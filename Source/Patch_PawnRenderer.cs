@@ -459,7 +459,7 @@ namespace yayoAni
     }
 
     [HarmonyPatch(typeof(PawnRenderer), "DrawEquipmentAiming")]
-    internal class Patch_DrawEquipmentAiming
+    internal class patch_DrawEquipmentAiming
     {
         [HarmonyPriority(9999)]
         [HarmonyPrefix]
