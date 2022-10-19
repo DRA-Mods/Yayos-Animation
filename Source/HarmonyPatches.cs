@@ -282,22 +282,22 @@ namespace yayoAni
 
             if (pawn.pather != null && pawn.pather.MovingNow)
             {
-                if (core.val_walk)
+                if (core.settings.val_walk)
                 {
                     changed = true;
                     int IdTick = pawn.thingIDNumber * 20;
 
-                    float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f * core.val_walkSpeed / pawn.pather.nextCellCostTotal);
-                    oa = wiggle * 9f * core.val_walkAngle;
+                    float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f * core.settings.val_walkSpeed / pawn.pather.nextCellCostTotal);
+                    oa = wiggle * 9f * core.settings.val_walkAngle;
                     op = new Vector3(wiggle * 0.025f, 0f, 0f);
                 }
             }
-            else if (core.val_anyJob && pawn.CurJob != null)
+            else if (core.settings.val_anyJob && pawn.CurJob != null)
             {
                 changed = true;
                 int IdTick = pawn.thingIDNumber * 20;
 
-                if (core.val_debug)
+                if (core.settings.val_debug)
                     if (pawn.IsColonist)
                         Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName}");
 
@@ -1024,7 +1024,7 @@ namespace yayoAni
                 {
                     changed = true;
 
-                    if (core.val_debug)
+                    if (core.settings.val_debug)
                         if (pawn.IsColonist)
                             Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName}");
 
@@ -1035,7 +1035,7 @@ namespace yayoAni
                     switch (pawn.CurJob.def.defName)
                     {
                         case "Lovin": // 사랑나누기
-                            if (!core.val_lovin) return;
+                            if (!core.settings.val_lovin) return;
                             Building_Bed building_Bed = pawn.CurrentBed();
                             if (building_Bed == null) return;
                             var t = (Find.TickManager.TicksGame + IdTick % 30) % 360;
@@ -1065,7 +1065,7 @@ namespace yayoAni
                             break;
 
                         case "LayDown": // 잠자기
-                            if (!core.val_sleep) return;
+                            if (!core.settings.val_sleep) return;
                             if (!(pawn.jobs?.curDriver?.asleep ?? false)) return;
 
                             int seed = ((Find.TickManager.TicksGame + IdTick * 5) / 2500 + IdTick * 5);

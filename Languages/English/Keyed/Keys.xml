@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <YayoAnim_Walk>Walking animations</YayoAnim_Walk>
+  <YayoAnim_WalkAnimSpeed>Walking motion speed</YayoAnim_WalkAnimSpeed>
+  <YayoAnim_WalkAnimAngle>Walking motion angle</YayoAnim_WalkAnimAngle>
+  <YayoAnim_Combat>Combat animations</YayoAnim_Combat>
+  <YayoAnim_TwirlWeapon>Weapon twirling</YayoAnim_TwirlWeapon>
+  <YayoAnim_AllJobs>All work animations</YayoAnim_AllJobs>
+  <YayoAnim_Sleep>Sleeping animations</YayoAnim_Sleep>
+  <YayoAnim_LovinBed>Lovin' animations</YayoAnim_LovinBed>
+  <YayoAnim_DebugMode>Debug mode</YayoAnim_DebugMode>
+  <YayoAnim_ResetToDefault>Reset to default</YayoAnim_ResetToDefault>
+</LanguageData>

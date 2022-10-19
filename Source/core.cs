@@ -1,104 +1,34 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using HugsLib;
-using HugsLib.Settings;
 using RimWorld;
 using UnityEngine;
 using Verse;
 
 namespace yayoAni
 {
-    public class core : ModBase
+    public class core : Mod
     {
-        public override string ModIdentifier => "yayoAni";
+        public static YayoAniSettings settings;
+        
+        public core(ModContentPack content) : base(content)
+        {
+            settings = GetSettings<YayoAniSettings>();
+        }
 
+        public override string SettingsCategory() => "yayoAni";
 
-        private SettingHandle<bool> val_walk_s;
-        public static bool val_walk;
-
-        private SettingHandle<float> val_walkSpeed_s;
-        public static float val_walkSpeed;
-
-        private SettingHandle<float> val_walkAngle_s;
-        public static float val_walkAngle;
-
-
-        private SettingHandle<bool> val_combat_s;
-        public static bool val_combat;
-
-        private SettingHandle<bool> val_combatTwirl_s;
-        public static bool val_combatTwirl;
-
-
-        private SettingHandle<bool> val_anyJob_s;
-        public static bool val_anyJob;
-
-        private SettingHandle<bool> val_sleep_s;
-        public static bool val_sleep;
-        private SettingHandle<bool> val_lovin_s;
-        public static bool val_lovin;
-
-
-        private SettingHandle<bool> val_debug_s;
-        public static bool val_debug;
-
+        public override void DoSettingsWindowContents(Rect inRect) => settings.DoSettingsWindowContents(inRect);
 
         public static bool using_dualWeld = false;
-
+        
         static core()
         {
             if (ModsConfig.ActiveModsInLoadOrder.Any(mod => mod.PackageId.ToLower().Contains("DualWield".ToLower())))
             {
                 using_dualWeld = true;
+                dualWield_etc.Init();
                 Log.Message($"# DualWield detected");
             }
-        }
-
-        public override void DefsLoaded()
-        {
-            val_walk_s = Settings.GetHandle<bool>("val_walk", "walk".Translate(), "", true);
-            val_walkSpeed_s = Settings.GetHandle<float>("val_walkSpeed", "walk_ani_speed".Translate(), "", 0.8f);
-            val_walkAngle_s = Settings.GetHandle<float>("val_walkAngle", "walk_ani_angle".Translate(), "", 0.6f);
-
-            val_combat_s = Settings.GetHandle<bool>("val_combat", "combat".Translate(), "", true);
-            val_combatTwirl_s = Settings.GetHandle<bool>("val_combatTwirl", "twirl_weapon".Translate(), "", true);
-
-            val_anyJob_s = Settings.GetHandle<bool>("val_anyJob", "all_job".Translate(), "", true);
-
-            val_sleep_s = Settings.GetHandle<bool>("val_sleep", "sleep".Translate(), "", true);
-            val_lovin_s = Settings.GetHandle<bool>("val_lovin", "lovin_bed".Translate(), "", true);
-
-            val_debug_s = Settings.GetHandle<bool>("val_debug", "debug_mode".Translate(), "", false);
-
-            SettingsChanged();
-        }
-
-        public override void SettingsChanged()
-        {
-            val_walk = val_walk_s.Value;
-            val_walkSpeed = Mathf.Clamp(val_walkSpeed_s.Value, 0.1f, 10f);
-            val_walkAngle = Mathf.Clamp(val_walkAngle_s.Value, 0.1f, 10f);
-
-            val_combat = val_combat_s.Value;
-            val_combatTwirl = val_combatTwirl_s.Value;
-
-            val_anyJob = val_anyJob_s.Value;
-
-            val_sleep = val_sleep_s.Value;
-            val_lovin = val_lovin_s.Value;
-
-            val_debug = val_debug_s.Value;
-        }
-
-        public override void WorldLoaded()
-        {
-            dataUtility.reset();
-        }
-
-        public override void Tick(int currentTick)
-        {
-            if (Find.TickManager.TicksGame % GenDate.TicksPerDay == 0)
-                dataUtility.GC();
         }
 
         public static Rot4 getRot(Vector3 vel, Rot4 curRot)

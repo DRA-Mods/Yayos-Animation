@@ -15,7 +15,7 @@ namespace yayoAni
         [UsedImplicitly]
         static bool Prefix(PawnRenderer __instance, Vector3 rootLoc)
         {
-            if (!core.val_combat)
+            if (!core.settings.val_combat)
             {
                 return true;
             }
@@ -86,7 +86,7 @@ namespace yayoAni
             offset.z += (pawn.Rotation == Rot4.North) ? (-0.00289575267f) : 0.03474903f;
 
             // 설정과 무기 무게에 따른 회전 애니메이션 사용 여부
-            bool useTwirl = core.val_combatTwirl && !pawn.RaceProps.IsMechanoid && thing.def.BaseMass < 5f;
+            bool useTwirl = core.settings.val_combatTwirl && !pawn.RaceProps.IsMechanoid && thing.def.BaseMass < 5f;
 
             if (stance_Busy != null && !stance_Busy.neverAimWeapon && stance_Busy.focusTarg.IsValid)
             {
@@ -572,7 +572,7 @@ namespace yayoAni
         [UsedImplicitly]
         static bool Prefix(PawnRenderer __instance, Thing eq, Vector3 drawLoc, float aimAngle)
         {
-            if (!core.val_combat)
+            if (!core.settings.val_combat)
             {
                 return true;
             }
