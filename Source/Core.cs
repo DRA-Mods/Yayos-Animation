@@ -11,12 +11,24 @@ namespace yayoAni
     {
         public static YayoAniSettings settings;
         public static Harmony harmony;
-        
+
         public Core(ModContentPack content) : base(content)
         {
             settings = GetSettings<YayoAniSettings>();
             harmony = new Harmony("com.yayo.yayoAni");
             harmony.PatchAll();
+
+            if (usingHar)
+            {
+                LongEventHandler.ExecuteWhenFinished(() =>
+                {
+                    harmony.Patch(AccessTools.Method("AlienRace.HarmonyPatches:DrawAddons"),
+                        prefix: new HarmonyMethod(AccessTools.Method(
+                                typeof(HumanoidAlienRaces.Prefix_AlienRace_HarmonyPatches_DrawAddons),
+                                nameof(HumanoidAlienRaces.Prefix_AlienRace_HarmonyPatches_DrawAddons.Prefix)),
+                            0));
+                });
+            }
         }
 
         public override string SettingsCategory() => "yayoAni";
@@ -24,14 +36,24 @@ namespace yayoAni
         public override void DoSettingsWindowContents(Rect inRect) => settings.DoSettingsWindowContents(inRect);
 
         public static bool usingDualWield = false;
-        
+        public static bool usingHar = false;
+
         static Core()
         {
-            if (ModsConfig.ActiveModsInLoadOrder.Any(mod => mod.PackageId.ToLower().Contains("DualWield".ToLower())))
+            foreach (var mod in ModsConfig.ActiveModsInLoadOrder)
             {
-                usingDualWield = true;
-                DualWield.Init();
-                Log.Message($"# DualWield detected");
+                switch (mod.PackageId.ToLower())
+                {
+                    case "roolo.dualwield":
+                        usingDualWield = true;
+                        DualWield.Init();
+                        Log.Message("# DualWield detected");
+                        break;
+                    case "erdelf.humanoidalienraces":
+                        usingHar = true;
+                        Log.Message("# HumanoidAlienRaces detected");
+                        break;
+                }
             }
         }
 

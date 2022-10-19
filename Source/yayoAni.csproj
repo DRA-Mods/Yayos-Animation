@@ -54,5 +54,9 @@
       <HintPath>..\..\..\..\..\workshop\content\294100\1628211313\1.3\Assemblies\DualWield.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="HumanoidAlienRaces">
+      <HintPath>..\..\..\..\..\workshop\content\294100\839005762\1.3\Assemblies\AlienRace.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 </Project>
