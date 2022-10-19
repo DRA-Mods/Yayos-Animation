@@ -1,32 +1,36 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
 
 namespace yayoAni
 {
-    public class core : Mod
+    public class Core : Mod
     {
         public static YayoAniSettings settings;
+        public static Harmony harmony;
         
-        public core(ModContentPack content) : base(content)
+        public Core(ModContentPack content) : base(content)
         {
             settings = GetSettings<YayoAniSettings>();
+            harmony = new Harmony("com.yayo.yayoAni");
+            harmony.PatchAll();
         }
 
         public override string SettingsCategory() => "yayoAni";
 
         public override void DoSettingsWindowContents(Rect inRect) => settings.DoSettingsWindowContents(inRect);
 
-        public static bool using_dualWeld = false;
+        public static bool usingDualWield = false;
         
-        static core()
+        static Core()
         {
             if (ModsConfig.ActiveModsInLoadOrder.Any(mod => mod.PackageId.ToLower().Contains("DualWield".ToLower())))
             {
-                using_dualWeld = true;
-                dualWield_etc.Init();
+                usingDualWield = true;
+                DualWield.Init();
                 Log.Message($"# DualWield detected");
             }
         }
@@ -71,9 +75,9 @@ namespace yayoAni
             return true;
         }
 
-        const float piHalf = Mathf.PI / 2f;
-        const float angleReduce = 0.5f;
-        const float angleToPos = 0.01f;
+        private const float piHalf = Mathf.PI / 2f;
+        private const float angleReduce = 0.5f;
+        private const float angleToPos = 0.01f;
 
         public enum tweenType
         {
@@ -208,7 +212,7 @@ namespace yayoAni
         public static Rot4 Rot90(Rot4 rot) => new(rot.AsInt + 1);
         public static Rot4 Rot90b(Rot4 rot) => new(rot.AsInt - 1);
 
-        static List<LordJob_Ritual> ar_lordJob_ritual = new();
+        private static List<LordJob_Ritual> ar_lordJob_ritual = new();
 
         public static LordJob_Ritual GetPawnRitual(Pawn p)
         {

@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using RimWorld;
 using Verse;
+using yayoAni.Data;
 
 namespace yayoAni
 {
@@ -12,12 +13,12 @@ namespace yayoAni
         public YayoAniGameComp([UsedImplicitly] Game _)
         { }
 
-        public static void ResetData() => dataUtility.reset();
+        public static void ResetData() => DataUtility.Reset();
 
         public override void GameComponentTick()
         {
             if (Find.TickManager.TicksGame % GenDate.TicksPerDay == 0)
-                dataUtility.GC();
+                DataUtility.GC();
         }
     }
 }

@@ -6,7 +6,7 @@
 
 //namespace Verse
 //{
-//    public class PawnRenderer_test
+//    public class PawnRenderer_Test
 //    {
 //        private Pawn pawn;
 

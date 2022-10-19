@@ -7,7 +7,7 @@ using Verse;
 
 namespace yayoAni
 {
-    static class dualWield_etc
+    public static class DualWield
     {
         private delegate object GetInstance();
 
