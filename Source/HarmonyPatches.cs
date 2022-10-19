@@ -259,7 +259,7 @@ namespace yayoAni
         {
             pdd = dataUtility.GetData(p);
             rotation = pdd.fixed_rot ?? rotation;
-            return (Mesh)AccessTools.Method(typeof(PawnRenderer), "GetBlitMeshUpdatedFrame").Invoke(p.Drawer.renderer, new object[] { frameSet, rotation, drawMode });
+            return p.Drawer.renderer.GetBlitMeshUpdatedFrame(frameSet, rotation, drawMode);
         }
 
 
@@ -1219,7 +1219,7 @@ namespace yayoAni
         {
             Vector3 zero = Vector3.zero;
             //PawnRenderFlags pawnRenderFlags = GetDefaultRenderFlags(pawn);
-            PawnRenderFlags pawnRenderFlags = (PawnRenderFlags)AccessTools.Method(typeof(PawnRenderer), "GetDefaultRenderFlags").Invoke(__instance, new object[] { ___pawn });
+            PawnRenderFlags pawnRenderFlags = __instance.GetDefaultRenderFlags(___pawn);
             if (portrait)
             {
                 pawnRenderFlags |= PawnRenderFlags.Portrait;
@@ -1270,8 +1270,8 @@ namespace yayoAni
                 }
                 //RenderPawnInternal(zero + positionOffset, angle, renderBody, rotation, ___CurRotDrawMode, pawnRenderFlags);
                 Patch_PawnRenderer_RenderPawnInternal.skipPatch = true;
-                RotDrawMode CurRotDrawMode = Traverse.Create(__instance).Property("CurRotDrawMode").GetValue<RotDrawMode>();
-                AccessTools.Method(typeof(PawnRenderer), "RenderPawnInternal").Invoke(__instance, new object[] { zero + positionOffset, angle, renderBody, rotation, CurRotDrawMode, pawnRenderFlags });
+                RotDrawMode CurRotDrawMode = __instance.CurRotDrawMode;
+                __instance.RenderPawnInternal(zero + positionOffset, angle, renderBody, rotation, CurRotDrawMode, pawnRenderFlags);
                 foreach (KeyValuePair<Apparel, (Color, bool)> tmpOriginalColor in ___tmpOriginalColors)
                 {
                     if (!tmpOriginalColor.Value.Item2)
