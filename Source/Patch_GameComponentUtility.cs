@@ -14,11 +14,7 @@ namespace yayoAni
         public static class ResetOnStartedOrLoaded
         {
             [UsedImplicitly]
-            public static void Postfix()
-            {
-                Log.Message("Reset on load");
-                DataUtility.Reset();
-            }
+            public static void Postfix() => DataUtility.Reset();
         }
 
         [HarmonyPatch(typeof(GameComponentUtility), nameof(GameComponentUtility.GameComponentTick))]
@@ -27,8 +23,6 @@ namespace yayoAni
             [UsedImplicitly]
             public static void Postfix()
             {
-                if (Find.TickManager.TicksGame % 60 == 0)
-                    Log.Message("Tick");
                 if (Find.TickManager.TicksGame % GenDate.TicksPerDay == 0)
                     DataUtility.GC();
             }
