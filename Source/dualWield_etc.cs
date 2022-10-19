@@ -1,10 +1,6 @@
-﻿using DualWield.Storage;
-using HarmonyLib;
+﻿using DualWield;
+using DualWield.Storage;
 using RimWorld;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Verse;
 
 namespace yayoAni
@@ -18,8 +14,8 @@ namespace yayoAni
             {
                 return false;
             }
-            
-            ExtendedDataStorage store = DualWield.Base.Instance.GetExtendedDataStorage();
+
+            ExtendedDataStorage store = Base.Instance.GetExtendedDataStorage();
             foreach (ThingWithComps twc in instance.AllEquipmentListForReading)
             {
                 if (store.TryGetExtendedDataFor(twc, out ExtendedThingWithCompsData ext) && ext.isOffHand)
@@ -28,6 +24,7 @@ namespace yayoAni
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -41,19 +38,18 @@ namespace yayoAni
                     hasMissingHand = true;
                 }
             }
+
             return hasMissingHand;
         }
 
-
         public static Pawn_StanceTracker GetStancesOffHand(this Pawn instance)
         {
-            if (DualWield.Base.Instance.GetExtendedDataStorage() is ExtendedDataStorage store)
+            if (Base.Instance.GetExtendedDataStorage() is { } store)
             {
                 return store.GetExtendedDataFor(instance).stancesOffhand;
             }
+
             return null;
         }
-
-
     }
 }

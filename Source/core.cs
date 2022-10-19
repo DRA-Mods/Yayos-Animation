@@ -1,21 +1,13 @@
-﻿using UnityEngine;
-using Verse;
-using RimWorld;
+﻿using System.Collections.Generic;
+using System.Linq;
 using HugsLib;
 using HugsLib.Settings;
-using System.Linq;
-using RimWorld.Planet;
-using System.Collections.Generic;
-using HarmonyLib;
-using System;
-using System.Reflection;
-using Verse.Noise;
-using System.Collections;
-
+using RimWorld;
+using UnityEngine;
+using Verse;
 
 namespace yayoAni
 {
-
     public class core : ModBase
     {
         public override string ModIdentifier => "yayoAni";
@@ -29,7 +21,6 @@ namespace yayoAni
 
         private SettingHandle<float> val_walkAngle_s;
         public static float val_walkAngle;
-
 
 
         private SettingHandle<bool> val_combat_s;
@@ -52,10 +43,7 @@ namespace yayoAni
         public static bool val_debug;
 
 
-
         public static bool using_dualWeld = false;
-        public static bool using_yayoCombat = false;
-
 
         static core()
         {
@@ -64,12 +52,6 @@ namespace yayoAni
                 using_dualWeld = true;
                 Log.Message($"# DualWield detected");
             }
-            if (ModsConfig.ActiveModsInLoadOrder.Any(mod => mod.PackageId.ToLower().Contains("yayo.combat".ToLower())))
-            {
-                using_yayoCombat = true;
-                Log.Message($"# YayoCombat detected");
-            }
-
         }
 
         public override void DefsLoaded()
@@ -89,9 +71,7 @@ namespace yayoAni
             val_debug_s = Settings.GetHandle<bool>("val_debug", "debug_mode".Translate(), "", false);
 
             SettingsChanged();
-
         }
-        
 
         public override void SettingsChanged()
         {
@@ -108,48 +88,23 @@ namespace yayoAni
             val_lovin = val_lovin_s.Value;
 
             val_debug = val_debug_s.Value;
-
-
-
         }
-
-
-
-
 
         public override void WorldLoaded()
         {
             dataUtility.reset();
         }
 
-
-
         public override void Tick(int currentTick)
         {
-            if(Find.TickManager.TicksGame % GenDate.TicksPerDay == 0)
-            {
+            if (Find.TickManager.TicksGame % GenDate.TicksPerDay == 0)
                 dataUtility.GC();
-            }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         public static Rot4 getRot(Vector3 vel, Rot4 curRot)
         {
             Rot4 r = Rot4.South;
-            if(curRot == Rot4.North || curRot == Rot4.East)
+            if (curRot == Rot4.North || curRot == Rot4.East)
             {
                 if (Mathf.Abs(vel.x) > Mathf.Abs(vel.z))
                 {
@@ -175,23 +130,7 @@ namespace yayoAni
             return r;
         }
 
-        static public bool checkAniTick(ref int tick, int duration)
-        {
-            if(tick >= duration)
-            {
-                tick -= duration;
-                return false;
-            }
-            return true;
-        }
-
-        static float piHalf = Mathf.PI / 2f;
-        static float angleReduce = 0.5f;
-        static float angleToPos = 0.01f;
-        
-        public enum tweenType { line, sin }
-
-        static public bool Ani(ref int tick, int duration, ref float angle, float s_angle, float t_angle, float centerY, ref Vector3 pos, Vector3 s_pos, Vector3 t_pos, Rot4? rot = null, tweenType tween = tweenType.sin, Rot4? axis = null)
+        public static bool checkAniTick(ref int tick, int duration)
         {
             if (tick >= duration)
             {
@@ -199,7 +138,29 @@ namespace yayoAni
                 return false;
             }
 
-            bool needCenterCheck = true; ;
+            return true;
+        }
+
+        const float piHalf = Mathf.PI / 2f;
+        const float angleReduce = 0.5f;
+        const float angleToPos = 0.01f;
+
+        public enum tweenType
+        {
+            line,
+            sin
+        }
+
+        public static bool Ani(ref int tick, int duration, ref float angle, float s_angle, float t_angle, float centerY, ref Vector3 pos, Vector3 s_pos, Vector3 t_pos, Rot4? rot = null,
+            tweenType tween = tweenType.sin, Rot4? axis = null)
+        {
+            if (tick >= duration)
+            {
+                tick -= duration;
+                return false;
+            }
+
+            bool needCenterCheck = true;
             if (axis != null)
             {
                 if (rot != null)
@@ -212,10 +173,12 @@ namespace yayoAni
                         t_pos = new Vector3(-t_pos.x, 0f, t_pos.z);
                     }
                 }
-                if(axis != Rot4.South)
+
+                if (axis != Rot4.South)
                 {
                     needCenterCheck = false;
                 }
+
                 if (axis == Rot4.North)
                 {
                     //s_angle = -s_angle;
@@ -248,8 +211,6 @@ namespace yayoAni
                         t_pos += new Vector3(0f, 0f, -t_angle * 0.01f * centerY);
                     }
                 }
-
-
             }
             else if (rot != null)
             {
@@ -274,73 +235,52 @@ namespace yayoAni
                     s_pos = new Vector3(0f, 0f, s_pos.z + s_pos.x - s_angle * angleToPos);
                     t_pos = new Vector3(0f, 0f, t_pos.z + t_pos.x - t_angle * angleToPos);
                 }
-                
             }
+
             if (needCenterCheck && centerY != 0f)
             {
                 s_pos += new Vector3(s_angle * -0.01f * centerY, 0f, 0f);
                 t_pos += new Vector3(t_angle * -0.01f * centerY, 0f, 0f);
             }
 
-
-
-            float tickPer = 0f;
-            switch (tween)
+            float tickPer = tween switch
             {
-                default:
-                    tickPer = (tick / (float)duration);
-                    break;
-                case tweenType.sin:
-                    tickPer = Mathf.Sin(piHalf * (tick / (float)duration));
-                    break;
-            }
-            
-            
+                tweenType.sin => Mathf.Sin(piHalf * (tick / (float)duration)),
+                _ => (tick / (float)duration)
+            };
+
             angle += s_angle + (t_angle - s_angle) * tickPer;
-            if(s_pos != null)
-            {
-                pos += s_pos + (t_pos - s_pos) * tickPer;
-            }
+            pos += s_pos + (t_pos - s_pos) * tickPer;
             return true;
         }
 
-        static public bool Ani(ref int tick, int duration, ref float angle, float s_angle, float t_angle, float centerY, ref Vector3 pos, Rot4? rot = null, tweenType tween = tweenType.sin)
+        public static bool Ani(ref int tick, int duration, ref float angle, float s_angle, float t_angle, float centerY, ref Vector3 pos, Rot4? rot = null, tweenType tween = tweenType.sin)
         {
             return Ani(ref tick, duration, ref angle, s_angle, t_angle, centerY, ref pos, Vector3.zero, Vector3.zero, rot, tween);
         }
-        static public bool Ani(ref int tick, int duration, ref float angle, ref Vector3 pos, Vector3 s_pos, Vector3 t_pos, Rot4? rot = null, tweenType tween = tweenType.sin)
-        {
 
+        public static bool Ani(ref int tick, int duration, ref float angle, ref Vector3 pos, Vector3 s_pos, Vector3 t_pos, Rot4? rot = null, tweenType tween = tweenType.sin)
+        {
             return Ani(ref tick, duration, ref angle, 0f, 0f, 0f, ref pos, s_pos, t_pos, rot, tween);
         }
 
-        static public bool Ani(ref int tick, int duration)
+        public static bool Ani(ref int tick, int duration)
         {
             if (tick >= duration)
             {
                 tick -= duration;
                 return false;
             }
+
             return true;
         }
 
-        static public Rot4 Rot90(Rot4 rot)
-        {
-            if (rot == Rot4.East) return Rot4.South;
-            if (rot == Rot4.South) return Rot4.West;
-            if (rot == Rot4.West) return Rot4.North;
-            return Rot4.East;
-        }
-        static public Rot4 Rot90b(Rot4 rot)
-        {
-            if (rot == Rot4.East) return Rot4.North;
-            if (rot == Rot4.North) return Rot4.West;
-            if (rot == Rot4.West) return Rot4.South;
-            return Rot4.East;
-        }
+        public static Rot4 Rot90(Rot4 rot) => new(rot.AsInt + 1);
+        public static Rot4 Rot90b(Rot4 rot) => new(rot.AsInt - 1);
 
-        static List<LordJob_Ritual> ar_lordJob_ritual = new List<LordJob_Ritual>();
-        static  public LordJob_Ritual GetPawnRitual(Pawn p)
+        static List<LordJob_Ritual> ar_lordJob_ritual = new();
+
+        public static LordJob_Ritual GetPawnRitual(Pawn p)
         {
             ar_lordJob_ritual = Find.IdeoManager.GetActiveRituals(p.Map);
             if (ar_lordJob_ritual == null) return null;
@@ -348,20 +288,8 @@ namespace yayoAni
             {
                 if (l.PawnsToCountTowardsPresence.Contains(p)) return l;
             }
+
             return null;
         }
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
 }

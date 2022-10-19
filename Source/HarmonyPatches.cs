@@ -1,33 +1,26 @@
 ﻿using System;
-using System.Reflection;
-using HarmonyLib;
-using Verse;
-using RimWorld;
-using RimWorld.Planet;
-using UnityEngine;
 using System.Collections.Generic;
-using Verse.AI.Group;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
-
+using HarmonyLib;
+using JetBrains.Annotations;
+using RimWorld;
+using UnityEngine;
+using Verse;
 
 namespace yayoAni
 {
-
     [StaticConstructorOnStartup]
     public class HarmonyPatches : Mod
     {
-        static public Harmony harmony;
+        public static Harmony harmony;
+
         public HarmonyPatches(ModContentPack content) : base(content)
         {
             harmony = new Harmony("com.yayo.yayoAni");
-
         }
-
     }
-
-
-
 
 
     [HarmonyPatch(typeof(PawnRenderer))]
@@ -38,27 +31,26 @@ namespace yayoAni
         {
             return ci.opcode == oc;
         }
+
         public static bool oploc(this CodeInstruction ci, OpCode oc, int i)
         {
-            if (ci.opcode == oc)
-            {
-                LocalBuilder localBuilder = ci.operand as LocalBuilder;
-                if (localBuilder != null)
-                {
-                    return localBuilder.LocalIndex == i;
-                }
-            }
+            if (ci.opcode == oc && ci.operand is LocalBuilder localBuilder)
+                return localBuilder.LocalIndex == i;
+
             return false;
         }
 
-        public enum findPointType { start, after }
+        public enum findPointType
+        {
+            start,
+            after
+        }
+
         public static bool findPoint(this List<CodeInstruction> ar, List<OpCode> target, out int point, findPointType findType)
         {
             point = -1;
             for (int i = 0; i < ar.Count - target.Count; i++)
             {
-
-
                 for (int j = 0; j < target.Count; j++)
                 {
                     if (ar[i + j].equal(target[j]))
@@ -74,6 +66,7 @@ namespace yayoAni
                                     point = i + j + 1;
                                     break;
                             }
+
                             return true;
                         }
                     }
@@ -82,24 +75,24 @@ namespace yayoAni
                         break;
                     }
                 }
-
-
             }
+
             return false;
         }
 
 
+        [UsedImplicitly]
         static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> instructions)
         {
             List<CodeInstruction> ar_ci = instructions.ToList();
-            List<CodeInstruction> ar_insert = new List<CodeInstruction>();
-            List<OpCode> ar_find = new List<OpCode>();
-            int point = -1;
-            int tmp_point;
+            List<CodeInstruction> ar_insert;
+            List<OpCode> ar_find;
 
 
             // --------------------
+
             #region GenDraw.DrawMeshNowOrLater(GetBlitMeshUpdatedFrame(frameSet, rot, PawnDrawMode.BodyAndHead), drawLoc, Quaternion.AngleAxis(0f, Vector3.up), original, drawNow: false);
+
             ar_find = new List<OpCode>()
             {
                 OpCodes.Ldarg_0,
@@ -116,7 +109,7 @@ namespace yayoAni
                 OpCodes.Call
             };
 
-            if (ar_ci.findPoint(ar_find, out point, findPointType.start))
+            if (ar_ci.findPoint(ar_find, out var point, findPointType.start))
             {
                 //for (int i = point; i < point + ar_find.Count; i++)
                 //{
@@ -124,37 +117,30 @@ namespace yayoAni
                 //}
                 //Log.Message($"--------------change-----------------");
 
-                tmp_point = point + 11;
+                var tmp_point = point + 11;
                 ar_ci.RemoveRange(tmp_point, 1);
                 ar_insert = new List<CodeInstruction>()
                 {
-                    new CodeInstruction(OpCodes.Ldarg_0),
-                    new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), "pawn")),
-                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(yayo), "DrawMeshNowOrLater"))
-
+                    new(OpCodes.Ldarg_0),
+                    new(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), "pawn")),
+                    new(OpCodes.Call, AccessTools.Method(typeof(yayo), "DrawMeshNowOrLater"))
                 };
                 ar_ci.InsertRange(tmp_point, ar_insert);
-
-
 
 
                 tmp_point = point + 4;
                 ar_ci.RemoveRange(tmp_point, 1);
                 ar_insert = new List<CodeInstruction>()
                 {
-                    new CodeInstruction(OpCodes.Ldarg_0),
-                    new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), "pawn")),
-                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(yayo), "GetBlitMeshUpdatedFrame"))
-
+                    new(OpCodes.Ldarg_0),
+                    new(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), "pawn")),
+                    new(OpCodes.Call, AccessTools.Method(typeof(yayo), "GetBlitMeshUpdatedFrame"))
                 };
                 ar_ci.InsertRange(tmp_point, ar_insert);
 
 
-
                 tmp_point = point + 0;
                 ar_ci.RemoveRange(tmp_point, 1);
-
-
 
 
                 //for (int i = point; i < point + ar_find.Count; i++)
@@ -162,11 +148,12 @@ namespace yayoAni
                 //	Log.Message($"{i} : {ar_ci[i].opcode}");
 
                 //}
-
             }
+
             #endregion
 
             #region RenderPawnInternal(drawLoc, 0f, renderBody: true, rot, curRotDrawMode, pawnRenderFlags);
+
             //ar_find = new List<OpCode>()
             //{
             //	//IL_0106: br.s IL_0118
@@ -213,7 +200,6 @@ namespace yayoAni
             //             //ar_ci.Insert(point + 3, new CodeInstruction(OpCodes.Ldarg_2));
 
 
-
             //             for (int i = point - 5; i < point + ar_find.Count + 5; i++)
             //             {
             //                 Log.Message($"{i} : {ar_ci[i].opcode} - {ar_ci[i].operand}");
@@ -221,12 +207,8 @@ namespace yayoAni
             //             }
 
             //         }
+
             #endregion
-
-
-
-
-
 
 
             // result out
@@ -234,30 +216,15 @@ namespace yayoAni
             {
                 yield return ar_ci[i];
             }
-
         }
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public static class yayo
     {
-        static pawnDrawData pdd;
         public static Mesh GetBlitMeshUpdatedFrame(PawnTextureAtlasFrameSet frameSet, Rot4 rotation, PawnDrawMode drawMode, Pawn p)
         {
-            pdd = dataUtility.GetData(p);
+            var pdd = dataUtility.GetData(p);
             rotation = pdd.fixed_rot ?? rotation;
             return p.Drawer.renderer.GetBlitMeshUpdatedFrame(frameSet, rotation, drawMode);
         }
@@ -265,8 +232,7 @@ namespace yayoAni
 
         public static void DrawMeshNowOrLater(Mesh mesh, Vector3 loc, Quaternion quat, Material mat, bool drawNow, Pawn p)
         {
-
-            pdd = dataUtility.GetData(p);
+            var pdd = dataUtility.GetData(p);
             quat = Quaternion.AngleAxis(pdd.offset_angle, Vector3.up);
             GenDraw.DrawMeshNowOrLater(mesh, loc, quat, mat, drawNow);
         }
@@ -281,7 +247,6 @@ namespace yayoAni
         //}
 
 
-
         public static void checkAni(Pawn pawn, ref Vector3 pos, Rot4 rot)
 
         {
@@ -294,14 +259,22 @@ namespace yayoAni
             {
                 ani1(pawn, ref pos, rot);
             }
-
         }
 
-        public enum aniType { none, doSomeThing, social, smash, idle, gameCeremony, crowd, solemn }
+        public enum aniType
+        {
+            none,
+            doSomeThing,
+            social,
+            smash,
+            idle,
+            gameCeremony,
+            crowd,
+            solemn
+        }
+
         public static void ani0(Pawn pawn, ref Vector3 pos, Rot4 rot)
         {
-
-
             bool changed = false;
             float oa = 0f;
             Vector3 op = Vector3.zero;
@@ -324,7 +297,9 @@ namespace yayoAni
                 changed = true;
                 int IdTick = pawn.thingIDNumber * 20;
 
-                if (core.val_debug) if (pawn.IsColonist) Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName}");
+                if (core.val_debug)
+                    if (pawn.IsColonist)
+                        Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName}");
 
                 //if (pawn.IsColonist) Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName} / id {pawn.thingIDNumber}");
                 //float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f / pawn.pather.nextCellCostTotal);
@@ -334,7 +309,7 @@ namespace yayoAni
                 aniType aniType = aniType.none;
                 float f;
                 Rot4 r;
-                Rot4 tr = rot;
+                Rot4 tr;
 
 
                 switch (pawn.CurJob.def.defName)
@@ -497,7 +472,6 @@ namespace yayoAni
                         break;
 
 
-
                     // social
                     case "GotoAndBeSociallyActive":
                         aniType = aniType.social;
@@ -530,12 +504,9 @@ namespace yayoAni
                                         if (!core.Ani(ref t, 25, ref oa, 25f, 35f, -1f, ref op, rot))
                                             if (!core.Ani(ref t, 25, ref oa, 35f, 25f, -1f, ref op, rot))
                                                 if (!core.Ani(ref t, 25, ref oa, 25f, 35f, -1f, ref op, rot))
-                                                    if (!core.Ani(ref t, 25, ref oa, 35f, 15f, -1f, ref op, rot)) ;
+                                                    core.Ani(ref t, 25, ref oa, 35f, 15f, -1f, ref op, rot);
 
                         break;
-
-
-
 
 
                     case "Clean":
@@ -555,8 +526,7 @@ namespace yayoAni
                             if (!core.Ani(ref t, 20, ref oa, 0f, 5f, -1f, ref op, Vector3.zero, new Vector3(0.05f, 0f, 0f), rot))
                                 if (!core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0f), new Vector3(0.05f, 0f, 0f), rot))
                                     if (!core.Ani(ref t, 50, ref oa, 10, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0f), new Vector3(0.05f, 0f, 0f), rot))
-                                        if (!core.Ani(ref t, 40, ref oa, 10f, 0f, -1f, ref op, new Vector3(0.05f, 0f, 0f), Vector3.zero, rot)) ;
-
+                                        core.Ani(ref t, 40, ref oa, 10f, 0f, -1f, ref op, new Vector3(0.05f, 0f, 0f), Vector3.zero, rot);
                         }
 
                         break;
@@ -566,7 +536,7 @@ namespace yayoAni
                         {
                             aniType = aniType.crowd;
                         }
-                        else if(ritualJob.Ritual == null)
+                        else if (ritualJob.Ritual == null)
                         {
                             // 로얄티 수여식 관중
                             aniType = aniType.solemn;
@@ -584,11 +554,11 @@ namespace yayoAni
                                     break;
                             }
                         }
+
                         break;
                     case "BestowingCeremony": // 로얄티 수여식 받는 대상
                         aniType = aniType.solemn;
                         break;
-
 
 
                     case "Dance":
@@ -602,43 +572,71 @@ namespace yayoAni
                         t = (Find.TickManager.TicksGame + IdTick) % 60;
                         if (!core.Ani(ref t, 30, ref oa, 10f, -20f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
                         {
-                            if (!core.Ani(ref t, 30, ref oa, -20f, 10f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot)) ;
+                            core.Ani(ref t, 30, ref oa, -20f, 10f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot);
                         }
+
                         break;
                     case "Play_Horseshoes":
                         t = (Find.TickManager.TicksGame + IdTick) % 60;
                         if (!core.Ani(ref t, 30, ref oa, 10f, -20f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
                         {
-                            if (!core.Ani(ref t, 30, ref oa, -20f, 10f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot)) ;
+                            core.Ani(ref t, 30, ref oa, -20f, 10f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot);
                         }
+
                         break;
 
-                        
+
                     case "Play_GameOfUr":
                         t = (Find.TickManager.TicksGame + IdTick * 27) % 900;
-                        if (t <= 159) { aniType = aniType.gameCeremony; }
-                        else { aniType = aniType.doSomeThing; }
+                        if (t <= 159)
+                        {
+                            aniType = aniType.gameCeremony;
+                        }
+                        else
+                        {
+                            aniType = aniType.doSomeThing;
+                        }
+
                         break;
 
                     case "Play_Poker":
                         t = (Find.TickManager.TicksGame + IdTick * 27) % 900;
-                        if (t <= 159) { aniType = aniType.gameCeremony; }
-                        else { aniType = aniType.doSomeThing; }
+                        if (t <= 159)
+                        {
+                            aniType = aniType.gameCeremony;
+                        }
+                        else
+                        {
+                            aniType = aniType.doSomeThing;
+                        }
+
                         break;
 
                     case "Play_Billiards":
                         t = (Find.TickManager.TicksGame + IdTick * 27) % 900;
-                        if (t <= 159) { aniType = aniType.gameCeremony; }
-                        else { aniType = aniType.doSomeThing; }
+                        if (t <= 159)
+                        {
+                            aniType = aniType.gameCeremony;
+                        }
+                        else
+                        {
+                            aniType = aniType.doSomeThing;
+                        }
+
                         break;
 
                     case "Play_Chess":
                         t = (Find.TickManager.TicksGame + IdTick * 27) % 900;
-                        if (t <= 159) { aniType = aniType.gameCeremony; }
-                        else { aniType = aniType.doSomeThing; }
+                        if (t <= 159)
+                        {
+                            aniType = aniType.gameCeremony;
+                        }
+                        else
+                        {
+                            aniType = aniType.doSomeThing;
+                        }
+
                         break;
-
-
 
 
                     case "ExtinguishSelf": // 스스로 불 끄기
@@ -657,56 +655,68 @@ namespace yayoAni
 
                         float a = 45f;
 
-                        if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, core.tweenType.line))
+                        if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r,
+                                core.tweenType.line))
                         {
                             rot = core.Rot90(rot);
                             step++;
-                            if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, core.tweenType.line))
+                            if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r,
+                                    core.tweenType.line))
                             {
                                 rot = core.Rot90(rot);
                                 step++;
-                                if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, core.tweenType.line))
+                                if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r,
+                                        core.tweenType.line))
                                 {
                                     rot = core.Rot90(rot);
                                     step++;
 
 
                                     // reverse
-                                    if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
+                                    if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r,
+                                            core.tweenType.line))
                                     {
                                         rot = core.Rot90b(rot);
                                         step--;
-                                        if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
+                                        if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
+                                                new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
                                         {
                                             rot = core.Rot90b(rot);
                                             step--;
-                                            if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
+                                            if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
+                                                    new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
                                             {
                                                 rot = core.Rot90b(rot);
                                                 step--;
-                                                if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
+                                                if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
+                                                        new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
                                                 {
                                                     rot = core.Rot90b(rot);
                                                     step--;
-                                                    if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
+                                                    if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
+                                                            new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
                                                     {
                                                         rot = core.Rot90b(rot);
                                                         step--;
-                                                        if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
+                                                        if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
+                                                                new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, core.tweenType.line))
                                                         {
                                                             rot = core.Rot90b(rot);
                                                             step--;
 
                                                             // reverse
-                                                            if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, core.tweenType.line))
+                                                            if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
+                                                                    new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, core.tweenType.line))
                                                             {
                                                                 rot = core.Rot90(rot);
                                                                 step++;
-                                                                if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, core.tweenType.line))
+                                                                if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
+                                                                        new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, core.tweenType.line))
                                                                 {
                                                                     rot = core.Rot90(rot);
                                                                     step++;
-                                                                    if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, core.tweenType.line))
+                                                                    if (!core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
+                                                                            new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, core.tweenType.line))
                                                                     {
                                                                         rot = core.Rot90(rot);
                                                                         step++;
@@ -723,11 +733,17 @@ namespace yayoAni
                             }
                         }
 
-                        try{ pawn.CurJob.targetA.Thing.DrawAt(pos + op + new Vector3(0f,0.1f,0f)); } catch { }
-                        
+                        try
+                        {
+                            pawn.CurJob.targetA.Thing.DrawAt(pos + op + new Vector3(0f, 0.1f, 0f));
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+
 
                         break;
-
 
 
                     case "Sow": // 씨뿌리기
@@ -735,7 +751,7 @@ namespace yayoAni
 
                         if (!core.Ani(ref t, 35))
                             if (!core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, rot))
-                                if (!core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot)) ;
+                                core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot);
 
                         break;
 
@@ -749,6 +765,7 @@ namespace yayoAni
                         {
                             aniType = aniType.doSomeThing;
                         }
+
                         break;
                     case "Harvest": // 자동 수확
                         if (pawn.CurJob.targetA.Thing?.def.plant?.IsTree != null && pawn.CurJob.targetA.Thing.def.plant.IsTree)
@@ -759,6 +776,7 @@ namespace yayoAni
                         {
                             aniType = aniType.doSomeThing;
                         }
+
                         break;
 
                     case "HarvestDesignated": // 수동 수확
@@ -770,6 +788,7 @@ namespace yayoAni
                         {
                             aniType = aniType.doSomeThing;
                         }
+
                         break;
 
                     case "Mine": // 채굴
@@ -787,10 +806,9 @@ namespace yayoAni
                                             if (!core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, f), new Vector3(0f, 0f, -f), rot))
                                                 if (!core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot))
                                                     if (!core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, f), new Vector3(0f, 0f, -f), rot))
-                                                        if (!core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot)) ;
+                                                        core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot);
 
                         break;
-
                 }
 
 
@@ -803,9 +821,9 @@ namespace yayoAni
                         {
                             if (!core.Ani(ref t, 30, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
                                 if (!core.Ani(ref t, 300, ref oa, 15f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
-                                    if (!core.Ani(ref t, 30, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot)) ;
-
+                                    core.Ani(ref t, 30, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot);
                         }
+
                         break;
 
                     case aniType.crowd:
@@ -833,18 +851,14 @@ namespace yayoAni
                                                         if (t2 >= total)
                                                         {
                                                             if (!core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.60f), rot))
-                                                                if (!core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.60f), new Vector3(0f, 0f, 0f), rot, core.tweenType.line)) ;
-
+                                                                core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.60f), new Vector3(0f, 0f, 0f), rot, core.tweenType.line);
                                                         }
                                                         else
                                                         {
-                                                            if (!core.Ani(ref t, 33)) ;
-
+                                                            core.Ani(ref t, 33);
                                                         }
-
                                                 }
                                             }
-
                                         }
                         }
 
@@ -852,7 +866,7 @@ namespace yayoAni
                         break;
 
                     case aniType.gameCeremony:
-                        
+
                         // need 159 tick
 
                         r = core.Rot90(rot);
@@ -870,7 +884,7 @@ namespace yayoAni
                                         {
                                             rot = core.Rot90b(rot);
                                             if (!core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
-                                                
+
                                                 if (!core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.60f), rot))
                                                     if (!core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.60f), new Vector3(0f, 0f, 0f), rot, core.tweenType.line))
                                                         if (!core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
@@ -879,16 +893,14 @@ namespace yayoAni
                                                             if (!core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
                                                             {
                                                                 rot = core.Rot90b(rot);
-                                                                if (!core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot)) ;
+                                                                core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot);
                                                             }
                                                         }
                                         }
-
                                     }
-
                         }
 
-                        
+
                         break;
 
                     case aniType.idle:
@@ -902,7 +914,7 @@ namespace yayoAni
                                         if (!core.Ani(ref t, 50, ref oa, f, -f, -1f, ref op, r))
                                             if (!core.Ani(ref t, 50, ref oa, -f, f, -1f, ref op, r))
                                                 if (!core.Ani(ref t, 50, ref oa, f, -f, -1f, ref op, r))
-                                                    if (!core.Ani(ref t, 25, ref oa, -f, 0f, -1f, ref op, r)) ;
+                                                    core.Ani(ref t, 25, ref oa, -f, 0f, -1f, ref op, r);
                         break;
 
                     case aniType.smash:
@@ -912,9 +924,9 @@ namespace yayoAni
                         {
                             if (!core.Ani(ref t, 3, ref oa, -20f, 10f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot, core.tweenType.line))
                                 if (!core.Ani(ref t, 20, ref oa, 10f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
-                                    if (!core.Ani(ref t, 40, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot)) ;
-
+                                    core.Ani(ref t, 40, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot);
                         }
+
                         break;
 
                     case aniType.doSomeThing:
@@ -937,11 +949,9 @@ namespace yayoAni
                                                     //tr = rot;
                                                     if (!core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, rot)) // 105
                                                         if (!core.Ani(ref t, 5, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.05f), rot))
-                                                            if (!core.Ani(ref t, 6, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.05f), new Vector3(0f, 0f, 0f), rot)) ;
-
+                                                            core.Ani(ref t, 6, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.05f), new Vector3(0f, 0f, 0f), rot);
                                                 }
                                             }
-
                                         }
 
                         rot = tr;
@@ -975,45 +985,33 @@ namespace yayoAni
                                                                         if (!core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot))
                                                                             if (!core.Ani(ref t, 10, ref oa, 0f, 10f, -1f, ref op, rot))
                                                                                 if (!core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot))
-                                                                                    if (!core.Ani(ref t, 25, ref oa, 0f, 0f, -1f, ref op, rot)) ;
-
+                                                                                    core.Ani(ref t, 25, ref oa, 0f, 0f, -1f, ref op, rot);
                                                 }
                                             }
-
                                         }
 
                         rot = tr;
                         break;
                 }
-
-
             }
 
             if (changed)
             {
-
                 pdd.offset_angle = oa;
                 pdd.fixed_rot = rot;
                 op = new Vector3(op.x, 0f, op.z);
                 pdd.offset_pos = op;
                 pos += op;
-
             }
             else
             {
                 pdd.reset();
             }
-
-
-
-
         }
-
 
 
         public static void ani1(Pawn pawn, ref Vector3 pos, Rot4 rot)
         {
-
             try
             {
                 pawnDrawData pdd = dataUtility.GetData(pawn);
@@ -1026,13 +1024,12 @@ namespace yayoAni
                 {
                     changed = true;
 
-                    if (core.val_debug) if (pawn.IsColonist) Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName}");
+                    if (core.val_debug)
+                        if (pawn.IsColonist)
+                            Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName}");
 
 
                     int IdTick = pawn.thingIDNumber * 20;
-                    int t;
-                    int t2;
-                    float f;
                     pdd.forcedShowBody = false;
 
                     switch (pawn.CurJob.def.defName)
@@ -1041,53 +1038,46 @@ namespace yayoAni
                             if (!core.val_lovin) return;
                             Building_Bed building_Bed = pawn.CurrentBed();
                             if (building_Bed == null) return;
-                            t = (Find.TickManager.TicksGame + IdTick % 30) % 360;
-                            f = 0.03f;
-                            if(building_Bed != null && pawn.RaceProps.Humanlike)
+                            var t = (Find.TickManager.TicksGame + IdTick % 30) % 360;
+                            var f = 0.03f;
+                            if (pawn.RaceProps.Humanlike)
                             {
                                 rot = core.getRot(pawn.CurJob.targetA.Pawn.DrawPos - pawn.DrawPos, building_Bed.Rotation);
-                                
+
                                 if (t <= 160)
                                 {
                                     if (!core.Ani(ref t, 20, ref oa, 0f, 5f, -1f, ref op, Vector3.zero, new Vector3(0.05f, 0f, 0.05f), rot, core.tweenType.sin, building_Bed.Rotation))
-                                        if (!core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0.05f), new Vector3(0.05f, 0f, 0.1f), rot, core.tweenType.sin, building_Bed.Rotation))
-                                            if (!core.Ani(ref t, 50, ref oa, 10, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0.1f), new Vector3(0.05f, 0f, 0.1f), rot, core.tweenType.sin, building_Bed.Rotation))
-                                                if (!core.Ani(ref t, 40, ref oa, 10f, 0f, -1f, ref op, new Vector3(0.05f, 0f, 0.1f), Vector3.zero, rot, core.tweenType.sin, building_Bed.Rotation)) ;
+                                        if (!core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0.05f), new Vector3(0.05f, 0f, 0.1f), rot, core.tweenType.sin,
+                                                building_Bed.Rotation))
+                                            if (!core.Ani(ref t, 50, ref oa, 10, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0.1f), new Vector3(0.05f, 0f, 0.1f), rot, core.tweenType.sin,
+                                                    building_Bed.Rotation))
+                                                core.Ani(ref t, 40, ref oa, 10f, 0f, -1f, ref op, new Vector3(0.05f, 0f, 0.1f), Vector3.zero, rot, core.tweenType.sin, building_Bed.Rotation);
                                 }
                                 else
                                 {
                                     t = (Find.TickManager.TicksGame + IdTick) % 40;
                                     if (!core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, f), new Vector3(0f, 0f, -f), rot, core.tweenType.sin, building_Bed.Rotation))
-                                        if (!core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot, core.tweenType.sin, building_Bed.Rotation)) ;
+                                        core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot, core.tweenType.sin, building_Bed.Rotation);
                                 }
-
                             }
-                            
-                            
-                            
+
 
                             break;
 
                         case "LayDown": // 잠자기
                             if (!core.val_sleep) return;
                             if (!(pawn.jobs?.curDriver?.asleep ?? false)) return;
-                            
+
                             int seed = ((Find.TickManager.TicksGame + IdTick * 5) / 2500 + IdTick * 5);
-                            switch (Rand.RangeSeeded(0, 4, seed))
+                            rot = Rand.RangeSeeded(0, 4, seed) switch
                             {
-                                case 0:
-                                    rot = Rot4.East;
-                                    break;
-                                case 1:
-                                    rot = Rot4.West;
-                                    break;
-                                case 2:
-                                    rot = Rot4.South;
-                                    break;
-                                case 3:
-                                    rot = Rot4.North;
-                                    break;
-                            }
+                                0 => Rot4.East,
+                                1 => Rot4.West,
+                                2 => Rot4.South,
+                                3 => Rot4.North,
+                                _ => rot
+                            };
+
                             switch (Rand.RangeSeeded(0, 3, seed + 100))
                             {
                                 case 0:
@@ -1101,26 +1091,21 @@ namespace yayoAni
                                     pdd.forcedShowBody = true;
                                     break;
                             }
-                            switch (Rand.RangeSeeded(0, 3, seed + 200))
-                            {
-                                case 0:
-                                    oa = Rand.RangeSeeded(-15f, 15f, seed);
-                                    break;
-                                case 1:
-                                    oa = Rand.RangeSeeded(-15f, 15f, seed);
-                                    break;
-                                case 2:
-                                    oa = Rand.RangeSeeded(-45f, 45f, seed);
-                                    break;
-                            }
-                            break;
 
+                            oa = Rand.RangeSeeded(0, 3, seed + 200) switch
+                            {
+                                0 => Rand.RangeSeeded(-15f, 15f, seed),
+                                1 => Rand.RangeSeeded(-15f, 15f, seed),
+                                2 => Rand.RangeSeeded(-45f, 45f, seed),
+                                _ => oa
+                            };
+
+                            break;
                     }
                 }
 
                 if (changed)
                 {
-
                     pdd.offset_angle = oa;
                     pdd.fixed_rot = rot;
                     op = new Vector3(op.x, 0f, op.z);
@@ -1131,52 +1116,38 @@ namespace yayoAni
                 {
                     pdd.reset();
                 }
-
             }
             catch
             {
                 dataUtility.GetData(pawn).reset();
             }
-
-
-
-
         }
-
-
-
-
     }
-
-
-
 
 
     // ---------------------------------------------------
     [HarmonyPatch(typeof(PawnRenderer), "RenderPawnAt")]
     public class Patch_PawnRenderer_RenderPawnAt
     {
-        static pawnDrawData pdd;
         [HarmonyPriority(0)]
+        [UsedImplicitly]
         public static void Prefix(PawnRenderer __instance, Pawn ___pawn, ref Vector3 drawLoc, Rot4? rotOverride = null, bool neverAimWeapon = false)
         {
-            pdd = dataUtility.GetData(___pawn);
+            dataUtility.GetData(___pawn);
             yayo.checkAni(___pawn, ref drawLoc, rotOverride ?? ___pawn.Rotation);
-
         }
     }
 
     [HarmonyPatch(typeof(PawnRenderer), "DrawDynamicParts")]
     public class Patch_PawnRenderer_DrawDynamicParts
     {
-        static pawnDrawData pdd;
-        //static pawnDrawData pdd;
         [HarmonyPriority(0)]
+        [UsedImplicitly]
         public static void Prefix(PawnRenderer __instance, ref Vector3 rootLoc, ref float angle, ref Rot4 pawnRotation, PawnRenderFlags flags, Pawn ___pawn)
         {
             if (___pawn.GetPosture() == PawnPosture.Standing)
             {
-                pdd = dataUtility.GetData(___pawn);
+                var pdd = dataUtility.GetData(___pawn);
                 angle += pdd.offset_angle;
                 pawnRotation = pdd.fixed_rot ?? pawnRotation;
             }
@@ -1186,9 +1157,10 @@ namespace yayoAni
     [HarmonyPatch(typeof(PawnRenderer), "RenderPawnInternal")]
     public class Patch_PawnRenderer_RenderPawnInternal
     {
-        static pawnDrawData pdd;
-        static public bool skipPatch = false;
+        public static bool skipPatch = false;
+
         [HarmonyPriority(0)]
+        [UsedImplicitly]
         public static void Prefix(PawnRenderer __instance, ref Vector3 rootLoc, ref float angle, bool renderBody, ref Rot4 bodyFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags, Pawn ___pawn)
         {
             if (skipPatch)
@@ -1196,16 +1168,12 @@ namespace yayoAni
                 skipPatch = false;
                 return;
             }
+
             if (___pawn.GetPosture() == PawnPosture.Standing)
             {
-                pdd = dataUtility.GetData(___pawn);
+                var pdd = dataUtility.GetData(___pawn);
                 angle += pdd.offset_angle;
                 bodyFacing = pdd.fixed_rot ?? bodyFacing;
-            }
-            else
-            {
-
-
             }
         }
     }
@@ -1213,9 +1181,11 @@ namespace yayoAni
     [HarmonyPatch(typeof(PawnRenderer), "RenderCache")]
     public class Patch_PawnRenderer_RenderCache
     {
-        static pawnDrawData pdd;
         [HarmonyPriority(0)]
-        public static bool Prefix(PawnRenderer __instance, Pawn ___pawn, Dictionary<Apparel, (Color, bool)> ___tmpOriginalColors, Rot4 rotation, ref float angle, Vector3 positionOffset, bool renderHead, bool renderBody, bool portrait, bool renderHeadgear, bool renderClothes, Dictionary<Apparel, Color> overrideApparelColor = null, Color? overrideHairColor = null, bool stylingStation = false)
+        [UsedImplicitly]
+        public static bool Prefix(PawnRenderer __instance, Pawn ___pawn, Dictionary<Apparel, (Color, bool)> ___tmpOriginalColors, Rot4 rotation, ref float angle, Vector3 positionOffset,
+            bool renderHead, bool renderBody, bool portrait, bool renderHeadgear, bool renderClothes, Dictionary<Apparel, Color> overrideApparelColor = null, Color? overrideHairColor = null,
+            bool stylingStation = false)
         {
             Vector3 zero = Vector3.zero;
             //PawnRenderFlags pawnRenderFlags = GetDefaultRenderFlags(pawn);
@@ -1224,40 +1194,45 @@ namespace yayoAni
             {
                 pawnRenderFlags |= PawnRenderFlags.Portrait;
             }
+
             pawnRenderFlags |= PawnRenderFlags.Cache;
             pawnRenderFlags |= PawnRenderFlags.DrawNow;
             if (!renderHead)
             {
                 pawnRenderFlags |= PawnRenderFlags.HeadStump;
             }
+
             if (renderHeadgear)
             {
                 pawnRenderFlags |= PawnRenderFlags.Headgear;
             }
+
             if (renderClothes)
             {
                 pawnRenderFlags |= PawnRenderFlags.Clothes;
             }
+
             if (stylingStation)
             {
                 pawnRenderFlags |= PawnRenderFlags.StylingStation;
             }
+
             ___tmpOriginalColors.Clear();
             try
             {
                 if (overrideApparelColor != null)
                 {
-                    foreach (KeyValuePair<Apparel, Color> item in overrideApparelColor)
+                    foreach (var (key, value) in overrideApparelColor)
                     {
-                        Apparel key = item.Key;
                         CompColorable compColorable = key.TryGetComp<CompColorable>();
                         if (compColorable != null)
                         {
                             ___tmpOriginalColors.Add(key, (compColorable.Color, compColorable.Active));
-                            key.SetColor(item.Value);
+                            key.SetColor(value);
                         }
                     }
                 }
+
                 Color hairColor = Color.white;
                 if (___pawn.story != null)
                 {
@@ -1268,6 +1243,7 @@ namespace yayoAni
                         ___pawn.Drawer.renderer.graphics.CalculateHairMats();
                     }
                 }
+
                 //RenderPawnInternal(zero + positionOffset, angle, renderBody, rotation, ___CurRotDrawMode, pawnRenderFlags);
                 Patch_PawnRenderer_RenderPawnInternal.skipPatch = true;
                 RotDrawMode CurRotDrawMode = __instance.CurRotDrawMode;
@@ -1283,6 +1259,7 @@ namespace yayoAni
                         tmpOriginalColor.Key.SetColor(tmpOriginalColor.Value.Item1);
                     }
                 }
+
                 if (___pawn.story != null && overrideHairColor.HasValue)
                 {
                     ___pawn.story.hairColor = hairColor;
@@ -1297,22 +1274,20 @@ namespace yayoAni
             {
                 ___tmpOriginalColors.Clear();
             }
+
             return false;
         }
     }
 
 
-
-
-
     [HarmonyPatch(typeof(PawnRenderer), "GetBodyPos")]
     internal class Patch_PawnRenderer_GetBodyPos
     {
-        static pawnDrawData pdd;
         [HarmonyPostfix]
+        [UsedImplicitly]
         public static void Postfix(PawnRenderer __instance, ref Vector3 __result, Vector3 drawLoc, ref bool showBody, Pawn ___pawn)
         {
-            pdd = dataUtility.GetData(___pawn);
+            var pdd = dataUtility.GetData(___pawn);
             __result += pdd.offset_pos;
             if (pdd.forcedShowBody) showBody = true;
         }
@@ -1321,11 +1296,11 @@ namespace yayoAni
     [HarmonyPatch(typeof(PawnRenderer), "BodyAngle")]
     internal class Patch_PawnRenderer_BodyAngle
     {
-        static pawnDrawData pdd;
         [HarmonyPostfix]
+        [UsedImplicitly]
         public static void Postfix(PawnRenderer __instance, ref float __result, Pawn ___pawn)
         {
-            pdd = dataUtility.GetData(___pawn);
+            var pdd = dataUtility.GetData(___pawn);
             __result += pdd.offset_angle;
         }
     }
@@ -1334,18 +1309,14 @@ namespace yayoAni
     [HarmonyPatch(typeof(PawnRenderer), "LayingFacing")]
     internal class Patch_PawnRenderer_LayingFacing
     {
-        static pawnDrawData pdd;
         [HarmonyPostfix]
+        [UsedImplicitly]
         public static void Postfix(PawnRenderer __instance, ref Rot4 __result, Pawn ___pawn)
         {
-            pdd = dataUtility.GetData(___pawn);
+            var pdd = dataUtility.GetData(___pawn);
             __result = pdd.fixed_rot ?? __result;
         }
     }
-
-
-
-
 
 
     /*
@@ -1452,9 +1423,4 @@ namespace yayoAni
         }
     }
 	*/
-
-
-
-
-
 }

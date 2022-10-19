@@ -1,6 +1,7 @@
 ﻿using RimWorld;
 using UnityEngine;
 using HarmonyLib;
+using JetBrains.Annotations;
 using Verse;
 
 namespace yayoAni
@@ -11,6 +12,7 @@ namespace yayoAni
     {
         [HarmonyPriority(0)]
         [HarmonyPrefix]
+        [UsedImplicitly]
         static bool Prefix(PawnRenderer __instance, Vector3 rootLoc)
         {
             if (!core.val_combat)
@@ -71,9 +73,9 @@ namespace yayoAni
 
 
 
-    static public class PawnRenderer_override
+    public static class PawnRenderer_override
     {
-        static public void animateEquip(PawnRenderer __instance, Pawn pawn, Vector3 rootLoc, ThingWithComps thing, Stance_Busy stance_Busy, Vector3 offset, bool isSub = false)
+        public static void animateEquip(PawnRenderer __instance, Pawn pawn, Vector3 rootLoc, ThingWithComps thing, Stance_Busy stance_Busy, Vector3 offset, bool isSub = false)
         {
 
 
@@ -567,6 +569,7 @@ namespace yayoAni
     {
         [HarmonyPriority(9999)]
         [HarmonyPrefix]
+        [UsedImplicitly]
         static bool Prefix(PawnRenderer __instance, Thing eq, Vector3 drawLoc, float aimAngle)
         {
             if (!core.val_combat)

@@ -10,7 +10,7 @@ namespace yayoAni
 
     public static class dataUtility
     {
-        public static readonly Dictionary<Pawn, pawnDrawData> dic_pdd = new Dictionary<Pawn, pawnDrawData>();
+        public static readonly Dictionary<Pawn, pawnDrawData> dic_pdd = new();
 
         public static pawnDrawData GetData(Pawn key)
         {
