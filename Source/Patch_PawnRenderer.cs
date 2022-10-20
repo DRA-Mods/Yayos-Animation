@@ -470,8 +470,53 @@ namespace yayoAni
     }
 
     [HarmonyPatch(typeof(PawnRenderer), "DrawEquipmentAiming")]
-    internal class patch_DrawEquipmentAiming
+    internal static class patch_DrawEquipmentAiming
     {
+        private static Type CompOversizedType;
+        private static Type CompOversizedPropsType;
+        private static FastInvokeHandler OffsetFromRotationMethod;
+        private static FastInvokeHandler NonCombatAngleAdjustmentMethod;
+        private static FastInvokeHandler AngleOffsetAtPeaceMethod;
+        private static AccessTools.FieldRef<CompProperties, bool> IsDualField;
+        private static AccessTools.FieldRef<CompProperties, bool> VerticalFlipNorth;
+
+        [UsedImplicitly]
+        public static bool Prepare()
+        {
+            CompOversizedType = AccessTools.TypeByName("CompOversizedWeapon.CompOversizedWeapon");
+
+            if (CompOversizedType != null)
+            {
+                CompOversizedPropsType = AccessTools.TypeByName("CompOversizedWeapon.CompProperties_OversizedWeapon");
+
+                if (CompOversizedPropsType != null)
+                {
+                    // For whatever reason, those methods and fields may not always exist
+                    var method = AccessTools.Method("CompOversizedWeapon.HarmonyCompOversizedWeapon:OffsetFromRotation");
+                    if (method != null)
+                        OffsetFromRotationMethod = MethodInvoker.GetHandler(method);
+
+                    method = AccessTools.Method("CompOversizedWeapon.HarmonyCompOversizedWeapon:NonCombatAngleAdjustment");
+                    if (method != null)
+                        NonCombatAngleAdjustmentMethod = MethodInvoker.GetHandler(method);
+
+                    method = AccessTools.Method("CompOversizedWeapon.HarmonyCompOversizedWeapon:AngleOffsetAtPeace");
+                    if (method != null)
+                        AngleOffsetAtPeaceMethod = MethodInvoker.GetHandler(method);
+
+                    var field = AccessTools.Field(CompOversizedPropsType, "isDualWeapon");
+                    if (field != null)
+                        IsDualField = AccessTools.FieldRefAccess<CompProperties, bool>(field);
+
+                    field = AccessTools.Field(CompOversizedPropsType, "verticalFlipNorth");
+                    if (field != null)
+                        VerticalFlipNorth = AccessTools.FieldRefAccess<CompProperties, bool>(field);
+                }
+            }
+
+            return true;
+        }
+
         [HarmonyPriority(9999)]
         [HarmonyPrefix]
         [UsedImplicitly]
@@ -481,7 +526,9 @@ namespace yayoAni
             {
                 return true;
             }
+
             Pawn pawn = __instance.pawn;
+            Rot4 pawnRotation = pawn.Rotation;
 
             float num = aimAngle - 90f;
             Mesh mesh;
@@ -497,7 +544,7 @@ namespace yayoAni
 
             if (flag && stance_Busy is { neverAimWeapon: false, focusTarg: { IsValid: true } })
             {
-                if (pawn.Rotation == Rot4.West)
+                if (pawnRotation == Rot4.West)
                 {
                     flip = true;
                 }
@@ -533,6 +580,7 @@ namespace yayoAni
                 //else if ((aimAngle > 200f && aimAngle < 340f) || ignore)
                 else if (aimAngle is > 200f and < 340f || flip)
                 {
+                    flip = true;
                     mesh = MeshPool.plane10Flip;
                     num -= 180f;
                     num -= eq.def.equippedAngleOffset;
@@ -544,15 +592,59 @@ namespace yayoAni
                 }
             }
 
-            num %= 360f;
+            bool isOversized = false;
+            bool isDual = false;
+            Vector3 oversizedOffset = Vector3.zero;
 
-            CompEquippable compEquippable = eq.TryGetComp<CompEquippable>();
-            if (compEquippable != null)
+            if (eq is ThingWithComps eqComps)
             {
-                EquipmentUtility.Recoil(eq.def, EquipmentUtility.GetRecoilVerb(compEquippable.AllVerbs), out var drawOffset, out var angleOffset, aimAngle);
-                drawLoc += drawOffset;
-                num += angleOffset;
+                CompEquippable compEquippable = eqComps.GetComp<CompEquippable>();
+                if (compEquippable != null)
+                {
+                    EquipmentUtility.Recoil(eq.def, EquipmentUtility.GetRecoilVerb(compEquippable.AllVerbs), out var drawOffset, out var angleOffset, aimAngle);
+                    drawLoc += drawOffset;
+                    num += angleOffset;
+                }
+
+                if (CompOversizedType != null)
+                {
+                    foreach (var comp in eqComps.comps)
+                    {
+                        if (CompOversizedType.IsInstanceOfType(comp))
+                        {
+                            isOversized = true;
+
+                            if (CompOversizedPropsType.IsInstanceOfType(comp.props))
+                            {
+                                var isFighting = pawn.IsFighting();
+                                
+                                if (IsDualField != null)
+                                    isDual = IsDualField(comp.props);
+                                if (OffsetFromRotationMethod != null)
+                                    oversizedOffset = (Vector3)OffsetFromRotationMethod(null, pawnRotation, comp.props);
+                                if (flip && AngleOffsetAtPeaceMethod != null)
+                                    num += (float)AngleOffsetAtPeaceMethod(null, eq, isFighting, comp.props);
+                                if (!isFighting)
+                                {
+                                    if (VerticalFlipNorth != null && pawnRotation == Rot4.North && VerticalFlipNorth(comp.props))
+                                    {
+                                        num += 180f;
+                                    }
+
+                                    if (NonCombatAngleAdjustmentMethod != null)
+                                    {
+                                        num += (float)NonCombatAngleAdjustmentMethod(null, pawnRotation, comp.props);
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+                }
             }
+
+            num %= 360f;
 
             // Material matSingle;
             //if (graphic_StackCount != null)
@@ -564,7 +656,56 @@ namespace yayoAni
             //    matSingle = eq.Graphic.MatSingle;
             //}
             //Graphics.DrawMesh(mesh, drawLoc, Quaternion.AngleAxis(num, Vector3.up), matSingle, 0);
-            Graphics.DrawMesh(material: eq.Graphic is not Graphic_StackCount graphicStackCount ? eq.Graphic.MatSingleFor(eq) : graphicStackCount.SubGraphicForStackCount(1, eq.def).MatSingleFor(eq), mesh: mesh, position: drawLoc, rotation: Quaternion.AngleAxis(num, Vector3.up), layer: 0);
+
+            Material mat = eq.Graphic is Graphic_StackCount graphicStackCount
+                ? graphicStackCount.SubGraphicForStackCount(1, eq.def).MatSingleFor(eq)
+                : eq.Graphic.MatSingleFor(eq);
+
+            if (isOversized)
+            {
+                Vector3 size = new(eq.def.graphicData.drawSize.x, 1f, eq.def.graphicData.drawSize.y);
+                Matrix4x4 matrix4x = Matrix4x4.TRS(drawLoc + oversizedOffset, Quaternion.AngleAxis(num, Vector3.up), size);
+
+                Graphics.DrawMesh(
+                    matrix: matrix4x,
+                    material: mat,
+                    mesh: mesh,
+                    layer: 0);
+
+                if (isDual)
+                {
+                    oversizedOffset = new Vector3(-oversizedOffset.x, oversizedOffset.y, oversizedOffset.z);
+
+                    if (pawn.Rotation == Rot4.North || pawn.Rotation == Rot4.South)
+                    {
+                        num += 135f;
+                        num %= 360f;
+                        mesh = flip
+                            ? MeshPool.plane10Flip
+                            : MeshPool.plane10;
+                    }
+                    else
+                    {
+                        oversizedOffset = new Vector3(oversizedOffset.x, oversizedOffset.y - 0.1f, oversizedOffset.z + 0.15f);
+                    }
+
+                    matrix4x.SetTRS(drawLoc + oversizedOffset, Quaternion.AngleAxis(num, Vector3.up), size);
+                    Graphics.DrawMesh(
+                        matrix: matrix4x,
+                        material: mat,
+                        mesh: mesh,
+                        layer: 0);
+                }
+            }
+            else
+            {
+                Graphics.DrawMesh(
+                    material: mat,
+                    mesh: mesh,
+                    position: drawLoc,
+                    rotation: Quaternion.AngleAxis(num, Vector3.up),
+                    layer: 0);
+            }
 
             return false;
         }
