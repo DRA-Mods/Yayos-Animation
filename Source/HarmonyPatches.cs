@@ -302,180 +302,71 @@ namespace yayoAni
                 {
                     // do something
                     case "UseArtifact":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "UseNeurotrainer":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "UseStylingStation":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "UseStylingStationAutomatic":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Wear":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "SmoothWall":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "UnloadYourInventory":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "UnloadInventory":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Uninstall":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Train":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "TendPatient":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Tame":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "TakeBeerOutOfFermentingBarrel":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "StudyThing":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Strip":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "SmoothFloor":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "SlaveSuppress":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "SlaveExecution":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "DoBill": // 제작, 조리
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Deconstruct":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "FinishFrame": // 건설
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Equip":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "ExtractRelic":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "ExtractSkull":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "ExtractTree":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "GiveSpeech":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Hack":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "InstallRelic":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Insult":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Milk":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Open":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Play_MusicalInstrument":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "PruneGauranlenTree":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "RearmTurret":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "RearmTurretAtomic":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "RecolorApparel":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Refuel":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "RefuelAtomic":
-                        aniType = AniType.doSomeThing;
-                        break;
-
                     case "Reload":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "RemoveApparel":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "RemoveFloor":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "RemoveRoof":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Repair":
-                        aniType = AniType.doSomeThing;
-                        break;
-
                     case "Research":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Resurrect":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Sacrifice":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Scarify":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Shear":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Slaughter":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "Ignite":
-                        aniType = AniType.doSomeThing;
-                        break;
                     case "ManTurret":
+                    case "Clean":
                         aniType = AniType.doSomeThing;
                         break;
 
 
                     // social
                     case "GotoAndBeSociallyActive":
-                        aniType = AniType.social;
-                        break;
                     case "StandAndBeSociallyActive":
-                        aniType = AniType.social;
-                        break;
                     case "VisitSickPawn":
-                        aniType = AniType.social;
-                        break;
                     case "SocialRelax":
                         aniType = AniType.social;
                         break;
 
 
                     case "Wait_Combat":
-                        aniType = AniType.idle;
-                        break;
                     case "Wait":
                         aniType = AniType.idle;
                         break;
@@ -492,11 +383,6 @@ namespace yayoAni
                                                 if (!Core.Ani(ref t, 25, ref oa, 25f, 35f, -1f, ref op, rot))
                                                     Core.Ani(ref t, 25, ref oa, 35f, 15f, -1f, ref op, rot);
 
-                        break;
-
-
-                    case "Clean":
-                        aniType = AniType.doSomeThing;
                         break;
 
 
@@ -551,13 +437,6 @@ namespace yayoAni
 
 
                     case "Play_Hoopstone":
-                        t = (Find.TickManager.TicksGame + IdTick) % 60;
-                        if (!Core.Ani(ref t, 30, ref oa, 10f, -20f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
-                        {
-                            Core.Ani(ref t, 30, ref oa, -20f, 10f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot);
-                        }
-
-                        break;
                     case "Play_Horseshoes":
                         t = (Find.TickManager.TicksGame + IdTick) % 60;
                         if (!Core.Ani(ref t, 30, ref oa, 10f, -20f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
@@ -569,54 +448,14 @@ namespace yayoAni
 
 
                     case "Play_GameOfUr":
-                        t = (Find.TickManager.TicksGame + IdTick * 27) % 900;
-                        if (t <= 159)
-                        {
-                            aniType = AniType.gameCeremony;
-                        }
-                        else
-                        {
-                            aniType = AniType.doSomeThing;
-                        }
-
-                        break;
-
                     case "Play_Poker":
-                        t = (Find.TickManager.TicksGame + IdTick * 27) % 900;
-                        if (t <= 159)
-                        {
-                            aniType = AniType.gameCeremony;
-                        }
-                        else
-                        {
-                            aniType = AniType.doSomeThing;
-                        }
-
-                        break;
-
                     case "Play_Billiards":
-                        t = (Find.TickManager.TicksGame + IdTick * 27) % 900;
-                        if (t <= 159)
-                        {
-                            aniType = AniType.gameCeremony;
-                        }
-                        else
-                        {
-                            aniType = AniType.doSomeThing;
-                        }
-
-                        break;
-
                     case "Play_Chess":
                         t = (Find.TickManager.TicksGame + IdTick * 27) % 900;
                         if (t <= 159)
-                        {
                             aniType = AniType.gameCeremony;
-                        }
                         else
-                        {
                             aniType = AniType.doSomeThing;
-                        }
 
                         break;
 
@@ -701,7 +540,7 @@ namespace yayoAni
                                                                             new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, Core.tweenType.line))
                                                                     {
                                                                         rot = Core.Rot90(rot);
-                                                                        step++;
+                                                                        // step++;
                                                                     }
                                                                 }
                                                             }
@@ -739,28 +578,7 @@ namespace yayoAni
 
 
                     case "CutPlant": // 식물 베기
-                        if (pawn.CurJob.targetA.Thing?.def.plant?.IsTree != null && pawn.CurJob.targetA.Thing.def.plant.IsTree)
-                        {
-                            aniType = AniType.smash;
-                        }
-                        else
-                        {
-                            aniType = AniType.doSomeThing;
-                        }
-
-                        break;
                     case "Harvest": // 자동 수확
-                        if (pawn.CurJob.targetA.Thing?.def.plant?.IsTree != null && pawn.CurJob.targetA.Thing.def.plant.IsTree)
-                        {
-                            aniType = AniType.smash;
-                        }
-                        else
-                        {
-                            aniType = AniType.doSomeThing;
-                        }
-
-                        break;
-
                     case "HarvestDesignated": // 수동 수확
                         if (pawn.CurJob.targetA.Thing?.def.plant?.IsTree != null && pawn.CurJob.targetA.Thing.def.plant.IsTree)
                         {
@@ -851,8 +669,8 @@ namespace yayoAni
 
                         // need 159 tick
 
-                        r = Core.Rot90(rot);
-                        tr = rot;
+                        // r = Core.Rot90(rot);
+                        // tr = rot;
 
                         if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.60f), rot))
                         {
