@@ -269,7 +269,11 @@ namespace yayoAni
                     changed = true;
                     int IdTick = pawn.thingIDNumber * 20;
 
-                    float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f * Core.settings.walkSpeed / pawn.pather.nextCellCostTotal);
+                    float walkSpeed = Core.settings.walkSpeed;
+                    if (pawn.CurJob?.def.defName == "Hunt")
+                        walkSpeed *= 0.6f;
+
+                    float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f * walkSpeed / pawn.pather.nextCellCostTotal);
                     oa = wiggle * 9f * Core.settings.walkAngle;
                     op = new Vector3(wiggle * 0.025f, 0f, 0f);
                 }
@@ -526,7 +530,7 @@ namespace yayoAni
                         else
                         {
                             aniType = ritualJob.Ritual.def.defName switch
-                            { 
+                            {
                                 // 장례식
                                 "Funeral" => AniType.solemn,
                                 _ => AniType.crowd
@@ -1078,7 +1082,7 @@ namespace yayoAni
                             };
 
                             break;
-                        
+
                         case "Skygaze":
                             rot = Rot4.Invalid;
 
