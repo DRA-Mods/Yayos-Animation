@@ -1,7 +1,8 @@
-﻿using RimWorld;
-using UnityEngine;
+﻿using System;
 using HarmonyLib;
 using JetBrains.Annotations;
+using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace yayoAni
@@ -18,16 +19,18 @@ namespace yayoAni
             {
                 return true;
             }
-            
+
             Pawn pawn = __instance.pawn;
             if (pawn.Dead || !pawn.Spawned)
             {
                 return false;
             }
+
             if (pawn.equipment?.Primary == null)
             {
                 return false;
             }
+
             if (pawn.CurJob != null && pawn.CurJob.def.neverShowWeapon)
             {
                 return false;
@@ -55,13 +58,13 @@ namespace yayoAni
                 {
                     offHandStance = pawn.GetStancesOffHand().curStance as Stance_Busy;
                 }
+
                 PawnRenderer_Override.AnimateEquip(__instance, pawn, rootLoc, offHandEquip, offHandStance, new Vector3(0.1f, 0.1f, 0f), true);
             }
 
             return false;
         }
     }
-
 
 
     public static class PawnRenderer_Override
@@ -100,10 +103,10 @@ namespace yayoAni
                     float ani_cool = stanceBusy.ticksLeft;
 
                     float ani = 0f;
-                    if (!isMechanoid) 
+                    if (!isMechanoid)
                         ani = Mathf.Max(ani_cool, 25f) * 0.001f;
 
-                    if (ticksToNextBurstShot > 0) 
+                    if (ticksToNextBurstShot > 0)
                         ani = ani_burst * 0.02f;
 
                     float addAngle = 0f;
@@ -176,21 +179,23 @@ namespace yayoAni
                                             break;
                                     }
                                 }
+
                                 break;
                             default:
                                 if (stanceBusy.ticksLeft > 1)
                                 {
                                     addY += wiggleSlow;
                                 }
+
                                 break;
                         }
                     }
 
                     Vector3 a = stanceBusy.focusTarg.Thing?.DrawPos ?? stanceBusy.focusTarg.Cell.ToVector3Shifted();
                     float num = 0f;
-                    if ((a - pawn.DrawPos).MagnitudeHorizontalSquared() > 0.001f) 
+                    if ((a - pawn.DrawPos).MagnitudeHorizontalSquared() > 0.001f)
                         num = (a - pawn.DrawPos).AngleFlat();
-                    
+
                     Vector3 drawLoc;
                     if (pawn.Rotation == Rot4.West)
                         drawLoc = rootLoc2 + new Vector3(addY, offset.z, 0.4f + addX - ani).RotatedBy(num);
@@ -207,7 +212,7 @@ namespace yayoAni
 
                     if (pawn.Rotation == Rot4.West)
                         __instance.DrawEquipmentAiming(thing, drawLoc, num + ani * reboundFactor + addAngle);
-                    else if (pawn.Rotation != Rot4.Invalid) 
+                    else if (pawn.Rotation != Rot4.Invalid)
                         __instance.DrawEquipmentAiming(thing, drawLoc, num - ani * reboundFactor - addAngle);
 
                     return;
@@ -235,13 +240,12 @@ namespace yayoAni
                     };
                     //Log.Message("C");
                     // 원거리 무기일경우 각도보정
-                    if (thing.def.IsRangedWeapon) 
+                    if (thing.def.IsRangedWeapon)
                         addAngle -= 35f;
 
                     //Log.Message("D");
 
                     const float readyZ = 0.2f;
-
 
 
                     //Log.Message("E");
@@ -328,15 +332,16 @@ namespace yayoAni
                         //drawLoc.y += 0.03787879f;
 
                         __instance.DrawEquipmentAiming(thing, drawLoc, num);
-
                     }
+
                     return;
                 }
             }
 
             //Log.Message("11");
             // 대기
-            if ((pawn.carryTracker?.CarriedThing == null) && (pawn.Drafted || (pawn.CurJob != null && pawn.CurJob.def.alwaysShowWeapon) || (pawn.mindState.duty != null && pawn.mindState.duty.def.alwaysShowWeapon)))
+            if ((pawn.carryTracker?.CarriedThing == null) &&
+                (pawn.Drafted || (pawn.CurJob != null && pawn.CurJob.def.alwaysShowWeapon) || (pawn.mindState.duty != null && pawn.mindState.duty.def.alwaysShowWeapon)))
             {
                 int tick = Mathf.Abs(pawn.HashOffsetTicks() % 1000000000);
                 tick %= 100000000;
@@ -351,7 +356,7 @@ namespace yayoAni
                     wiggle = Mathf.Sin(tick * 0.05f);
                 else
                     wiggle = Mathf.Sin(tick * 0.05f + 0.5f);
-                
+
                 float aniAngle = -5f;
                 float addAngle = 0f;
 
@@ -390,10 +395,12 @@ namespace yayoAni
                         angle = 350f - 143f;
                         aniAngle *= -1f;
                     }
+
                     //drawLoc2.y += 0.03787879f;
                     __instance.DrawEquipmentAiming(thing, drawLoc, addAngle + angle + wiggle * aniAngle);
                     return;
                 }
+
                 if (pawn.Rotation == Rot4.North)
                 {
                     Vector3 drawLoc;
@@ -409,10 +416,12 @@ namespace yayoAni
                         angle = 350f - 143f;
                         aniAngle *= -1f;
                     }
+
                     //drawLoc3.y += 0f;
                     __instance.DrawEquipmentAiming(thing, drawLoc, addAngle + angle + wiggle * aniAngle);
                     return;
                 }
+
                 if (pawn.Rotation == Rot4.East)
                 {
                     Vector3 drawLoc;
@@ -428,10 +437,12 @@ namespace yayoAni
                         angle = 350f - 143f;
                         aniAngle *= -1f;
                     }
+
                     //drawLoc4.y += 0.03787879f;
                     __instance.DrawEquipmentAiming(thing, drawLoc, addAngle + angle + wiggle * aniAngle);
                     return;
                 }
+
                 if (pawn.Rotation == Rot4.West)
                 {
                     Vector3 drawLoc;
@@ -447,11 +458,11 @@ namespace yayoAni
                         angle = 350f - 217f;
                         aniAngle *= -1f;
                     }
+
                     //drawLoc5.y += 0.03787879f;
                     __instance.DrawEquipmentAiming(thing, drawLoc, addAngle + angle + wiggle * aniAngle);
                     return;
                 }
-
             }
 
             return;
@@ -476,11 +487,10 @@ namespace yayoAni
             Mesh mesh;
 
 
-
             bool isMeleeAtk = false;
             bool flip = false;
 
-            
+
             Stance_Busy stance_Busy = pawn.stances.curStance as Stance_Busy;
 
             bool flag = !(pawn.CurJob != null && pawn.CurJob.def.neverShowWeapon);
