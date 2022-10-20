@@ -1082,7 +1082,7 @@ namespace yayoAni
                         case "Skygaze":
                             rot = Rot4.Invalid;
 
-                            seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
+                            seed = pawn.CurJob.loadID + idTick * 5;
 
                             op = Rand.RangeSeeded(0, 3, seed + 100) switch
                             {
