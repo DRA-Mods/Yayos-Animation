@@ -25,7 +25,7 @@ namespace yayoAni.Data
         public static void GC()
         {
             int prev = DrawDataDictionary.Keys.Count;
-            DrawDataDictionary.RemoveAll(a => a.Key == null || a.Key.Map == null);
+            DrawDataDictionary.RemoveAll(a => a.Key?.Map == null);
             Log.Message($"GC : animation data count [{prev} -> {DrawDataDictionary.Keys.Count}]");
         }
 

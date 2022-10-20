@@ -24,7 +24,7 @@ namespace yayoAni
             {
                 return false;
             }
-            if (pawn.equipment == null || pawn.equipment.Primary == null)
+            if (pawn.equipment?.Primary == null)
             {
                 return false;
             }
