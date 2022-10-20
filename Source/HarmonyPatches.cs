@@ -305,6 +305,7 @@ namespace yayoAni
                     case "UseNeurotrainer":
                     case "UseStylingStation":
                     case "UseStylingStationAutomatic":
+                    case "DyeHair":
                     case "Wear":
                     case "SmoothWall":
                     case "UnloadYourInventory":
@@ -313,26 +314,40 @@ namespace yayoAni
                     case "Train":
                     case "TendPatient":
                     case "Tame":
+                    case "FillFermentingBarrel":
                     case "TakeBeerOutOfFermentingBarrel":
+#if IDEOLOGY
                     case "StudyThing":
+#elif BIOTECH_PLUS
+                    case "StudyBuilding":
+#endif
                     case "Strip":
                     case "SmoothFloor":
                     case "SlaveSuppress":
                     case "SlaveExecution":
+                    case "PrisonerAttemptRecruit":
+                    case "PrisonerEnslave":
+                    case "PrisonerConvert":
+                    case "PrisonerExecution":
+                    case "GuiltyColonistExecution":
                     case "DoBill": // 제작, 조리
                     case "Deconstruct":
                     case "FinishFrame": // 건설
                     case "Equip":
                     case "ExtractRelic":
+                    case "ExtractToInventory":
                     case "ExtractSkull":
                     case "ExtractTree":
+                    case "Replant":
                     case "GiveSpeech":
+                    case "AcceptRole":
                     case "Hack":
                     case "InstallRelic":
                     case "Insult":
                     case "Milk":
                     case "Open":
                     case "Play_MusicalInstrument":
+                    case "PlantSeed":
                     case "PruneGauranlenTree":
                     case "RearmTurret":
                     case "RearmTurretAtomic":
@@ -343,8 +358,13 @@ namespace yayoAni
                     case "RemoveApparel":
                     case "RemoveFloor":
                     case "RemoveRoof":
+                    case "BuildRoof":
                     case "Repair":
+                    case "FixBrokenDownBuilding":
                     case "Research":
+                    case "ApplyTechprint":
+                    case "OperateDeepDrill":
+                    case "OperateScanner":
                     case "Resurrect":
                     case "Sacrifice":
                     case "Scarify":
@@ -353,6 +373,13 @@ namespace yayoAni
                     case "Ignite":
                     case "ManTurret":
                     case "Clean":
+                    case "ClearSnow":
+#if BIOTECH_PLUS
+                    case "PaintBuilding":
+                    case "PaintFloor":
+                    case "RemovePaintBuilding":
+                    case "RemovePaintFloor":
+#endif
                         aniType = AniType.doSomeThing;
                         break;
 
