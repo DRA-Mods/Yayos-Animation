@@ -9,8 +9,12 @@ namespace yayoAni.Data
 
         public static PawnDrawData GetData(Pawn key)
         {
-            if (!DrawDataDictionary.ContainsKey(key)) DrawDataDictionary[key] = new PawnDrawData();
-            return DrawDataDictionary[key];
+            if (DrawDataDictionary.TryGetValue(key, out var data))
+                return data;
+            
+            data = new PawnDrawData();
+            DrawDataDictionary[key] = data;
+            return data;
         }
 
         public static void Remove(Pawn key)
