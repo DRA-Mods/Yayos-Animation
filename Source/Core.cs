@@ -31,7 +31,7 @@ namespace yayoAni
             }
         }
 
-        public override string SettingsCategory() => "yayoAni";
+        public override string SettingsCategory() => "Yayo's Animation";
 
         public override void DoSettingsWindowContents(Rect inRect) => settings.DoSettingsWindowContents(inRect);
 
