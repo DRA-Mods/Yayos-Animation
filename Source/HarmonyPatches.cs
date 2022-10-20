@@ -976,7 +976,7 @@ namespace yayoAni
             if (changed)
             {
                 pdd.angleOffset = oa;
-                pdd.fixedRot = rot;
+                pdd.fixedRot = rot.IsValid ? rot : null;
                 op = new Vector3(op.x, 0f, op.z);
                 pdd.posOffset = op;
                 pos += op;
@@ -1010,6 +1010,7 @@ namespace yayoAni
                     int idTick = pawn.thingIDNumber * 20;
                     pdd.forcedShowBody = false;
 
+                    int seed;
                     switch (pawn.CurJob.def.defName)
                     {
                         case "Lovin": // 사랑나누기
@@ -1046,7 +1047,7 @@ namespace yayoAni
                             if (!Core.settings.sleepEnabled) return;
                             if (!(pawn.jobs?.curDriver?.asleep ?? false)) return;
 
-                            int seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
+                            seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
                             rot = Rand.RangeSeeded(0, 4, seed) switch
                             {
                                 0 => Rot4.East,
@@ -1072,11 +1073,25 @@ namespace yayoAni
 
                             oa = Rand.RangeSeeded(0, 3, seed + 200) switch
                             {
-                                0 => Rand.RangeSeeded(-15f, 15f, seed),
-                                1 => Rand.RangeSeeded(-15f, 15f, seed),
                                 2 => Rand.RangeSeeded(-45f, 45f, seed),
-                                _ => oa
+                                _ => Rand.RangeSeeded(-15f, 15f, seed),
                             };
+
+                            break;
+                        
+                        case "Skygaze":
+                            rot = Rot4.Invalid;
+
+                            seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
+
+                            op = Rand.RangeSeeded(0, 3, seed + 100) switch
+                            {
+                                0 => new Vector3(Rand.RangeSeeded(-0.1f, 0.1f, seed + 50), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 100)),
+                                1 => new Vector3(Rand.RangeSeeded(-0.2f, 0.2f, seed + 150), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 200)),
+                                _ => new Vector3(Rand.RangeSeeded(-0.3f, 0.3f, seed + 250), 0f, Rand.RangeSeeded(-0.2f, 0.2f, seed + 300)),
+                            };
+
+                            oa = Rand.RangeSeeded(0f, 360f, seed + 200);
 
                             break;
                     }
@@ -1085,7 +1100,7 @@ namespace yayoAni
                 if (changed)
                 {
                     pdd.angleOffset = oa;
-                    pdd.fixedRot = rot;
+                    pdd.fixedRot = rot.IsValid ? rot : null;
                     op = new Vector3(op.x, 0f, op.z);
                     pdd.posOffset = op;
                     pos += op;
