@@ -203,6 +203,7 @@ namespace yayoAni
     }
 
 
+    [HotSwappable]
     public static class Yayo
     {
         public static Mesh GetBlitMeshUpdatedFrame(PawnTextureAtlasFrameSet frameSet, Rot4 rotation, PawnDrawMode drawMode, Pawn p)
@@ -270,7 +271,7 @@ namespace yayoAni
                     int IdTick = pawn.thingIDNumber * 20;
 
                     float walkSpeed = Core.settings.walkSpeed;
-                    if (pawn.CurJob?.def.defName == "Hunt")
+                    if (pawn.CurJob?.def.defName is "Hunt" or "GR_AnimalHuntJob")
                         walkSpeed *= 0.6f;
 
                     float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f * walkSpeed / pawn.pather.nextCellCostTotal);
@@ -324,12 +325,9 @@ namespace yayoAni
                     case "Strip":
                     case "SmoothFloor":
                     case "SlaveSuppress":
-                    case "SlaveExecution":
                     case "PrisonerAttemptRecruit":
                     case "PrisonerEnslave":
                     case "PrisonerConvert":
-                    case "PrisonerExecution":
-                    case "GuiltyColonistExecution":
                     case "DoBill": // 제작, 조리
                     case "Deconstruct":
                     case "FinishFrame": // 건설
@@ -374,12 +372,102 @@ namespace yayoAni
                     case "ManTurret":
                     case "Clean":
                     case "ClearSnow":
+                    case "BuildSnowman":
+                    case "HaulToContainer": // Bury pawn
 #if BIOTECH_PLUS
                     case "PaintBuilding":
                     case "PaintFloor":
                     case "RemovePaintBuilding":
                     case "RemovePaintFloor":
 #endif
+                    // Dubs Paint Shop
+                    case "PaintThings":
+                    case "PaintCells":
+                    // Dubs Bad Hygiene
+                    case "TriggerFireSprinkler":
+                    case "emptySeptictank":
+                    case "emptyLatrine":
+                    case "LoadWashing":
+                    case "UnloadWashing":
+                    case "LoadComposter":
+                    case "UnloadComposter":
+                    case "RemoveSewage":
+                    case "DrainWaterTankJob":
+                    case "PlaceFertilizer":
+                    case "DBHPackWaterBottle":
+                    case "DBHStockpileWaterBottles":
+                    case "DBHAdministerFluids":
+                    case "useWashBucket":
+                    case "washAtCell":
+                    case "takeShower":
+                    case "washHands":
+                    case "washPatient":
+                    case "RefillTub":
+                    case "RefillWater:":
+                    case "cleanBedpan":
+                    case "clearBlockage":
+                    // Dubs Rimatomics
+                    case "RimatomicsResearch":
+                    case "SuperviseConstruction":
+                    case "SuperviseResearch":
+                    case "UpgradeBuilding":
+                    case "LoadRailgunMagazine":
+                    case "LoadSilo":
+                    case "UseReactorConsole":
+                    case "RemoveFuelModule":
+                    case "LoadSpentFuel":
+                    case "UnloadPlutonium":
+                    // Rimefeller
+                    case "CleanOil":
+                    case "SuperviseDrilling":
+                    case "EmptyAutoclave":
+                    case "FillAutoclave":
+                    case "OperateResourceConsole":
+                    // Vanilla Furniture Core
+                    case "Play_Arcade":
+                    case "Play_Piano":
+                    case "Play_ComputerIndustrial":
+                    case "Play_ComputerModern":
+                    // Vanilla Furniture Security
+                    case "VFES_RearmTrap":
+                    // Vanilla Furniture Power
+#if IDEOLOGY
+                    // Removed in 1.4
+                    case "VPE_JobPlugHole":
+#endif
+                    // Vanilla Factions Ancients
+                    case "VFEA_Play_AncientEducator":
+                    // Vanilla Factions Insectoid
+                    case "VFEI_InsertFirstGenomeJob":
+                    case "VFEI_InsertSecondGenomeJob":
+                    case "VFEI_InsertThirdGenomeJob":
+                    case "VFEM_RefuelSilo":
+                    // Vanilla Factions Pirates
+                    case "VFEP_DoWelding":
+                    // Vanilla Factions Settlers
+                    case "Play_FiveFingerFillet":
+                    // Vanilla Factions Vikings
+                    case "VFEV_TakeHoneyOutOfApiary":
+                    case "VFEV_TendToApiary":
+                    case "VFEV_ChangeFacepaint":
+                    // Vanilla Factions Medieval
+                    case "VFEM_DigTerrain":
+                    case "VFEM_FillTerrain":
+                    // Vanilla Genetics Expanded
+                    case "GR_UseGenomeExcavator":
+                    case "GR_HumanoidHybridRecruit":
+                    case "GR_AnimalDeconstructJob":
+                    case "GR_AnimalHarvestJob":
+                    case "GR_InsertIngredients":
+                    case "GR_InsertGrowthCell":
+                    case "GR_InsertArchotechGrowthCell":
+                    // Vanilla Genetics Expanded - More Lab Stuff
+                    case "GR_UseGenetrainer":
+                    // Vanilla Hair Expanded
+                    case "VHE_ChangeHairstyle":
+                    // Vanilla Ideology - Memes and Structures
+                    case "VME_DeconstructBuilding":
+                    case "VME_MaintainInsectNest":
                         aniType = AniType.doSomeThing;
                         break;
 
@@ -389,12 +477,57 @@ namespace yayoAni
                     case "StandAndBeSociallyActive":
                     case "VisitSickPawn":
                     case "SocialRelax":
+                    case "WatchTelevision":
+                    // Dubs Bad Hygiene
+                    case "WatchWashingMachine":
+                    case "DBHGoSwimming":
+                    case "DBHUseSauna":
+                    // Vanilla Expanded Classical
+                    case "VFEC_Stage_Performance":
+                    case "VFEC_Stage_WatchPerformance":
+                    // Vanilla Genetics Expanded
+                    case "GR_HumanoidHybridTalk":
+                    // Vanilla Social Interactions
+                    case "VSIE_VentToFriend":
+                    case "VSIE_TalkToSecondPawn":
+                    case "VSIE_WatchTelevisionTogether":
+                    // More social variant of those 2 interactions
+                    case "VSIE_ViewArtTogether":
+                    case "VSIE_BuildSnowmanTogether":
+                        aniType = AniType.social;
+                        break;
+
+                    // Vanilla Expanded Classical
+                    case "VFEC_Relax_Thermaebath":
+                        var seed = ((Find.TickManager.TicksGame + IdTick * 3) / 2500 + IdTick * 3);
+                        rot = Rand.RangeSeeded(0, 4, seed) switch
+                        {
+                            0 => Rot4.East,
+                            1 => Rot4.West,
+                            2 => Rot4.South,
+                            3 => Rot4.North,
+                            _ => rot
+                        };
                         aniType = AniType.social;
                         break;
 
 
                     case "Wait_Combat":
                     case "Wait":
+                    case "Wait_SafeTemperature":
+                    case "Wait_Wander":
+                    case "ViewArt":
+                    case "Meditate":
+                    case "Pray":
+                    // Dubs Bad Hygiene
+                    case "haveWildPoo":
+                    case "UseToilet":
+                    // Vanilla Fishing Expanded
+                    case "VCEF_FishJob":
+                    // Vanilla Books Expanded
+                    case "VBE_ReadBook":
+                    // Vanilla Social Interactions
+                    case "VSIE_StandAndHearVenting": // Don't do any movements that could be interpreted as excitement, etc.
                         aniType = AniType.idle;
                         break;
 
@@ -452,6 +585,10 @@ namespace yayoAni
 
                         break;
                     case "BestowingCeremony": // 로얄티 수여식 받는 대상
+                    case "VisitGrave":
+                    case "UseTelescope":
+                    // Vanilla Social Interactions
+                    case "VSIE_HonorPawn":
                         aniType = AniType.solemn;
                         break;
 
@@ -465,6 +602,8 @@ namespace yayoAni
 
                     case "Play_Hoopstone":
                     case "Play_Horseshoes":
+                    // Vanilla Furniture Core
+                    case "Play_DartsBoard":
                         t = (Find.TickManager.TicksGame + IdTick) % 60;
                         if (!Core.Ani(ref t, 30, ref oa, 10f, -20f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
                         {
@@ -478,6 +617,14 @@ namespace yayoAni
                     case "Play_Poker":
                     case "Play_Billiards":
                     case "Play_Chess":
+                    // Vanilla Furniture Core
+                    case "Play_Roulette":
+                    // Vanilla Factions Ancients
+                    case "VFEA_Play_AncientFoosballTable":
+                    // Vanilla Factions Settlers
+                    case "Play_Faro":
+                    // Vanilla Factions Vikings
+                    case "Play_Hnefatafl":
                         t = (Find.TickManager.TicksGame + IdTick * 27) % 900;
                         if (t <= 159)
                             aniType = AniType.gameCeremony;
@@ -619,10 +766,20 @@ namespace yayoAni
                         break;
 
                     case "Mine": // 채굴
+                    // Dubs Bad Hygiene
+                    case "TipOverSewage":
+                    // Vanilla Furniture Core
+                    case "Play_PunchingBag":
                         aniType = AniType.smash;
                         break;
 
                     case "Ingest": // 밥먹기
+                    case "EatAtCannibalPlatter":
+                    // Dubs Bad Hygiene
+                    case "DBHDrinkFromGround":
+                    case "DBHDrinkFromBasin":
+                    // Vanilla Social Interactions
+                    case "VSIE_HaveMealTogether":
                         t = (Find.TickManager.TicksGame + IdTick) % 150;
                         f = 0.03f;
                         if (!Core.Ani(ref t, 10, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, new Vector3(0f, 0f, 0f), rot))
@@ -863,6 +1020,7 @@ namespace yayoAni
                     switch (pawn.CurJob.def.defName)
                     {
                         case "Lovin": // 사랑나누기
+                        case "VSIE_OneStandLovin":
                             if (!Core.settings.lovinEnabled) return;
                             Building_Bed bed = pawn.CurrentBed();
                             if (bed == null) return;
@@ -929,8 +1087,9 @@ namespace yayoAni
                             break;
 
                         case "Skygaze":
+                        case "VSIE_Skygaze":
                             rot = Rot4.Invalid;
-
+                            
                             seed = pawn.CurJob.loadID + idTick * 5;
 
                             op = Rand.RangeSeeded(0, 3, seed + 100) switch
@@ -941,6 +1100,40 @@ namespace yayoAni
                             };
 
                             oa = Rand.RangeSeeded(0f, 360f, seed + 200);
+
+                            break;
+
+                        // Dubs Bad Hygiene
+                        case "takeBath":
+                            rot = Rot4.Invalid;
+                            break;
+                        case "UseHotTub":
+                            rot = Rot4.Invalid;
+                            
+                            if (Rand.ChanceSeeded(0.5f, pawn.CurJob.loadID + idTick))
+                            {
+                                op = new Vector3(0, 0f, 0.5f);
+                                oa = 180f;
+                            }
+                            break;
+                        case "VFEV_HypothermiaResponse":
+                            rot = Rot4.Invalid;
+                            if (!Core.settings.sleepEnabled) return;
+
+                            seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
+                            rot = Rand.RangeSeeded(0, 4, seed) switch
+                            {
+                                0 => Rot4.East,
+                                1 => Rot4.West,
+                                2 => Rot4.South,
+                                3 => Rot4.North,
+                                _ => rot
+                            };
+
+                            if (Rand.ChanceSeeded(0.5f, seed + 100)) 
+                                op = new Vector3(Rand.RangeSeeded(-0.1f, 0.1f, seed + 50), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 100));
+                            else
+                                op = new Vector3(Rand.RangeSeeded(-0.2f, 0.2f, seed + 150), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 200));
 
                             break;
                     }
