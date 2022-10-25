@@ -1054,9 +1054,9 @@ namespace yayoAni
                         case "LayDown": // 잠자기
                             if (!Core.settings.sleepEnabled) break;
                             if (!(pawn.jobs?.curDriver?.asleep ?? false)) break;
-#region BIOTECH
+#if BIOTECH
                             if (pawn.DevelopmentalStage.Juvenile()) break;
-#endregion
+#endif
 
                             seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
                             rot = Rand.RangeSeeded(0, 4, seed) switch
