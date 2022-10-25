@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace yayoAni
 {
     public class YayoAniSettings : ModSettings
     {
+        public bool onlyPlayerPawns = false;
+        public CameraZoomRange maximumZoomLevel = CameraZoomRange.Furthest;
+
         public bool walkEnabled = true;
         public float walkSpeed = 0.8f;
         public float walkAngle = 0.6f;
@@ -20,12 +24,21 @@ namespace yayoAni
         public bool mechanoidWalkEnabled = true;
         public bool mechanoidJobEnabled = true;
         public bool mechanoidCombatEnabled = true;
+        
+        public bool animalWalkEnabled = true;
+        public bool animalJobEnabled = true;
+        public bool animalCombatEnabled = true;
+
+        public bool applyHarPatch = true;
 
         public bool debugMode = false;
 
         public override void ExposeData()
         {
             base.ExposeData();
+
+            Scribe_Values.Look(ref onlyPlayerPawns, "OnlyPlayer", false);
+            Scribe_Values.Look(ref maximumZoomLevel, "MaximumZoomLevel", CameraZoomRange.Furthest);
 
             Scribe_Values.Look(ref walkEnabled, "WalkAnim", true);
             Scribe_Values.Look(ref walkSpeed, "WalkSpeed", 0.8f);
@@ -44,6 +57,12 @@ namespace yayoAni
             Scribe_Values.Look(ref mechanoidWalkEnabled, "MechanoidWalk", true);
             Scribe_Values.Look(ref mechanoidJobEnabled, "MechanoidJob", true);
             Scribe_Values.Look(ref mechanoidCombatEnabled, "MechanoidCombat", true);
+            
+            Scribe_Values.Look(ref animalWalkEnabled, "AnimalWalk", true);
+            Scribe_Values.Look(ref animalJobEnabled, "AnimalJob", true);
+            Scribe_Values.Look(ref animalWalkEnabled, "AnimalCombat", true);
+            
+            Scribe_Values.Look(ref applyHarPatch, "ApplyHarPatch", true);
 
             Scribe_Values.Look(ref debugMode, "Debug", false);
         }
@@ -53,6 +72,17 @@ namespace yayoAni
             var listing = new Listing_Standard();
             listing.Begin(inRect);
             listing.ColumnWidth = 400f;
+
+            listing.CheckboxLabeled("YayoAnim_OnlyPlayerPawns".Translate(), ref onlyPlayerPawns, "YayoAnim_OnlyPlayerPawnsTooltip".Translate());
+            if (listing.ButtonTextTooltip("YayoAnim_MaximumZoomLevel".Translate($"YayoAnim_MaximumZoomLevel_{maximumZoomLevel}".Translate()), "YayoAnim_MaximumZoomLevelTooltip".Translate()))
+            {
+                FloatMenuUtility.MakeMenu(
+                    (CameraZoomRange[])typeof(CameraZoomRange).GetEnumValues(),
+                    range => $"YayoAnim_MaximumZoomLevel_{range}".Translate(),
+                    range => () => maximumZoomLevel = range);
+            }
+
+            listing.Gap();
 
             listing.CheckboxLabeled("YayoAnim_Walk".Translate(), ref walkEnabled);
             string buffer = null;
@@ -78,10 +108,21 @@ namespace yayoAni
 
             listing.Gap();
 
-            listing.CheckboxLabeled("YayoAnim_MechanoidWalk".Translate(), ref mechanoidWalkEnabled, "YayoAnim_MechanoidWalkTooltip".Translate());
-            listing.CheckboxLabeled("YayoAnim_MechanoidJob".Translate(), ref mechanoidJobEnabled, "YayoAnim_MechanoidJobTooltip".Translate());
-            listing.CheckboxLabeled("YayoAnim_MechanoidCombat".Translate(), ref mechanoidCombatEnabled, "YayoAnim_MechanoidCombatTooltip".Translate());
+            listing.CheckboxLabeled("YayoAnim_MechanoidWalk".Translate(), ref mechanoidWalkEnabled, "YayoAnim_RequiresWalkTooltip".Translate());
+            listing.CheckboxLabeled("YayoAnim_MechanoidJob".Translate(), ref mechanoidJobEnabled, "YayoAnim_RequiresJobTooltip".Translate());
+            listing.CheckboxLabeled("YayoAnim_MechanoidCombat".Translate(), ref mechanoidCombatEnabled, "YayoAnim_RequiresCombatTooltip".Translate());
 
+            listing.Gap();
+
+            listing.CheckboxLabeled("YayoAnim_AnimalWalk".Translate(), ref animalWalkEnabled, "YayoAnim_RequiresWalkTooltip".Translate());
+            listing.CheckboxLabeled("YayoAnim_AnimalJob".Translate(), ref animalJobEnabled, "YayoAnim_RequiresJobTooltip".Translate());
+            listing.CheckboxLabeled("YayoAnim_AnimalCombat".Translate(), ref animalCombatEnabled, "YayoAnim_RequiresCombatTooltip".Translate());
+
+            listing.Gap();
+
+            listing.CheckboxLabeled("YayoAnim_ApplyHarPatch".Translate(), ref applyHarPatch, "YayoAnim_ApplyHarPatchTooltip");
+            Core.SetHarPatch(applyHarPatch);
+            
             listing.Gap();
 
             if (listing.ButtonText("YayoAnim_ResetToDefault".Translate()))
@@ -96,6 +137,9 @@ namespace yayoAni
 
         private void ResetToDefault()
         {
+            onlyPlayerPawns = false;
+            maximumZoomLevel = CameraZoomRange.Furthest;
+
             walkEnabled = true;
             walkSpeed = 0.8f;
             walkAngle = 0.6f;
@@ -107,6 +151,17 @@ namespace yayoAni
 
             sleepEnabled = true;
             lovinEnabled = true;
+
+            mechanoidWalkEnabled = true;
+            mechanoidJobEnabled = true;
+            mechanoidCombatEnabled = true;
+
+            animalWalkEnabled = true;
+            animalJobEnabled = true;
+            animalCombatEnabled = true;
+
+            applyHarPatch = true;
+            Core.SetHarPatch(applyHarPatch);
 
             debugMode = false;
         }

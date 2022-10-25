@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
 using AlienRace;
-using HarmonyLib;
-using JetBrains.Annotations;
 using UnityEngine;
 using Verse;
 
@@ -12,11 +9,6 @@ namespace yayoAni
     {
         public class Prefix_AlienRace_HarmonyPatches_DrawAddons
         {
-            [UsedImplicitly]
-            public static MethodBase TargetMethod() => AccessTools.Method("AlienRace.HarmonyPatches:DrawAddons");
-
-            [HarmonyPriority(0)]
-            [UsedImplicitly]
             public static bool Prefix(PawnRenderFlags renderFlags, Vector3 vector, Vector3 headOffset, Pawn pawn, Quaternion quat, Rot4 rotation)
             {
                 if (pawn.def is not ThingDef_AlienRace alienRace || renderFlags.FlagSet(PawnRenderFlags.Invisible))

@@ -7,6 +7,7 @@ using Verse;
 
 namespace yayoAni
 {
+    [HotSwappable]
     [HarmonyPatch(typeof(PawnRenderer), "DrawEquipment")]
     public class Patch_DrawEquipment
     {
@@ -18,12 +19,21 @@ namespace yayoAni
             if (!Core.settings.combatEnabled)
                 return true;
 
+            if (Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
+                return true;
+
             Pawn pawn = __instance.pawn;
             if (pawn.Dead || !pawn.Spawned)
                 return false;
 
+            if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns)
+                return true;
+
             if (pawn.RaceProps.IsMechanoid && !Core.settings.mechanoidCombatEnabled)
-                return false;
+                return true;
+
+            if (pawn.RaceProps.Animal && !Core.settings.animalCombatEnabled)
+                return true;
 
             if (pawn.equipment?.Primary == null)
                 return false;
@@ -62,6 +72,7 @@ namespace yayoAni
     }
 
 
+    [HotSwappable]
     public static class PawnRenderer_Override
     {
         public static void AnimateEquip(PawnRenderer __instance, Pawn pawn, Vector3 rootLoc, ThingWithComps thing, Stance_Busy stanceBusy, Vector3 offset, bool isSub = false)
@@ -464,6 +475,7 @@ namespace yayoAni
         }
     }
 
+    [HotSwappable]
     [HarmonyPatch(typeof(PawnRenderer), "DrawEquipmentAiming")]
     internal static class patch_DrawEquipmentAiming
     {
@@ -518,20 +530,29 @@ namespace yayoAni
         private static bool Prefix(PawnRenderer __instance, Thing eq, Vector3 drawLoc, float aimAngle)
         {
             if (!Core.settings.combatEnabled)
-            {
                 return true;
-            }
+
+            if (Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
+                return true;
 
             Pawn pawn = __instance.pawn;
+
+            if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns)
+                return true;
+
+            if (pawn.RaceProps.IsMechanoid && !Core.settings.mechanoidCombatEnabled)
+                return true;
+
+            if (pawn.RaceProps.Animal && !Core.settings.animalCombatEnabled)
+                return true;
+
             Rot4 pawnRotation = pawn.Rotation;
 
             float num = aimAngle - 90f;
             Mesh mesh;
 
-
             bool isMeleeAtk = false;
             bool flip = false;
-
 
             Stance_Busy stance_Busy = pawn.stances.curStance as Stance_Busy;
 
@@ -612,7 +633,7 @@ namespace yayoAni
                             if (CompOversizedPropsType.IsInstanceOfType(comp.props))
                             {
                                 var isFighting = pawn.IsFighting();
-                                
+
                                 if (IsDualField != null)
                                     isDual = IsDualField(comp.props);
                                 if (OffsetFromRotationMethod != null)

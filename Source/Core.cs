@@ -19,17 +19,8 @@ namespace yayoAni
             harmony = new Harmony("com.yayo.yayoAni");
             harmony.PatchAll();
 
-            if (usingHar)
-            {
-                LongEventHandler.ExecuteWhenFinished(() =>
-                {
-                    harmony.Patch(AccessTools.Method("AlienRace.HarmonyPatches:DrawAddons"),
-                        prefix: new HarmonyMethod(AccessTools.Method(
-                                typeof(HumanoidAlienRaces.Prefix_AlienRace_HarmonyPatches_DrawAddons),
-                                nameof(HumanoidAlienRaces.Prefix_AlienRace_HarmonyPatches_DrawAddons.Prefix)),
-                            0));
-                });
-            }
+            if (usingHar && settings.applyHarPatch) 
+                LongEventHandler.ExecuteWhenFinished(() => SetHarPatch(true));
         }
 
         public override string SettingsCategory() => "Yayo's Animation";
@@ -38,6 +29,7 @@ namespace yayoAni
 
         public static bool usingDualWield = false;
         public static bool usingHar = false;
+        private static bool harPatchActive = false;
 
         static Core()
         {
@@ -56,6 +48,24 @@ namespace yayoAni
                         break;
                 }
             }
+        }
+
+        public static void SetHarPatch(bool state)
+        {
+            if (!usingHar || harPatchActive == state) 
+                return;
+
+            var method = AccessTools.Method("AlienRace.HarmonyPatches:DrawAddons");
+            var patch = AccessTools.Method(
+                typeof(HumanoidAlienRaces.Prefix_AlienRace_HarmonyPatches_DrawAddons),
+                nameof(HumanoidAlienRaces.Prefix_AlienRace_HarmonyPatches_DrawAddons.Prefix));
+
+            if (state)
+                harmony.Patch(method, prefix: new HarmonyMethod(patch, 0));
+            else
+                harmony.Unpatch(method, patch);
+
+            harPatchActive = state;
         }
 
         public static Rot4 getRot(Vector3 vel, Rot4 curRot)

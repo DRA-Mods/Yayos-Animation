@@ -233,7 +233,9 @@ namespace yayoAni
 
         public static void CheckAni(Pawn pawn, ref Vector3 pos, Rot4 rot)
         {
-            if (pawn.Dead) return;
+            if (pawn.Dead) 
+                return;
+
             if (pawn.GetPosture() == PawnPosture.Standing)
             {
                 Ani0(pawn, ref pos, rot);
@@ -262,10 +264,16 @@ namespace yayoAni
             float oa = 0f;
             Vector3 op = Vector3.zero;
             PawnDrawData pdd = DataUtility.GetData(pawn);
-
-            if (pawn.pather is { MovingNow: true })
+            
+            if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns || Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
             {
-                if (Core.settings.walkEnabled && (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidWalkEnabled))
+                // Ignored
+            }
+            else if (pawn.pather is { MovingNow: true })
+            {
+                if (Core.settings.walkEnabled && 
+                    (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidWalkEnabled) && 
+                    (!pawn.RaceProps.Animal || Core.settings.animalWalkEnabled))
                 {
                     changed = true;
                     int IdTick = pawn.thingIDNumber * 20;
@@ -279,7 +287,9 @@ namespace yayoAni
                     op = new Vector3(wiggle * 0.025f, 0f, 0f);
                 }
             }
-            else if (Core.settings.anyJobEnabled && pawn.CurJob != null && (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidJobEnabled))
+            else if (Core.settings.anyJobEnabled && pawn.CurJob != null && 
+                     (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidJobEnabled) && 
+                     (!pawn.RaceProps.Animal || Core.settings.animalJobEnabled))
             {
                 changed = true;
                 int IdTick = pawn.thingIDNumber * 20;
@@ -1160,6 +1170,7 @@ namespace yayoAni
 
 
     // ---------------------------------------------------
+    [HotSwappable]
     [HarmonyPatch(typeof(PawnRenderer), "RenderPawnAt")]
     public class Patch_PawnRenderer_RenderPawnAt
     {
@@ -1172,6 +1183,7 @@ namespace yayoAni
         }
     }
 
+    [HotSwappable]
     [HarmonyPatch(typeof(PawnRenderer), "DrawDynamicParts")]
     public class Patch_PawnRenderer_DrawDynamicParts
     {
@@ -1188,6 +1200,7 @@ namespace yayoAni
         }
     }
 
+    [HotSwappable]
     [HarmonyPatch(typeof(PawnRenderer), "RenderPawnInternal")]
     public class Patch_PawnRenderer_RenderPawnInternal
     {
@@ -1212,6 +1225,7 @@ namespace yayoAni
         }
     }
 
+    [HotSwappable]
     [HarmonyPatch(typeof(PawnRenderer), "RenderCache")]
     public class Patch_PawnRenderer_RenderCache
     {
@@ -1314,6 +1328,7 @@ namespace yayoAni
     }
 
 
+    [HotSwappable]
     [HarmonyPatch(typeof(PawnRenderer), "GetBodyPos")]
     internal class Patch_PawnRenderer_GetBodyPos
     {
@@ -1327,6 +1342,7 @@ namespace yayoAni
         }
     }
 
+    [HotSwappable]
     [HarmonyPatch(typeof(PawnRenderer), "BodyAngle")]
     internal class Patch_PawnRenderer_BodyAngle
     {
@@ -1340,6 +1356,7 @@ namespace yayoAni
     }
 
 
+    [HotSwappable]
     [HarmonyPatch(typeof(PawnRenderer), "LayingFacing")]
     internal class Patch_PawnRenderer_LayingFacing
     {

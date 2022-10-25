@@ -1,5 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
+    <YayoAnim_OnlyPlayerPawns>Only player pawn animations</YayoAnim_OnlyPlayerPawns>
+    <YayoAnim_OnlyPlayerPawnsTooltip>Prevents any pawn (be it human, animal, or mechanoid) from having any animations unless they're from player's faction.</YayoAnim_OnlyPlayerPawnsTooltip>
+    <YayoAnim_MaximumZoomLevel>Maximum zoom level: {0}</YayoAnim_MaximumZoomLevel>
+    <YayoAnim_MaximumZoomLevelTooltip>Determines maximum zoom level at which the animations will play. If you zoom beyond it, the animations will stop playing.</YayoAnim_MaximumZoomLevelTooltip>
+    <YayoAnim_MaximumZoomLevel_Closest>Closest</YayoAnim_MaximumZoomLevel_Closest>
+    <YayoAnim_MaximumZoomLevel_Close>Close</YayoAnim_MaximumZoomLevel_Close>
+    <YayoAnim_MaximumZoomLevel_Middle>Middle</YayoAnim_MaximumZoomLevel_Middle>
+    <YayoAnim_MaximumZoomLevel_Far>Far</YayoAnim_MaximumZoomLevel_Far>
+    <YayoAnim_MaximumZoomLevel_Furthest>Furthest</YayoAnim_MaximumZoomLevel_Furthest>
+
     <YayoAnim_Walk>Walking animations</YayoAnim_Walk>
     <YayoAnim_WalkAnimSpeed>Walking motion speed</YayoAnim_WalkAnimSpeed>
     <YayoAnim_WalkAnimAngle>Walking motion angle</YayoAnim_WalkAnimAngle>
@@ -13,12 +23,20 @@
     <YayoAnim_LovinBed>Lovin' animations</YayoAnim_LovinBed>
 
     <YayoAnim_MechanoidWalk>Mechanoid walking animations</YayoAnim_MechanoidWalk>
-    <YayoAnim_MechanoidWalkTooltip>Requires walking animations to be enabled as well</YayoAnim_MechanoidWalkTooltip>
     <YayoAnim_MechanoidJob>Mechanoid work animations</YayoAnim_MechanoidJob>
-    <YayoAnim_MechanoidJobTooltip>Requires all work animations to be anbled as well</YayoAnim_MechanoidJobTooltip>
     <YayoAnim_MechanoidCombat>Mechanoid combat animations</YayoAnim_MechanoidCombat>
-    <YayoAnim_MechanoidCombatTooltip>Requires combat animations to be enabled as well</YayoAnim_MechanoidCombatTooltip>
 
+    <YayoAnim_AnimalWalk>Animal walking animations</YayoAnim_AnimalWalk>
+    <YayoAnim_AnimalJob>Animal work animations</YayoAnim_AnimalJob>
+    <YayoAnim_AnimalCombat>Animal combat animations</YayoAnim_AnimalCombat>
+
+    <YayoAnim_RequiresWalkTooltip>Requires walking animations to be enabled as well</YayoAnim_RequiresWalkTooltip>
+    <YayoAnim_RequiresJobTooltip>Requires all work animations to be anbled as well</YayoAnim_RequiresJobTooltip>
+    <YayoAnim_RequiresCombatTooltip>Requires combat animations to be enabled as well</YayoAnim_RequiresCombatTooltip>
+    
+    <YayoAnim_ApplyHarPatch>Apply Humanoid Alien Races patch</YayoAnim_ApplyHarPatch>
+    <YayoAnim_ApplyHarPatchTooltip>This should generally be kept on as it fixes issues with HAR enabled - disable only if this causes issues or negatively impacts performance</YayoAnim_ApplyHarPatchTooltip>
+    
     <YayoAnim_DebugMode>Debug mode</YayoAnim_DebugMode>
 
     <YayoAnim_ResetToDefault>Reset to default</YayoAnim_ResetToDefault>
