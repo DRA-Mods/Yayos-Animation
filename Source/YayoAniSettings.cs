@@ -17,14 +17,15 @@ namespace yayoAni
         public bool sleepEnabled = true;
         public bool lovinEnabled = true;
 
+        public bool mechanoidWalkEnabled = true;
+        public bool mechanoidJobEnabled = true;
+        public bool mechanoidCombatEnabled = true;
+
         public bool debugMode = false;
 
         public override void ExposeData()
         {
             base.ExposeData();
-
-            walkSpeed = Mathf.Clamp(walkSpeed, 0.1f, 10f);
-            walkAngle = Mathf.Clamp(walkAngle, 0.1f, 10f);
 
             Scribe_Values.Look(ref walkEnabled, "WalkAnim", true);
             Scribe_Values.Look(ref walkSpeed, "WalkSpeed", 0.8f);
@@ -39,6 +40,10 @@ namespace yayoAni
 
             Scribe_Values.Look(ref sleepEnabled, "SleepAnim", true);
             Scribe_Values.Look(ref lovinEnabled, "LovinAnim", true);
+
+            Scribe_Values.Look(ref mechanoidWalkEnabled, "MechanoidWalk", true);
+            Scribe_Values.Look(ref mechanoidJobEnabled, "MechanoidJob", true);
+            Scribe_Values.Look(ref mechanoidCombatEnabled, "MechanoidCombat", true);
 
             Scribe_Values.Look(ref debugMode, "Debug", false);
         }
@@ -73,6 +78,12 @@ namespace yayoAni
 
             listing.Gap();
 
+            listing.CheckboxLabeled("YayoAnim_MechanoidWalk".Translate(), ref mechanoidWalkEnabled, "YayoAnim_MechanoidWalkTooltip".Translate());
+            listing.CheckboxLabeled("YayoAnim_MechanoidJob".Translate(), ref mechanoidJobEnabled, "YayoAnim_MechanoidJobTooltip".Translate());
+            listing.CheckboxLabeled("YayoAnim_MechanoidCombat".Translate(), ref mechanoidCombatEnabled, "YayoAnim_MechanoidCombatTooltip".Translate());
+
+            listing.Gap();
+
             if (listing.ButtonText("YayoAnim_ResetToDefault".Translate()))
                 ResetToDefault();
 
@@ -88,15 +99,15 @@ namespace yayoAni
             walkEnabled = true;
             walkSpeed = 0.8f;
             walkAngle = 0.6f;
-            
+
             combatEnabled = true;
             combatTwirlEnabled = true;
-            
+
             anyJobEnabled = true;
-            
+
             sleepEnabled = true;
             lovinEnabled = true;
-            
+
             debugMode = false;
         }
     }

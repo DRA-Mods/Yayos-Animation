@@ -1,13 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  <YayoAnim_Walk>Walking animations</YayoAnim_Walk>
-  <YayoAnim_WalkAnimSpeed>Walking motion speed</YayoAnim_WalkAnimSpeed>
-  <YayoAnim_WalkAnimAngle>Walking motion angle</YayoAnim_WalkAnimAngle>
-  <YayoAnim_Combat>Combat animations</YayoAnim_Combat>
-  <YayoAnim_TwirlWeapon>Weapon twirling</YayoAnim_TwirlWeapon>
-  <YayoAnim_AllJobs>All work animations</YayoAnim_AllJobs>
-  <YayoAnim_Sleep>Sleeping animations</YayoAnim_Sleep>
-  <YayoAnim_LovinBed>Lovin' animations</YayoAnim_LovinBed>
-  <YayoAnim_DebugMode>Debug mode</YayoAnim_DebugMode>
-  <YayoAnim_ResetToDefault>Reset to default</YayoAnim_ResetToDefault>
+    <YayoAnim_Walk>Walking animations</YayoAnim_Walk>
+    <YayoAnim_WalkAnimSpeed>Walking motion speed</YayoAnim_WalkAnimSpeed>
+    <YayoAnim_WalkAnimAngle>Walking motion angle</YayoAnim_WalkAnimAngle>
+
+    <YayoAnim_Combat>Combat animations</YayoAnim_Combat>
+    <YayoAnim_TwirlWeapon>Weapon twirling</YayoAnim_TwirlWeapon>
+
+    <YayoAnim_AllJobs>All work animations</YayoAnim_AllJobs>
+
+    <YayoAnim_Sleep>Sleeping animations</YayoAnim_Sleep>
+    <YayoAnim_LovinBed>Lovin' animations</YayoAnim_LovinBed>
+
+    <YayoAnim_MechanoidWalk>Mechanoid walking animations</YayoAnim_MechanoidWalk>
+    <YayoAnim_MechanoidWalkTooltip>Requires walking animations to be enabled as well</YayoAnim_MechanoidWalkTooltip>
+    <YayoAnim_MechanoidJob>Mechanoid work animations</YayoAnim_MechanoidJob>
+    <YayoAnim_MechanoidJobTooltip>Requires all work animations to be anbled as well</YayoAnim_MechanoidJobTooltip>
+    <YayoAnim_MechanoidCombat>Mechanoid combat animations</YayoAnim_MechanoidCombat>
+    <YayoAnim_MechanoidCombatTooltip>Requires combat animations to be enabled as well</YayoAnim_MechanoidCombatTooltip>
+
+    <YayoAnim_DebugMode>Debug mode</YayoAnim_DebugMode>
+
+    <YayoAnim_ResetToDefault>Reset to default</YayoAnim_ResetToDefault>
 </LanguageData>

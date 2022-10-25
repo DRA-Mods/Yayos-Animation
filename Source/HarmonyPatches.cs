@@ -265,7 +265,7 @@ namespace yayoAni
 
             if (pawn.pather is { MovingNow: true })
             {
-                if (Core.settings.walkEnabled)
+                if (Core.settings.walkEnabled && (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidWalkEnabled))
                 {
                     changed = true;
                     int IdTick = pawn.thingIDNumber * 20;
@@ -279,7 +279,7 @@ namespace yayoAni
                     op = new Vector3(wiggle * 0.025f, 0f, 0f);
                 }
             }
-            else if (Core.settings.anyJobEnabled && pawn.CurJob != null)
+            else if (Core.settings.anyJobEnabled && pawn.CurJob != null && (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidJobEnabled))
             {
                 changed = true;
                 int IdTick = pawn.thingIDNumber * 20;

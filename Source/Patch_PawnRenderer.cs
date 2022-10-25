@@ -16,25 +16,20 @@ namespace yayoAni
         private static bool Prefix(PawnRenderer __instance, Vector3 rootLoc)
         {
             if (!Core.settings.combatEnabled)
-            {
                 return true;
-            }
 
             Pawn pawn = __instance.pawn;
             if (pawn.Dead || !pawn.Spawned)
-            {
                 return false;
-            }
+
+            if (pawn.RaceProps.IsMechanoid && !Core.settings.mechanoidCombatEnabled)
+                return false;
 
             if (pawn.equipment?.Primary == null)
-            {
                 return false;
-            }
 
             if (pawn.CurJob != null && pawn.CurJob.def.neverShowWeapon)
-            {
                 return false;
-            }
 
             // duelWeld
             ThingWithComps offHandEquip = null;
@@ -78,7 +73,7 @@ namespace yayoAni
             offset.z += (pawn.Rotation == Rot4.North) ? (-0.00289575267f) : 0.03474903f;
 
             // 설정과 무기 무게에 따른 회전 애니메이션 사용 여부
-            bool useTwirl = Core.settings.combatTwirlEnabled && !pawn.RaceProps.IsMechanoid && thing.def.BaseMass < 5f;
+            bool useTwirl = Core.settings.combatTwirlEnabled && !isMechanoid && thing.def.BaseMass < 5f;
 
             if (stanceBusy != null && !stanceBusy.neverAimWeapon && stanceBusy.focusTarg.IsValid)
             {
