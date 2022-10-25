@@ -1002,6 +1002,7 @@ namespace yayoAni
                 float oa = 0f;
                 Vector3 op = Vector3.zero;
                 bool changed = false;
+                rot = Rot4.Invalid;
 
 
                 if (pawn.CurJob != null)
@@ -1021,9 +1022,9 @@ namespace yayoAni
                     {
                         case "Lovin": // 사랑나누기
                         case "VSIE_OneStandLovin":
-                            if (!Core.settings.lovinEnabled) return;
+                            if (!Core.settings.lovinEnabled) break;
                             Building_Bed bed = pawn.CurrentBed();
-                            if (bed == null) return;
+                            if (bed == null) break;
                             var t = (Find.TickManager.TicksGame + idTick % 30) % 360;
                             const float f = 0.03f;
                             if (pawn.RaceProps.Humanlike)
@@ -1051,8 +1052,8 @@ namespace yayoAni
                             break;
 
                         case "LayDown": // 잠자기
-                            if (!Core.settings.sleepEnabled) return;
-                            if (!(pawn.jobs?.curDriver?.asleep ?? false)) return;
+                            if (!Core.settings.sleepEnabled) break;
+                            if (!(pawn.jobs?.curDriver?.asleep ?? false)) break;
 
                             seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
                             rot = Rand.RangeSeeded(0, 4, seed) switch
@@ -1088,8 +1089,6 @@ namespace yayoAni
 
                         case "Skygaze":
                         case "VSIE_Skygaze":
-                            rot = Rot4.Invalid;
-                            
                             seed = pawn.CurJob.loadID + idTick * 5;
 
                             op = Rand.RangeSeeded(0, 3, seed + 100) switch
@@ -1103,13 +1102,11 @@ namespace yayoAni
 
                             break;
 
-                        // Dubs Bad Hygiene
-                        case "takeBath":
-                            rot = Rot4.Invalid;
-                            break;
+                        // // Dubs Bad Hygiene
+                        // case "takeBath":
+                        //     rot = Rot4.Invalid;
+                        //     break;
                         case "UseHotTub":
-                            rot = Rot4.Invalid;
-                            
                             if (Rand.ChanceSeeded(0.5f, pawn.CurJob.loadID + idTick))
                             {
                                 op = new Vector3(0, 0f, 0.5f);
@@ -1117,8 +1114,7 @@ namespace yayoAni
                             }
                             break;
                         case "VFEV_HypothermiaResponse":
-                            rot = Rot4.Invalid;
-                            if (!Core.settings.sleepEnabled) return;
+                            if (!Core.settings.sleepEnabled) break;
 
                             seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
                             rot = Rand.RangeSeeded(0, 4, seed) switch
