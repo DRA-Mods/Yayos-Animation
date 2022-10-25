@@ -39,7 +39,7 @@
     <PackageReference Include="Lib.Harmony" Version="2.2.*" ExcludeAssets="runtime" />
     <PackageReference Include="UnlimitedHugs.Rimworld.HugsLib" Version="9.0.1" ExcludeAssets="runtime" />
     <PackageReference Condition=" '$(Configuration.EndsWith( 1.3))' " Include="Krafs.Rimworld.Ref" Version="1.3.3389" />
-    <PackageReference Condition=" '$(Configuration.EndsWith( 1.4))' " Include="Krafs.Rimworld.Ref" Version="1.4.3521-beta" />
+    <PackageReference Condition=" '$(Configuration.EndsWith( 1.4))' " Include="Krafs.Rimworld.Ref" Version="1.4.3527" />
   </ItemGroup>
   
   <ItemGroup>
