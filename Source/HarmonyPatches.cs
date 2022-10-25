@@ -233,7 +233,7 @@ namespace yayoAni
 
         public static void CheckAni(Pawn pawn, ref Vector3 pos, Rot4 rot)
         {
-            if (pawn.Dead) 
+            if (pawn.Dead)
                 return;
 
             if (pawn.GetPosture() == PawnPosture.Standing)
@@ -264,15 +264,15 @@ namespace yayoAni
             float oa = 0f;
             Vector3 op = Vector3.zero;
             PawnDrawData pdd = DataUtility.GetData(pawn);
-            
+
             if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns || Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
             {
                 // Ignored
             }
             else if (pawn.pather is { MovingNow: true })
             {
-                if (Core.settings.walkEnabled && 
-                    (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidWalkEnabled) && 
+                if (Core.settings.walkEnabled &&
+                    (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidWalkEnabled) &&
                     (!pawn.RaceProps.Animal || Core.settings.animalWalkEnabled))
                 {
                     changed = true;
@@ -287,8 +287,8 @@ namespace yayoAni
                     op = new Vector3(wiggle * 0.025f, 0f, 0f);
                 }
             }
-            else if (Core.settings.anyJobEnabled && pawn.CurJob != null && 
-                     (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidJobEnabled) && 
+            else if (Core.settings.anyJobEnabled && pawn.CurJob != null &&
+                     (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidJobEnabled) &&
                      (!pawn.RaceProps.Animal || Core.settings.animalJobEnabled))
             {
                 changed = true;
@@ -1015,7 +1015,13 @@ namespace yayoAni
                 rot = Rot4.Invalid;
 
 
-                if (pawn.CurJob != null)
+                if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns || Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
+                {
+                    // Ignored
+                }
+                else if (pawn.CurJob != null &&
+                         (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidJobEnabled) &&
+                         (!pawn.RaceProps.Animal || Core.settings.animalJobEnabled))
                 {
                     changed = true;
 
@@ -1125,6 +1131,7 @@ namespace yayoAni
                                 op = new Vector3(0, 0f, 0.5f);
                                 oa = 180f;
                             }
+
                             break;
                         case "VFEV_HypothermiaResponse":
                             if (!Core.settings.sleepEnabled) break;
@@ -1139,7 +1146,7 @@ namespace yayoAni
                                 _ => rot
                             };
 
-                            if (Rand.ChanceSeeded(0.5f, seed + 100)) 
+                            if (Rand.ChanceSeeded(0.5f, seed + 100))
                                 op = new Vector3(Rand.RangeSeeded(-0.1f, 0.1f, seed + 50), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 100));
                             else
                                 op = new Vector3(Rand.RangeSeeded(-0.2f, 0.2f, seed + 150), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 200));
