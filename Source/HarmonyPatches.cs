@@ -1055,7 +1055,7 @@ namespace yayoAni
                             if (!Core.settings.sleepEnabled) break;
                             if (!(pawn.jobs?.curDriver?.asleep ?? false)) break;
 #if BIOTECH
-                            if (pawn.DevelopmentalStage.Juvenile()) break;
+                            if (pawn.DevelopmentalStage.Newborn() || pawn.DevelopmentalStage.Baby()) break;
 #endif
 
                             seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
