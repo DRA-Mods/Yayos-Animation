@@ -32,7 +32,11 @@ namespace yayoAni
                     {
                         continue;
                     }
+#if IDEOLOGY
                     Vector3 val = (bodyAddon.defaultOffsets.GetOffset(rotation)?.GetOffset(renderFlags.FlagSet(PawnRenderFlags.Portrait), pawn.story.bodyType, comp.crownType) ?? Vector3.zero) + (bodyAddon.offsets.GetOffset(rotation)?.GetOffset(renderFlags.FlagSet(PawnRenderFlags.Portrait), pawn.story.bodyType, comp.crownType) ?? Vector3.zero);
+#else
+                    Vector3 val = (bodyAddon.defaultOffsets.GetOffset(rotation)?.GetOffset(renderFlags.FlagSet(PawnRenderFlags.Portrait), pawn.story.bodyType, pawn.story.headType) ?? Vector3.zero) + (bodyAddon.offsets.GetOffset(rotation)?.GetOffset(renderFlags.FlagSet(PawnRenderFlags.Portrait), pawn.story.bodyType, pawn.story.headType) ?? Vector3.zero);
+#endif
                     val.y = (bodyAddon.inFrontOfBody ? (0.3f + val.y) : (-0.3f - val.y));
                     float num = bodyAddon.angle;
                     if (rotation == Rot4.North)
