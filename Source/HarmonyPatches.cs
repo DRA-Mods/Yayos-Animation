@@ -230,19 +230,23 @@ namespace yayoAni
         // //         AccessTools.Method(typeof(PawnRenderer), "RenderPawnInternal").Invoke(p.Drawer.renderer, new object[] { rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags });
         //}
 
-
-        public static void CheckAni(Pawn pawn, ref Vector3 pos, Rot4 rot)
+        public static void CheckAni(Pawn pawn, ref Vector3 pos, Rot4 rot, PawnDrawData pdd)
         {
             if (pawn.Dead)
                 return;
+            if (pdd.jobName != null && pdd.jobName == pawn.CurJob?.def.defName && Find.TickManager.TicksGame < pdd.nextUpdateTick && (pawn.pather == null || pawn.pather.MovingNow == false))
+            {
+                pos += pdd.posOffset;
+                return;
+            }
 
             if (pawn.GetPosture() == PawnPosture.Standing)
             {
-                Ani0(pawn, ref pos, rot);
+                Ani0(pawn, ref pos, rot, pdd);
             }
             else
             {
-                Ani1(pawn, ref pos, rot);
+                Ani1(pawn, ref pos, rot, pdd);
             }
         }
 
@@ -258,12 +262,12 @@ namespace yayoAni
             solemn
         }
 
-        public static void Ani0(Pawn pawn, ref Vector3 pos, Rot4 rot)
+        public static void Ani0(Pawn pawn, ref Vector3 pos, Rot4 rot, PawnDrawData pdd)
         {
             bool changed = false;
             float oa = 0f;
             Vector3 op = Vector3.zero;
-            PawnDrawData pdd = DataUtility.GetData(pawn);
+            int? nextUpdate = null;
 
             if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns || Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
             {
@@ -292,6 +296,7 @@ namespace yayoAni
                      (!pawn.RaceProps.Animal || Core.settings.animalJobEnabled))
             {
                 changed = true;
+                pdd.jobName = pawn.CurJob.def.defName;
                 int IdTick = pawn.thingIDNumber * 20;
 
                 if (Core.settings.debugMode)
@@ -509,7 +514,10 @@ namespace yayoAni
 
                     // Vanilla Expanded Classical
                     case "VFEC_Relax_Thermaebath":
-                        var seed = ((Find.TickManager.TicksGame + IdTick * 3) / 2500 + IdTick * 3);
+                        var idTickMult = IdTick * 3;
+                        var idTickDiv = (Find.TickManager.TicksGame + idTickMult) / 2500;
+                        var seed = idTickDiv + idTickMult;
+                        nextUpdate = (idTickDiv + 1) * 2500 - idTickMult;
                         rot = Rand.RangeSeeded(0, 4, seed) switch
                         {
                             0 => Rot4.East,
@@ -556,14 +564,14 @@ namespace yayoAni
                         break;
 
 
-                    case "Mate":
-                        break;
+                    // case "Mate":
+                    //     break;
 
 
                     case "MarryAdjacentPawn":
                         t = (Find.TickManager.TicksGame) % 310;
 
-                        if (!Core.Ani(ref t, 150))
+                        if (!Core.Ani(ref t, 150, ref nextUpdate))
                         {
                             if (!Core.Ani(ref t, 20, ref oa, 0f, 5f, -1f, ref op, Vector3.zero, new Vector3(0.05f, 0f, 0f), rot))
                                 if (!Core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0f), new Vector3(0.05f, 0f, 0f), rot))
@@ -603,8 +611,8 @@ namespace yayoAni
                         break;
 
 
-                    case "Dance":
-                        break;
+                    // case "Dance":
+                    //     break;
 
 
                     // joy
@@ -740,6 +748,7 @@ namespace yayoAni
 
                         try
                         {
+                            nextUpdate = int.MinValue; // Drawing extra stuff, don't cache this job
                             pawn.CurJob.targetA.Thing.DrawAt(pos + op + new Vector3(0f, 0.1f, 0f));
                         }
                         catch
@@ -754,7 +763,7 @@ namespace yayoAni
                     case "Sow": // 씨뿌리기
                         t = (Find.TickManager.TicksGame + IdTick) % 50;
 
-                        if (!Core.Ani(ref t, 35))
+                        if (!Core.Ani(ref t, 35, ref nextUpdate))
                             if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, rot))
                                 Core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot);
 
@@ -803,6 +812,10 @@ namespace yayoAni
                                                         Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot);
 
                         break;
+
+                    default:
+                        nextUpdate = int.MaxValue; // Update on a new job
+                        break;
                 }
 
 
@@ -811,7 +824,7 @@ namespace yayoAni
                     case AniType.solemn:
                         t = (Find.TickManager.TicksGame + (IdTick % 25)) % 660;
 
-                        if (!Core.Ani(ref t, 300))
+                        if (!Core.Ani(ref t, 300, ref nextUpdate))
                         {
                             if (!Core.Ani(ref t, 30, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
                                 if (!Core.Ani(ref t, 300, ref oa, 15f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
@@ -826,7 +839,7 @@ namespace yayoAni
                         t = t2 % total;
                         r = Core.Rot90(rot);
                         tr = rot;
-                        if (!Core.Ani(ref t, 20))
+                        if (!Core.Ani(ref t, 20, ref nextUpdate))
                         {
                             if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r))
                                 if (!Core.Ani(ref t, 20, ref oa, 10f, 10f, -1f, ref op, r))
@@ -849,7 +862,7 @@ namespace yayoAni
                                                         }
                                                         else
                                                         {
-                                                            Core.Ani(ref t, 33);
+                                                            Core.Ani(ref t, 33, ref nextUpdate);
                                                         }
                                                 }
                                             }
@@ -929,7 +942,7 @@ namespace yayoAni
                         t = t2 % total;
                         r = Core.Rot90(rot);
                         tr = rot;
-                        if (!Core.Ani(ref t, 20))
+                        if (!Core.Ani(ref t, 20, ref nextUpdate))
                             if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r))
                                 if (!Core.Ani(ref t, 20, ref oa, 10f, 10f, -1f, ref op, r))
                                     if (!Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r))
@@ -958,7 +971,7 @@ namespace yayoAni
                         t = t2 % total;
                         r = Core.Rot90(rot);
                         tr = rot;
-                        if (!Core.Ani(ref t, 20))
+                        if (!Core.Ani(ref t, 20, ref nextUpdate))
                             if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r))
                                 if (!Core.Ani(ref t, 20, ref oa, 10f, 10f, -1f, ref op, r))
                                     if (!Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r))
@@ -996,6 +1009,7 @@ namespace yayoAni
                 op = new Vector3(op.x, 0f, op.z);
                 pdd.posOffset = op;
                 pos += op;
+                pdd.nextUpdateTick = nextUpdate ?? Find.TickManager.TicksGame + Core.settings.updateFrequencyTicks;
             }
             else
             {
@@ -1004,15 +1018,15 @@ namespace yayoAni
         }
 
 
-        public static void Ani1(Pawn pawn, ref Vector3 pos, Rot4 rot)
+        public static void Ani1(Pawn pawn, ref Vector3 pos, Rot4 rot, PawnDrawData pdd)
         {
             try
             {
-                PawnDrawData pdd = DataUtility.GetData(pawn);
                 float oa = 0f;
                 Vector3 op = Vector3.zero;
                 bool changed = false;
                 rot = Rot4.Invalid;
+                int? nextUpdate = null;
 
 
                 if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns || Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
@@ -1024,6 +1038,7 @@ namespace yayoAni
                          (!pawn.RaceProps.Animal || Core.settings.animalJobEnabled))
                 {
                     changed = true;
+                    pdd.jobName = pawn.CurJob.def.defName;
 
                     if (Core.settings.debugMode)
                         if (pawn.IsColonist)
@@ -1034,6 +1049,8 @@ namespace yayoAni
                     pdd.forcedShowBody = false;
 
                     int seed;
+                    int idTickMult;
+                    int idTickDiv;
                     switch (pawn.CurJob.def.defName)
                     {
                         case "Lovin": // 사랑나누기
@@ -1074,7 +1091,14 @@ namespace yayoAni
                             if (pawn.DevelopmentalStage.Newborn() || pawn.DevelopmentalStage.Baby()) break;
 #endif
 
-                            seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
+                            idTickMult = idTick * 5;
+                            idTickDiv = (Find.TickManager.TicksGame + idTickMult) / 2500;
+                            seed = idTickDiv + idTickMult;
+                            nextUpdate = (idTickDiv + 1) * 2500 - idTickMult;
+
+                            if (pawn.RaceProps.Humanlike)
+                                Log.Message($"Pawn: {pawn.Name}, Seed: {seed}, TicksGame: {Find.TickManager.TicksGame}, TickMult: {idTickMult}, TickDiv: {idTickDiv}");
+                            // Log.Message($"Pawn: {pawn.Name} seed: {seed}");
                             rot = Rand.RangeSeeded(0, 4, seed) switch
                             {
                                 0 => Rot4.East,
@@ -1110,6 +1134,7 @@ namespace yayoAni
                         case "VSIE_Skygaze":
                             seed = pawn.CurJob.loadID + idTick * 5;
 
+                            nextUpdate = int.MaxValue;
                             op = Rand.RangeSeeded(0, 3, seed + 100) switch
                             {
                                 0 => new Vector3(Rand.RangeSeeded(-0.1f, 0.1f, seed + 50), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 100)),
@@ -1126,6 +1151,7 @@ namespace yayoAni
                         //     rot = Rot4.Invalid;
                         //     break;
                         case "UseHotTub":
+                            nextUpdate = int.MaxValue;
                             if (Rand.ChanceSeeded(0.5f, pawn.CurJob.loadID + idTick))
                             {
                                 op = new Vector3(0, 0f, 0.5f);
@@ -1136,7 +1162,11 @@ namespace yayoAni
                         case "VFEV_HypothermiaResponse":
                             if (!Core.settings.sleepEnabled) break;
 
-                            seed = ((Find.TickManager.TicksGame + idTick * 5) / 2500 + idTick * 5);
+                            idTickMult = idTick * 5;
+                            idTickDiv = (Find.TickManager.TicksGame + idTickMult) / 2500;
+                            seed = idTickDiv + idTickMult;
+                            nextUpdate = (idTickDiv + 1) * 2500 - idTickMult;
+
                             rot = Rand.RangeSeeded(0, 4, seed) switch
                             {
                                 0 => Rot4.East,
@@ -1152,6 +1182,10 @@ namespace yayoAni
                                 op = new Vector3(Rand.RangeSeeded(-0.2f, 0.2f, seed + 150), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 200));
 
                             break;
+
+                        default:
+                            nextUpdate = int.MaxValue; // Update on a new job
+                            break;
                     }
                 }
 
@@ -1162,6 +1196,7 @@ namespace yayoAni
                     op = new Vector3(op.x, 0f, op.z);
                     pdd.posOffset = op;
                     pos += op;
+                    pdd.nextUpdateTick = nextUpdate ?? Find.TickManager.TicksGame + Core.settings.updateFrequencyTicks;
                 }
                 else
                 {
@@ -1185,8 +1220,8 @@ namespace yayoAni
         [UsedImplicitly]
         public static void Prefix(PawnRenderer __instance, Pawn ___pawn, ref Vector3 drawLoc, Rot4? rotOverride = null, bool neverAimWeapon = false)
         {
-            DataUtility.GetData(___pawn);
-            Yayo.CheckAni(___pawn, ref drawLoc, rotOverride ?? ___pawn.Rotation);
+            var pdd = DataUtility.GetData(___pawn);
+            Yayo.CheckAni(___pawn, ref drawLoc, rotOverride ?? ___pawn.Rotation, pdd);
         }
     }
 

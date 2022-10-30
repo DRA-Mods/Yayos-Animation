@@ -9,6 +9,8 @@ namespace yayoAni.Data
         public Vector3 posOffset = Vector3.zero;
         public Rot4? fixedRot = null;
         public bool forcedShowBody = false;
+        public int nextUpdateTick = int.MinValue;
+        public string jobName = null;
 
         public void Reset()
         {
@@ -16,6 +18,8 @@ namespace yayoAni.Data
             posOffset = Vector3.zero;
             fixedRot = null;
             forcedShowBody = false;
+            nextUpdateTick = int.MinValue;
+            jobName = null;
         }
     }
 }

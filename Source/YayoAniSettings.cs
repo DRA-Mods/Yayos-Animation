@@ -7,6 +7,7 @@ namespace yayoAni
     public class YayoAniSettings : ModSettings
     {
         public bool onlyPlayerPawns = false;
+        public int updateFrequencyTicks = 1;
         public CameraZoomRange maximumZoomLevel = CameraZoomRange.Furthest;
 
         public bool walkEnabled = true;
@@ -38,7 +39,9 @@ namespace yayoAni
             base.ExposeData();
 
             Scribe_Values.Look(ref onlyPlayerPawns, "OnlyPlayer", false);
+            Scribe_Values.Look(ref updateFrequencyTicks, "UpdateFrequencyTicks", 1);
             Scribe_Values.Look(ref maximumZoomLevel, "MaximumZoomLevel", CameraZoomRange.Furthest);
+            updateFrequencyTicks = Mathf.Clamp(updateFrequencyTicks, 1, 10);
 
             Scribe_Values.Look(ref walkEnabled, "WalkAnim", true);
             Scribe_Values.Look(ref walkSpeed, "WalkSpeed", 0.8f);
@@ -69,11 +72,14 @@ namespace yayoAni
 
         public void DoSettingsWindowContents(Rect inRect)
         {
+            string buffer;
             var listing = new Listing_Standard();
             listing.Begin(inRect);
             listing.ColumnWidth = 400f;
 
             listing.CheckboxLabeled("YayoAnim_OnlyPlayerPawns".Translate(), ref onlyPlayerPawns, "YayoAnim_OnlyPlayerPawnsTooltip".Translate());
+            buffer = null;
+            listing.TextFieldNumericLabeled("YayoAnim_UpdateFrequency".Translate(), ref updateFrequencyTicks, ref buffer, 1, 10);
             if (listing.ButtonTextTooltip("YayoAnim_MaximumZoomLevel".Translate($"YayoAnim_MaximumZoomLevel_{maximumZoomLevel}".Translate()), "YayoAnim_MaximumZoomLevelTooltip".Translate()))
             {
                 FloatMenuUtility.MakeMenu(
@@ -85,7 +91,7 @@ namespace yayoAni
             listing.Gap();
 
             listing.CheckboxLabeled("YayoAnim_Walk".Translate(), ref walkEnabled);
-            string buffer = null;
+            buffer = null;
             listing.TextFieldNumericLabeled("YayoAnim_WalkAnimSpeed".Translate(), ref walkSpeed, ref buffer, 0.1f, 10f);
             buffer = null;
             listing.TextFieldNumericLabeled("YayoAnim_WalkAnimAngle".Translate(), ref walkAngle, ref buffer, 0.1f, 10f);
@@ -138,6 +144,7 @@ namespace yayoAni
         private void ResetToDefault()
         {
             onlyPlayerPawns = false;
+            updateFrequencyTicks = 1;
             maximumZoomLevel = CameraZoomRange.Furthest;
 
             walkEnabled = true;

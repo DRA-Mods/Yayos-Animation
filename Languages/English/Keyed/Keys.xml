@@ -2,6 +2,7 @@
 <LanguageData>
     <YayoAnim_OnlyPlayerPawns>Only player pawn animations</YayoAnim_OnlyPlayerPawns>
     <YayoAnim_OnlyPlayerPawnsTooltip>Prevents any pawn (be it human, animal, or mechanoid) from having any animations unless they're from player's faction.</YayoAnim_OnlyPlayerPawnsTooltip>
+    <YayoAnim_UpdateFrequency>Update frequency (in ticks)</YayoAnim_UpdateFrequency>
     <YayoAnim_MaximumZoomLevel>Maximum zoom level: {0}</YayoAnim_MaximumZoomLevel>
     <YayoAnim_MaximumZoomLevelTooltip>Determines maximum zoom level at which the animations will play. If you zoom beyond it, the animations will stop playing.</YayoAnim_MaximumZoomLevelTooltip>
     <YayoAnim_MaximumZoomLevel_Closest>Closest</YayoAnim_MaximumZoomLevel_Closest>

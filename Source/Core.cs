@@ -231,7 +231,7 @@ namespace yayoAni
             return Ani(ref tick, duration, ref angle, 0f, 0f, 0f, ref pos, s_pos, t_pos, rot, tween);
         }
 
-        public static bool Ani(ref int tick, int duration)
+        public static bool Ani(ref int tick, int duration, ref int? nextUpdateTick)
         {
             if (tick >= duration)
             {
@@ -239,6 +239,7 @@ namespace yayoAni
                 return false;
             }
 
+            nextUpdateTick = Find.TickManager.TicksGame + (tick - duration);
             return true;
         }
 
