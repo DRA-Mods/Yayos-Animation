@@ -234,7 +234,11 @@ namespace yayoAni
         {
             if (pawn.Dead)
                 return;
-            if (pdd.jobName != null && pdd.jobName == pawn.CurJob?.def.defName && Find.TickManager.TicksGame < pdd.nextUpdateTick && (pawn.pather == null || pawn.pather.MovingNow == false))
+            if (pdd.jobName != null && // Make sure we've cached some job before cancelling
+                pdd.jobName == pawn.CurJob?.def.defName && // Check if the current pawn's job is the same as cached
+                Find.TickManager.TicksGame < pdd.nextUpdateTick && // Check if it's the proper tick to update
+                (pawn.pather == null || pawn.pather.MovingNow == false) && // Make sure pawn isn't moving
+                (pawn.stances?.curStance is not Stance_Busy busy || busy.neverAimWeapon || !busy.focusTarg.IsValid)) // Make sure the pawn isn't aiming at something
             {
                 pos += pdd.posOffset;
                 return;
