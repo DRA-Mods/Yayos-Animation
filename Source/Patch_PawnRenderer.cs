@@ -535,7 +535,7 @@ namespace yayoAni
             if (Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
                 return true;
 
-            Pawn pawn = __instance.pawn;
+            var pawn = __instance.pawn;
 
             if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns)
                 return true;
@@ -546,17 +546,17 @@ namespace yayoAni
             if (pawn.RaceProps.Animal && !Core.settings.animalCombatEnabled)
                 return true;
 
-            Rot4 pawnRotation = pawn.Rotation;
+            var pawnRotation = pawn.Rotation;
 
-            float num = aimAngle - 90f;
+            var num = aimAngle - 90f;
             Mesh mesh;
 
-            bool isMeleeAtk = false;
-            bool flip = false;
+            var isMeleeAtk = false;
+            var flip = false;
 
-            Stance_Busy stance_Busy = pawn.stances.curStance as Stance_Busy;
+            var stance_Busy = pawn.stances.curStance as Stance_Busy;
 
-            bool flag = !(pawn.CurJob != null && pawn.CurJob.def.neverShowWeapon);
+            var flag = !(pawn.CurJob != null && pawn.CurJob.def.neverShowWeapon);
 
             if (flag && stance_Busy is { neverAimWeapon: false, focusTarg: { IsValid: true } })
             {
@@ -608,13 +608,13 @@ namespace yayoAni
                 }
             }
 
-            bool isOversized = false;
-            bool isDual = false;
-            Vector3 oversizedOffset = Vector3.zero;
+            var isOversized = false;
+            var isDual = false;
+            var oversizedOffset = Vector3.zero;
 
             if (eq is ThingWithComps eqComps)
             {
-                CompEquippable compEquippable = eqComps.GetComp<CompEquippable>();
+                var compEquippable = eqComps.GetComp<CompEquippable>();
                 if (compEquippable != null)
                 {
                     EquipmentUtility.Recoil(eq.def, EquipmentUtility.GetRecoilVerb(compEquippable.AllVerbs), out var drawOffset, out var angleOffset, aimAngle);
@@ -673,14 +673,14 @@ namespace yayoAni
             //}
             //Graphics.DrawMesh(mesh, drawLoc, Quaternion.AngleAxis(num, Vector3.up), matSingle, 0);
 
-            Material mat = eq.Graphic is Graphic_StackCount graphicStackCount
+            Vector3 size = new(eq.def.graphicData.drawSize.x, 1f, eq.def.graphicData.drawSize.y);
+            var mat = eq.Graphic is Graphic_StackCount graphicStackCount
                 ? graphicStackCount.SubGraphicForStackCount(1, eq.def).MatSingleFor(eq)
                 : eq.Graphic.MatSingleFor(eq);
 
             if (isOversized)
             {
-                Vector3 size = new(eq.def.graphicData.drawSize.x, 1f, eq.def.graphicData.drawSize.y);
-                Matrix4x4 matrix4x = Matrix4x4.TRS(drawLoc + oversizedOffset, Quaternion.AngleAxis(num, Vector3.up), size);
+                var matrix4x = Matrix4x4.TRS(drawLoc + oversizedOffset, Quaternion.AngleAxis(num, Vector3.up), size);
 
                 Graphics.DrawMesh(
                     matrix: matrix4x,
@@ -707,19 +707,20 @@ namespace yayoAni
 
                     matrix4x.SetTRS(drawLoc + oversizedOffset, Quaternion.AngleAxis(num, Vector3.up), size);
                     Graphics.DrawMesh(
+                        mesh: mesh,
                         matrix: matrix4x,
                         material: mat,
-                        mesh: mesh,
                         layer: 0);
                 }
             }
             else
             {
+                var matrix4x = Matrix4x4.TRS(drawLoc, Quaternion.AngleAxis(num, Vector3.up), size);
+
                 Graphics.DrawMesh(
-                    material: mat,
                     mesh: mesh,
-                    position: drawLoc,
-                    rotation: Quaternion.AngleAxis(num, Vector3.up),
+                    matrix: matrix4x,
+                    material: mat,
                     layer: 0);
             }
 
