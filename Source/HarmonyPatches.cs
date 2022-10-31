@@ -323,6 +323,7 @@ namespace yayoAni
                     // do something
                     case "UseArtifact":
                     case "UseNeurotrainer":
+                    case "LinkPsylinkable":
                     case "UseStylingStation":
                     case "UseStylingStationAutomatic":
                     case "DyeHair":
@@ -398,6 +399,12 @@ namespace yayoAni
                     case "PaintFloor":
                     case "RemovePaintBuilding":
                     case "RemovePaintFloor":
+                    case "InstallMechlink":
+                    case "RemoveMechlink":
+                    case "DisassembleMech":
+                    case "CreateXenogerm":
+                    case "ReadDatacore":
+                    case "ClearPollution":
 #endif
                     // Dubs Paint Shop
                     case "PaintThings":
@@ -541,6 +548,7 @@ namespace yayoAni
                     case "ViewArt":
                     case "Meditate":
                     case "Pray":
+                    case "Reign": // Meditate royally
                     // Dubs Bad Hygiene
                     case "haveWildPoo":
                     case "UseToilet":
