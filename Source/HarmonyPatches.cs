@@ -1100,9 +1100,6 @@ namespace yayoAni
                             seed = idTickDiv + idTickMult;
                             nextUpdate = (idTickDiv + 1) * 2500 - idTickMult;
 
-                            if (pawn.RaceProps.Humanlike)
-                                Log.Message($"Pawn: {pawn.Name}, Seed: {seed}, TicksGame: {Find.TickManager.TicksGame}, TickMult: {idTickMult}, TickDiv: {idTickDiv}");
-                            // Log.Message($"Pawn: {pawn.Name} seed: {seed}");
                             rot = Rand.RangeSeeded(0, 4, seed) switch
                             {
                                 0 => Rot4.East,
