@@ -108,8 +108,8 @@ namespace yayoAni
                 var arInsert = new List<CodeInstruction>()
                 {
                     new(OpCodes.Ldarg_0),
-                    new(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), "pawn")),
-                    new(OpCodes.Call, AccessTools.Method(typeof(Yayo), "DrawMeshNowOrLater"))
+                    new(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), nameof(PawnRenderer.pawn))),
+                    new(OpCodes.Call, AccessTools.Method(typeof(Yayo), nameof(Yayo.DrawMeshNowOrLater)))
                 };
                 arCi.InsertRange(tmpPoint, arInsert);
 
@@ -119,8 +119,8 @@ namespace yayoAni
                 arInsert = new List<CodeInstruction>()
                 {
                     new(OpCodes.Ldarg_0),
-                    new(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), "pawn")),
-                    new(OpCodes.Call, AccessTools.Method(typeof(Yayo), "GetBlitMeshUpdatedFrame"))
+                    new(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), nameof(PawnRenderer.pawn))),
+                    new(OpCodes.Call, AccessTools.Method(typeof(Yayo), nameof(Yayo.GetBlitMeshUpdatedFrame)))
                 };
                 arCi.InsertRange(tmpPoint, arInsert);
 
