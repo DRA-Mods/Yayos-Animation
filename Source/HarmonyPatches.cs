@@ -1258,6 +1258,7 @@ namespace yayoAni
         public static bool skipPatch = false;
 
         [HarmonyPriority(0)]
+        [HarmonyBefore("rimworld.Nals.FacialAnimation")]
         [UsedImplicitly]
         public static void Prefix(PawnRenderer __instance, ref Vector3 rootLoc, ref float angle, bool renderBody, ref Rot4 bodyFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags, Pawn ___pawn)
         {
