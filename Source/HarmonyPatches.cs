@@ -7,6 +7,7 @@ using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using yayoAni.Compat;
 using yayoAni.Data;
 
 namespace yayoAni
@@ -270,30 +271,46 @@ namespace yayoAni
             float oa = 0f;
             Vector3 op = Vector3.zero;
             int? nextUpdate = null;
+            var defName = pawn.CurJob?.def.defName;
+            var mounted = defName is "Mounted";
 
-            if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns || Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
+            if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns || 
+                Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel ||
+                Core.usingGiddyUp && pawn.HasMount())
             {
                 // Ignored
             }
-            else if (pawn.pather is { MovingNow: true })
+            else if (pawn.pather is { MovingNow: true } || mounted)
             {
-                if (Core.settings.walkEnabled &&
-                    (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidWalkEnabled) &&
-                    (!pawn.RaceProps.Animal || Core.settings.animalWalkEnabled))
+                if (Core.settings.walkEnabled)
                 {
-                    changed = true;
-                    int IdTick = pawn.thingIDNumber * 20;
+                    var targetPawn = pawn;
+                    if (mounted && Core.settings.animalWalkEnabled)
+                    {
+                        var rider = pawn.MountingPawn();
+                        if (rider is { pather.MovingNow: true })
+                            targetPawn = rider;
+                        else
+                            targetPawn = null;
+                    }
 
-                    float walkSpeed = Core.settings.walkSpeed;
-                    if (pawn.CurJob?.def.defName is "Hunt" or "GR_AnimalHuntJob")
-                        walkSpeed *= 0.6f;
+                    if (targetPawn != null &&
+                        (!targetPawn.RaceProps.IsMechanoid || Core.settings.mechanoidWalkEnabled) &&
+                        (!targetPawn.RaceProps.Animal || Core.settings.animalWalkEnabled))
+                    {
+                        changed = true;
+                        int IdTick = targetPawn.thingIDNumber * 20;
+                        float walkSpeed = Core.settings.walkSpeed;
+                        if (defName is "Hunt" or "GR_AnimalHuntJob" || mounted)
+                            walkSpeed *= 0.6f;
 
-                    float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f * walkSpeed / pawn.pather.nextCellCostTotal);
-                    oa = wiggle * 9f * Core.settings.walkAngle;
-                    op = new Vector3(wiggle * 0.025f, 0f, 0f);
+                        float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f * walkSpeed / targetPawn.pather.nextCellCostTotal);
+                        oa = wiggle * 9f * Core.settings.walkAngle;
+                        op = new Vector3(wiggle * 0.025f, 0f, 0f);
+                    }
                 }
             }
-            else if (Core.settings.anyJobEnabled && pawn.CurJob != null &&
+            else if (Core.settings.anyJobEnabled && defName != null &&
                      (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidJobEnabled) &&
                      (!pawn.RaceProps.Animal || Core.settings.animalJobEnabled))
             {

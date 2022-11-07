@@ -32,6 +32,7 @@ namespace yayoAni
         public static bool usingDualWield = false;
         public static bool usingHar = false;
         public static bool usingOversizedWeapons = false;
+        public static bool usingGiddyUp = false;
         public static bool harPatchActive = false;
 
         static Core()
@@ -43,11 +44,15 @@ namespace yayoAni
                     case "roolo.dualwield":
                         usingDualWield = true;
                         Compat.DualWield.Init();
-                        Log.Message("# DualWield detected");
+                        Log.Message("[Yayo's Animation] - DualWield detected");
                         break;
                     case "erdelf.humanoidalienraces":
                         usingHar = true;
-                        Log.Message("# HumanoidAlienRaces detected");
+                        Log.Message("[Yayo's Animation] - HumanoidAlienRaces detected");
+                        break;
+                    case "roolo.giddyupcore":
+                        usingGiddyUp = true;
+                        Log.Message("[Yayo's Animation] - Giddy-up! Core detected");
                         break;
                 }
             }
