@@ -578,7 +578,8 @@ namespace yayoAni
                 drawLoc += drawOffset;
                 currentAngle += angleOffset;
             }
-            compOversized?.HandleOversizedDrawing(ref drawLoc, pawnRotation, ref currentAngle, pawn, flip);
+            if (Core.settings.applyOversizedChanges)
+                compOversized?.HandleOversizedDrawing(ref drawLoc, pawnRotation, ref currentAngle, pawn, flip);
 
             currentAngle %= 360f;
 

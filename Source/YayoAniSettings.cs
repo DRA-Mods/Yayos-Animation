@@ -31,6 +31,7 @@ namespace yayoAni
         public bool animalCombatEnabled = true;
 
         public bool applyHarPatch = true;
+        public bool applyOversizedChanges = true;
 
         public bool debugMode = false;
 
@@ -66,6 +67,7 @@ namespace yayoAni
             Scribe_Values.Look(ref animalWalkEnabled, "AnimalCombat", true);
             
             Scribe_Values.Look(ref applyHarPatch, "ApplyHarPatch", true);
+            Scribe_Values.Look(ref applyOversizedChanges, "applyOversizedChanges", true);
 
             Scribe_Values.Look(ref debugMode, "Debug", false);
         }
@@ -128,6 +130,7 @@ namespace yayoAni
 
             listing.CheckboxLabeled("YayoAnim_ApplyHarPatch".Translate(), ref applyHarPatch, "YayoAnim_ApplyHarPatchTooltip");
             Core.SetHarPatch(applyHarPatch);
+            listing.CheckboxLabeled("YayoAnim_ApplyOversizedChanges".Translate(), ref applyOversizedChanges, "YayoAnim_ApplyOversizedChangesTooltip");
             
             listing.Gap();
 
@@ -169,6 +172,7 @@ namespace yayoAni
 
             applyHarPatch = true;
             Core.SetHarPatch(applyHarPatch);
+            applyOversizedChanges = true;
 
             debugMode = false;
         }

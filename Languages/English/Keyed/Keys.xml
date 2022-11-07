@@ -34,10 +34,12 @@
     <YayoAnim_RequiresWalkTooltip>Requires walking animations to be enabled as well</YayoAnim_RequiresWalkTooltip>
     <YayoAnim_RequiresJobTooltip>Requires all work animations to be anbled as well</YayoAnim_RequiresJobTooltip>
     <YayoAnim_RequiresCombatTooltip>Requires combat animations to be enabled as well</YayoAnim_RequiresCombatTooltip>
-    
+
     <YayoAnim_ApplyHarPatch>Apply Humanoid Alien Races patch</YayoAnim_ApplyHarPatch>
     <YayoAnim_ApplyHarPatchTooltip>This should generally be kept on as it fixes issues with HAR enabled - disable only if this causes issues or negatively impacts performance</YayoAnim_ApplyHarPatchTooltip>
-    
+    <YayoAnim_ApplyOversizedChanges>Apply drawing changes from Oversized Weapons</YayoAnim_ApplyOversizedChanges>
+    <YayoAnim_ApplyOversizedChangesTooltip>Oversized Weapons can have additional data for things like weapon rotation, position offset, and others. Disabling this option disables those from being applied (with exception of dual-wield and projectile deflection).</YayoAnim_ApplyOversizedChangesTooltip>
+
     <YayoAnim_DebugMode>Debug mode</YayoAnim_DebugMode>
 
     <YayoAnim_ResetToDefault>Reset to default</YayoAnim_ResetToDefault>
