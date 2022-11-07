@@ -9,7 +9,7 @@
     <YayoAnim_MaximumZoomLevel_Close>Close</YayoAnim_MaximumZoomLevel_Close>
     <YayoAnim_MaximumZoomLevel_Middle>Middle</YayoAnim_MaximumZoomLevel_Middle>
     <YayoAnim_MaximumZoomLevel_Far>Far</YayoAnim_MaximumZoomLevel_Far>
-    <YayoAnim_MaximumZoomLevel_Furthest>Furthest</YayoAnim_MaximumZoomLevel_Furthest>
+    <YayoAnim_MaximumZoomLevel_Furthest>Any zoom level</YayoAnim_MaximumZoomLevel_Furthest>
 
     <YayoAnim_Walk>Walking animations</YayoAnim_Walk>
     <YayoAnim_WalkAnimSpeed>Walking motion speed</YayoAnim_WalkAnimSpeed>
