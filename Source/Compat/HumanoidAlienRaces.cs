@@ -3,7 +3,7 @@ using AlienRace;
 using UnityEngine;
 using Verse;
 
-namespace yayoAni
+namespace yayoAni.Compat
 {
     public static class HumanoidAlienRaces
     {

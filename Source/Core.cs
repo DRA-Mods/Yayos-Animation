@@ -5,6 +5,7 @@ using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using yayoAni.Compat;
 
 namespace yayoAni
 {
@@ -39,7 +40,7 @@ namespace yayoAni
                 {
                     case "roolo.dualwield":
                         usingDualWield = true;
-                        DualWield.Init();
+                        Compat.DualWield.Init();
                         Log.Message("# DualWield detected");
                         break;
                     case "erdelf.humanoidalienraces":

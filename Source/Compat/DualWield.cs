@@ -5,7 +5,7 @@ using RimWorld;
 using RimWorld.Planet;
 using Verse;
 
-namespace yayoAni
+namespace yayoAni.Compat
 {
     public static class DualWield
     {

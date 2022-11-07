@@ -2,6 +2,7 @@
 using RimWorld;
 using UnityEngine;
 using Verse;
+using yayoAni.Compat;
 
 namespace yayoAni
 {
