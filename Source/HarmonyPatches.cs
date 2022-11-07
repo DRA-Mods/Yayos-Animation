@@ -260,6 +260,7 @@ namespace yayoAni
             social,
             smash,
             idle,
+            wiggleGentle,
             gameCeremony,
             crowd,
             solemn
@@ -409,6 +410,7 @@ namespace yayoAni
                     case "ClearSnow":
                     case "BuildSnowman":
                     case "HaulToContainer": // Bury pawn
+                    case "PrepareSkylantern":
 #if BIOTECH_PLUS
                     case "PaintBuilding":
                     case "PaintFloor":
@@ -420,6 +422,8 @@ namespace yayoAni
                     case "CreateXenogerm":
                     case "ReadDatacore":
                     case "ClearPollution":
+                    case "RepairMech":
+                    case "Floordrawing":
 #endif
                     // Dubs Paint Shop
                     case "PaintThings":
@@ -519,6 +523,14 @@ namespace yayoAni
                     case "VisitSickPawn":
                     case "SocialRelax":
                     case "WatchTelevision":
+#if BIOTECH_PLUS
+                    case "Radiotalking":
+                    case "Workwatching":
+                    case "Lessontaking":
+                    case "Lessongiving":
+                    case "PlayStatic":
+                    case "PlayToys":
+#endif
                     // Dubs Bad Hygiene
                     case "WatchWashingMachine":
                     case "DBHGoSwimming":
@@ -563,6 +575,7 @@ namespace yayoAni
                     case "ViewArt":
                     case "Meditate":
                     case "Pray":
+                    case "MeditatePray": // Meditation for ideology with a diety
                     case "Reign": // Meditate royally
                     // Dubs Bad Hygiene
                     case "haveWildPoo":
@@ -575,6 +588,13 @@ namespace yayoAni
                     case "VSIE_StandAndHearVenting": // Don't do any movements that could be interpreted as excitement, etc.
                         aniType = AniType.idle;
                         break;
+
+#if BIOTECH_PLUS
+                    case "BottleFeedBaby":
+                    case "Breastfeed":
+                        aniType = AniType.wiggleGentle;
+                        break;
+#endif
 
 
                     case "Vomit":
@@ -798,6 +818,7 @@ namespace yayoAni
 
 
                     case "CutPlant": // 식물 베기
+                    case "CutPlantDesignated":
                     case "Harvest": // 자동 수확
                     case "HarvestDesignated": // 수동 수확
                         if (pawn.CurJob.targetA.Thing?.def.plant?.IsTree != null && pawn.CurJob.targetA.Thing.def.plant.IsTree)
@@ -949,6 +970,14 @@ namespace yayoAni
                                             if (!Core.Ani(ref t, 50, ref oa, -f, f, -1f, ref op, r))
                                                 if (!Core.Ani(ref t, 50, ref oa, f, -f, -1f, ref op, r))
                                                     Core.Ani(ref t, 25, ref oa, -f, 0f, -1f, ref op, r);
+                        break;
+
+                    case AniType.wiggleGentle:
+                        t = (Find.TickManager.TicksGame + IdTick * 13) % 200;
+                        f = 2.5f;
+                        r = Core.Rot90(rot);
+                        if (!Core.Ani(ref t, 100, ref oa, -f, f, -1f, ref op, r))
+                            Core.Ani(ref t, 100, ref oa, f, -f, -1f, ref op, r);
                         break;
 
                     case AniType.smash:
@@ -1155,6 +1184,9 @@ namespace yayoAni
                             break;
 
                         case "Skygaze":
+#if BIOTECH_PLUS
+                        case "Skydreaming":
+#endif
                         case "VSIE_Skygaze":
                             seed = pawn.CurJob.loadID + idTick * 5;
 
