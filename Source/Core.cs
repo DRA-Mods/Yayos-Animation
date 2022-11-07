@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CompOversizedWeapon;
 using HarmonyLib;
 using RimWorld;
 using UnityEngine;
@@ -30,7 +31,8 @@ namespace yayoAni
 
         public static bool usingDualWield = false;
         public static bool usingHar = false;
-        private static bool harPatchActive = false;
+        public static bool usingOversizedWeapons = false;
+        public static bool harPatchActive = false;
 
         static Core()
         {
@@ -48,6 +50,42 @@ namespace yayoAni
                         Log.Message("# HumanoidAlienRaces detected");
                         break;
                 }
+            }
+
+            try
+            {
+                // Basically a check to see if oversized weapons are active, and aren't an outdated version
+                // which (despite me checking the code with decompiler) are causing errors when accessing fields in props.
+                // Need to put it into a method other than this, as otherwise the static constructor will error.
+                bool Temp()
+                {
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    return typeof(CompOversizedWeapon.CompOversizedWeapon) != null && 
+                           typeof(CompProperties_OversizedWeapon) != null &&
+                           new CompOversizedWeapon.CompOversizedWeapon().compDeflectorIsAnimatingNow != null &&
+                           // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                           new CompProperties_OversizedWeapon
+                           {
+                               northOffset = Vector3.zero,
+                               eastOffset = Vector3.zero,
+                               southOffset = Vector3.zero,
+                               westOffset = Vector3.zero,
+                               verticalFlipOutsideCombat = true,
+                               verticalFlipNorth = true,
+                               isDualWeapon = true,
+                               angleAdjustmentEast = 1,
+                               angleAdjustmentWest = 1,
+                               angleAdjustmentNorth = 1,
+                               angleAdjustmentSouth = 1,
+                           } != null;
+                }
+
+                usingOversizedWeapons = Temp();
+            }
+            catch (TypeLoadException)
+            {
+                usingOversizedWeapons = false;
+                Log.Message("No oversized weapons.");
             }
         }
 
