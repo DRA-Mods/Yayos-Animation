@@ -128,9 +128,9 @@ namespace yayoAni
 
             listing.Gap();
 
-            listing.CheckboxLabeled("YayoAnim_ApplyHarPatch".Translate(), ref applyHarPatch, "YayoAnim_ApplyHarPatchTooltip");
+            listing.CheckboxLabeled("YayoAnim_ApplyHarPatch".Translate(), ref applyHarPatch, "YayoAnim_ApplyHarPatchTooltip".Translate());
             Core.SetHarPatch(applyHarPatch);
-            listing.CheckboxLabeled("YayoAnim_ApplyOversizedChanges".Translate(), ref applyOversizedChanges, "YayoAnim_ApplyOversizedChangesTooltip");
+            listing.CheckboxLabeled("YayoAnim_ApplyOversizedChanges".Translate(), ref applyOversizedChanges, "YayoAnim_ApplyOversizedChangesTooltip".Translate());
             
             listing.Gap();
 
