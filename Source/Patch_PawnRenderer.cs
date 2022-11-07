@@ -1,6 +1,4 @@
-﻿using System;
-using HarmonyLib;
-using JetBrains.Annotations;
+﻿using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -13,7 +11,6 @@ namespace yayoAni
     {
         [HarmonyPriority(0)]
         [HarmonyPrefix]
-        [UsedImplicitly]
         private static bool Prefix(PawnRenderer __instance, Vector3 rootLoc)
         {
             if (!Core.settings.combatEnabled)
@@ -526,7 +523,6 @@ namespace yayoAni
 
         [HarmonyPriority(9999)]
         [HarmonyPrefix]
-        [UsedImplicitly]
         private static bool Prefix(PawnRenderer __instance, Thing eq, Vector3 drawLoc, float aimAngle)
         {
             if (!Core.settings.combatEnabled)

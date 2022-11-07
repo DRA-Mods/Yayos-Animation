@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
-using JetBrains.Annotations;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -70,7 +69,6 @@ namespace yayoAni
         }
 
 
-        [UsedImplicitly]
         private static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> instructions)
         {
             List<CodeInstruction> arCi = instructions.ToList();
@@ -1226,7 +1224,6 @@ namespace yayoAni
     public class Patch_PawnRenderer_RenderPawnAt
     {
         [HarmonyPriority(0)]
-        [UsedImplicitly]
         public static void Prefix(PawnRenderer __instance, Pawn ___pawn, ref Vector3 drawLoc, Rot4? rotOverride = null, bool neverAimWeapon = false)
         {
             var pdd = DataUtility.GetData(___pawn);
@@ -1239,7 +1236,6 @@ namespace yayoAni
     public class Patch_PawnRenderer_DrawDynamicParts
     {
         [HarmonyPriority(0)]
-        [UsedImplicitly]
         public static void Prefix(PawnRenderer __instance, ref Vector3 rootLoc, ref float angle, ref Rot4 pawnRotation, PawnRenderFlags flags, Pawn ___pawn)
         {
             if (___pawn.GetPosture() == PawnPosture.Standing)
@@ -1259,7 +1255,6 @@ namespace yayoAni
 
         [HarmonyPriority(0)]
         [HarmonyBefore("rimworld.Nals.FacialAnimation")]
-        [UsedImplicitly]
         public static void Prefix(PawnRenderer __instance, ref Vector3 rootLoc, ref float angle, bool renderBody, ref Rot4 bodyFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags, Pawn ___pawn)
         {
             if (skipPatch)
@@ -1282,7 +1277,6 @@ namespace yayoAni
     public class Patch_PawnRenderer_RenderCache
     {
         [HarmonyPriority(0)]
-        [UsedImplicitly]
         public static bool Prefix(PawnRenderer __instance, Pawn ___pawn, Dictionary<Apparel, (Color, bool)> ___tmpOriginalColors, Rot4 rotation, ref float angle, Vector3 positionOffset,
             bool renderHead, bool renderBody, bool portrait, bool renderHeadgear, bool renderClothes, Dictionary<Apparel, Color> overrideApparelColor = null, Color? overrideHairColor = null,
             bool stylingStation = false)
@@ -1385,7 +1379,6 @@ namespace yayoAni
     internal class Patch_PawnRenderer_GetBodyPos
     {
         [HarmonyPostfix]
-        [UsedImplicitly]
         public static void Postfix(PawnRenderer __instance, ref Vector3 __result, Vector3 drawLoc, ref bool showBody, Pawn ___pawn)
         {
             var pdd = DataUtility.GetData(___pawn);
@@ -1399,7 +1392,6 @@ namespace yayoAni
     internal class Patch_PawnRenderer_BodyAngle
     {
         [HarmonyPostfix]
-        [UsedImplicitly]
         public static void Postfix(PawnRenderer __instance, ref float __result, Pawn ___pawn)
         {
             var pdd = DataUtility.GetData(___pawn);
@@ -1413,7 +1405,6 @@ namespace yayoAni
     internal class Patch_PawnRenderer_LayingFacing
     {
         [HarmonyPostfix]
-        [UsedImplicitly]
         public static void Postfix(PawnRenderer __instance, ref Rot4 __result, Pawn ___pawn)
         {
             var pdd = DataUtility.GetData(___pawn);
