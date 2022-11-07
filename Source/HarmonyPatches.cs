@@ -494,7 +494,10 @@ namespace yayoAni
                     // Vanilla Factions Vikings
                     case "VFEV_TakeHoneyOutOfApiary":
                     case "VFEV_TendToApiary":
+#if IDEOLOGY
+                    // Removed in 1.4
                     case "VFEV_ChangeFacepaint":
+#endif
                     // Vanilla Factions Medieval
                     case "VFEM_DigTerrain":
                     case "VFEM_FillTerrain":
