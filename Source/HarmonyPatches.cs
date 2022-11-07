@@ -622,7 +622,7 @@ namespace yayoAni
                         {
                             if (!Core.Ani(ref t, 20, ref oa, 0f, 5f, -1f, ref op, Vector3.zero, new Vector3(0.05f, 0f, 0f), rot))
                                 if (!Core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0f), new Vector3(0.05f, 0f, 0f), rot))
-                                    if (!Core.Ani(ref t, 50, ref oa, 10, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0f), new Vector3(0.05f, 0f, 0f), rot))
+                                    if (!Core.Ani(ref t, 50, ref nextUpdate, ref oa, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0f), rot))
                                         Core.Ani(ref t, 40, ref oa, 10f, 0f, -1f, ref op, new Vector3(0.05f, 0f, 0f), Vector3.zero, rot);
                         }
 
@@ -849,8 +849,8 @@ namespace yayoAni
                     case "VSIE_HaveMealTogether":
                         t = (Find.TickManager.TicksGame + IdTick) % 150;
                         f = 0.03f;
-                        if (!Core.Ani(ref t, 10, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, new Vector3(0f, 0f, 0f), rot))
-                            if (!Core.Ani(ref t, 10, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, new Vector3(0f, 0f, 0f), rot))
+                        if (!Core.Ani(ref t, 10, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
+                            if (!Core.Ani(ref t, 10, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
                                 if (!Core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, Vector3.zero, new Vector3(0f, 0f, f), rot))
                                     if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, f), new Vector3(0f, 0f, -f), rot))
                                         if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot))
@@ -875,7 +875,7 @@ namespace yayoAni
                         if (!Core.Ani(ref t, 300, ref nextUpdate))
                         {
                             if (!Core.Ani(ref t, 30, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
-                                if (!Core.Ani(ref t, 300, ref oa, 15f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
+                                if (!Core.Ani(ref t, 300, ref nextUpdate, ref oa, 15f, -1f, ref op, Vector3.zero, rot))
                                     Core.Ani(ref t, 30, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot);
                         }
 
@@ -890,17 +890,17 @@ namespace yayoAni
                         if (!Core.Ani(ref t, 20, ref nextUpdate))
                         {
                             if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r))
-                                if (!Core.Ani(ref t, 20, ref oa, 10f, 10f, -1f, ref op, r))
+                                if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 10f, -1f, ref op, r))
                                     if (!Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r))
-                                        if (!Core.Ani(ref t, 20, ref oa, -10f, -10f, -1f, ref op, r))
+                                        if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, -10f, -1f, ref op, r))
                                         {
                                             if (!Core.Ani(ref t, 5, ref oa, -10f, 0f, -1f, ref op, r))
                                             {
                                                 tr = t2 >= total ? Core.Rot90(rot) : Core.Rot90b(rot);
-                                                if (!Core.Ani(ref t, 15, ref oa, 0f, 0f, -1f, ref op, rot)) // 85
+                                                if (!Core.Ani(ref t, 15, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 85
                                                 {
                                                     tr = rot;
-                                                    if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, rot)) // 105
+                                                    if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 105
 
 
                                                         if (t2 >= total)
@@ -935,20 +935,20 @@ namespace yayoAni
                                     if (!Core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.60f), new Vector3(0f, 0f, 0f), rot, Core.tweenType.line))
                                     {
                                         rot = Core.Rot90b(rot);
-                                        if (!Core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
+                                        if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot))
                                         {
                                             rot = Core.Rot90b(rot);
-                                            if (!Core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
+                                            if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot))
 
                                                 if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.60f), rot))
                                                     if (!Core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.60f), new Vector3(0f, 0f, 0f), rot, Core.tweenType.line))
-                                                        if (!Core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
+                                                        if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot))
                                                         {
                                                             rot = Core.Rot90b(rot);
-                                                            if (!Core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
+                                                            if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot))
                                                             {
                                                                 rot = Core.Rot90b(rot);
-                                                                Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot);
+                                                                Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot);
                                                             }
                                                         }
                                         }
@@ -962,7 +962,7 @@ namespace yayoAni
                         t = (Find.TickManager.TicksGame + IdTick * 13) % 800;
                         f = 4.5f;
                         r = Core.Rot90(rot);
-                        if (!Core.Ani(ref t, 500, ref oa, 0f, 0f, -1f, ref op, r))
+                        if (!Core.Ani(ref t, 500, ref nextUpdate, ref oa, 0f, -1f, ref op, r))
                             if (!Core.Ani(ref t, 25, ref oa, 0f, f, -1f, ref op, r))
                                 if (!Core.Ani(ref t, 50, ref oa, f, -f, -1f, ref op, r))
                                     if (!Core.Ani(ref t, 50, ref oa, -f, f, -1f, ref op, r))
@@ -987,7 +987,7 @@ namespace yayoAni
                         {
                             if (!Core.Ani(ref t, 3, ref oa, -20f, 10f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot, Core.tweenType.line))
                                 if (!Core.Ani(ref t, 20, ref oa, 10f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
-                                    Core.Ani(ref t, 40, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot);
+                                    Core.Ani(ref t, 40, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot);
                         }
 
                         break;
@@ -1000,19 +1000,20 @@ namespace yayoAni
                         tr = rot;
                         if (!Core.Ani(ref t, 20, ref nextUpdate))
                             if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r))
-                                if (!Core.Ani(ref t, 20, ref oa, 10f, 10f, -1f, ref op, r))
+                                if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 10f, -1f, ref op, r))
                                     if (!Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r))
-                                        if (!Core.Ani(ref t, 20, ref oa, -10f, -10f, -1f, ref op, r))
+                                        if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, -10f, -1f, ref op, r))
                                         {
                                             if (!Core.Ani(ref t, 5, ref oa, -10f, 0f, -1f, ref op, r))
                                             {
                                                 //tr = t2 >= total ? core.Rot90(rot) : core.Rot90b(rot);
-                                                if (!Core.Ani(ref t, 15, ref oa, 0f, 0f, -1f, ref op, rot)) // 85
+                                                // if (!Core.Ani(ref t, 15, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 85
+                                                if (!Core.Ani(ref t, 35, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 105
                                                 {
                                                     //tr = rot;
-                                                    if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, rot)) // 105
-                                                        if (!Core.Ani(ref t, 5, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.05f), rot))
-                                                            Core.Ani(ref t, 6, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.05f), new Vector3(0f, 0f, 0f), rot);
+                                                    // if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 105
+                                                    if (!Core.Ani(ref t, 5, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.05f), rot))
+                                                        Core.Ani(ref t, 6, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.05f), new Vector3(0f, 0f, 0f), rot);
                                                 }
                                             }
                                         }
@@ -1029,26 +1030,25 @@ namespace yayoAni
                         tr = rot;
                         if (!Core.Ani(ref t, 20, ref nextUpdate))
                             if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r))
-                                if (!Core.Ani(ref t, 20, ref oa, 10f, 10f, -1f, ref op, r))
+                                if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 10f, -1f, ref op, r))
                                     if (!Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r))
-                                        if (!Core.Ani(ref t, 20, ref oa, -10f, -10f, -1f, ref op, r))
+                                        if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, -10f, -1f, ref op, r))
                                         {
                                             if (!Core.Ani(ref t, 5, ref oa, -10f, 0f, -1f, ref op, r))
                                             {
                                                 tr = t2 >= total ? Core.Rot90(rot) : Core.Rot90b(rot);
-                                                if (!Core.Ani(ref t, 15, ref oa, 0f, 0f, -1f, ref op, rot)) // 85
+                                                if (!Core.Ani(ref t, 15, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 85
                                                 {
                                                     tr = rot;
-                                                    if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, rot)) // 105
+                                                    if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 105
                                                         if (!Core.Ani(ref t, 5, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.05f), rot))
                                                             if (!Core.Ani(ref t, 6, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.05f), new Vector3(0f, 0f, 0f), rot))
-
-                                                                if (!Core.Ani(ref t, 35, ref oa, 0f, 0f, -1f, ref op, rot))
+                                                                if (!Core.Ani(ref t, 35, ref nextUpdate, ref oa, 0f, -1f, ref op, rot))
                                                                     if (!Core.Ani(ref t, 10, ref oa, 0f, 10f, -1f, ref op, rot))
                                                                         if (!Core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot))
                                                                             if (!Core.Ani(ref t, 10, ref oa, 0f, 10f, -1f, ref op, rot))
                                                                                 if (!Core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot))
-                                                                                    Core.Ani(ref t, 25, ref oa, 0f, 0f, -1f, ref op, rot);
+                                                                                    Core.Ani(ref t, 25, ref nextUpdate, ref oa, 0f, -1f, ref op, rot);
                                                 }
                                             }
                                         }
@@ -1123,10 +1123,8 @@ namespace yayoAni
                                 if (t <= 160)
                                 {
                                     if (!Core.Ani(ref t, 20, ref oa, 0f, 5f, -1f, ref op, Vector3.zero, new Vector3(0.05f, 0f, 0.05f), rot, Core.tweenType.sin, bed.Rotation))
-                                        if (!Core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0.05f), new Vector3(0.05f, 0f, 0.1f), rot, Core.tweenType.sin,
-                                                bed.Rotation))
-                                            if (!Core.Ani(ref t, 50, ref oa, 10, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0.1f), new Vector3(0.05f, 0f, 0.1f), rot, Core.tweenType.sin,
-                                                    bed.Rotation))
+                                        if (!Core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0.05f), new Vector3(0.05f, 0f, 0.1f), rot, Core.tweenType.sin, bed.Rotation))
+                                            if (!Core.Ani(ref t, 50, ref nextUpdate, ref oa, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0.1f), rot, Core.tweenType.sin, bed.Rotation))
                                                 Core.Ani(ref t, 40, ref oa, 10f, 0f, -1f, ref op, new Vector3(0.05f, 0f, 0.1f), Vector3.zero, rot, Core.tweenType.sin, bed.Rotation);
                                 }
                                 else

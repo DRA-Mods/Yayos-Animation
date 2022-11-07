@@ -265,9 +265,28 @@ namespace yayoAni
             return true;
         }
 
+        public static bool Ani(ref int tick, int duration, ref int? nextUpdateTick, ref float angle, float t_angle, float centerY, ref Vector3 pos, Vector3 t_pos, Rot4? rot = null,
+            tweenType tween = tweenType.sin, Rot4? axis = null)
+        {
+            if (!Ani(ref tick, duration, ref angle, t_angle, t_angle, centerY, ref pos, t_pos, t_pos, rot, tween, axis)) 
+                return false;
+
+            nextUpdateTick = Find.TickManager.TicksGame + (tick - duration);
+            return true;
+        }
+
         public static bool Ani(ref int tick, int duration, ref float angle, float s_angle, float t_angle, float centerY, ref Vector3 pos, Rot4? rot = null, tweenType tween = tweenType.sin)
         {
             return Ani(ref tick, duration, ref angle, s_angle, t_angle, centerY, ref pos, Vector3.zero, Vector3.zero, rot, tween);
+        }
+
+        public static bool Ani(ref int tick, int duration, ref int? nextUpdateTick, ref float angle, float t_angle, float centerY, ref Vector3 pos, Rot4? rot = null, tweenType tween = tweenType.sin)
+        {
+            if (!Ani(ref tick, duration, ref angle, t_angle, t_angle, centerY, ref pos, Vector3.zero, Vector3.zero, rot, tween)) 
+                return false;
+
+            nextUpdateTick = Find.TickManager.TicksGame + (tick - duration);
+            return true;
         }
 
         public static bool Ani(ref int tick, int duration, ref float angle, ref Vector3 pos, Vector3 s_pos, Vector3 t_pos, Rot4? rot = null, tweenType tween = tweenType.sin)
