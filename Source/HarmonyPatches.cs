@@ -578,7 +578,7 @@ namespace yayoAni
                     case "ViewArt":
                     case "Meditate":
                     case "Pray":
-                    case "MeditatePray": // Meditation for ideology with a diety
+                    case "MeditatePray": // Meditation for ideology with a deity
                     case "Reign": // Meditate royally
                     // Dubs Bad Hygiene
                     case "haveWildPoo":
