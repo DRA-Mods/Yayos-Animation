@@ -572,6 +572,12 @@ namespace yayoAni
                 }
             }
 
+            // Equipment offset - added by Enable Oversized Weapons, by default handles all weapons. Let's do the same (even if it's not active).
+            if (eq.StyleDef?.graphicData != null)
+                drawLoc += eq.StyleDef.graphicData.DrawOffsetForRot(pawnRotation);
+            else
+                drawLoc += eq.def.graphicData.DrawOffsetForRot(pawnRotation);
+
             if (compEquippable != null)
             {
                 EquipmentUtility.Recoil(eq.def, EquipmentUtility.GetRecoilVerb(compEquippable.AllVerbs), out var drawOffset, out var angleOffset, aimAngle);
