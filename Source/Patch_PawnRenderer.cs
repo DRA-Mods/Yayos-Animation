@@ -80,7 +80,13 @@ namespace yayoAni
             offset.z += (pawn.Rotation == Rot4.North) ? (-0.00289575267f) : 0.03474903f;
 
             // 설정과 무기 무게에 따른 회전 애니메이션 사용 여부
-            bool useTwirl = Core.settings.combatTwirlEnabled && !isMechanoid && thing.def.BaseMass < 5f;
+            bool useTwirl = 
+                Core.settings.combatTwirlEnabled &&
+                !isMechanoid &&
+                (!Core.settings.combatTwirlMaxMassEnabled || thing.def.BaseMass < Core.settings.combatTwirlMaxMass) &&
+                (!Core.settings.combatTwirlMaxSizeEnabled || ((thing.StyleDef?.graphic ?? thing.def.graphic).drawSize is var graphic && 
+                                                              graphic.x < Core.settings.combatTwirlMaxSize &&
+                                                              graphic.y < Core.settings.combatTwirlMaxSize));
 
             if (stanceBusy != null && !stanceBusy.neverAimWeapon && stanceBusy.focusTarg.IsValid)
             {

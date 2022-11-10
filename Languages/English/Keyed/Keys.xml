@@ -17,6 +17,10 @@
 
     <YayoAnim_Combat>Combat animations</YayoAnim_Combat>
     <YayoAnim_TwirlWeapon>Weapon twirling</YayoAnim_TwirlWeapon>
+    <YayoAnim_TwirlWeaponMaxMassEnabled>Disable weapon twirling for weapons over specific mass</YayoAnim_TwirlWeaponMaxMassEnabled>
+    <YayoAnim_TwirlWeaponMaxMass>Max weapon mass for twirling</YayoAnim_TwirlWeaponMaxMass>
+    <YayoAnim_TwirlWeaponMaxSizeEnabled>Disable weapon twirling for weapons over specific size</YayoAnim_TwirlWeaponMaxSizeEnabled>
+    <YayoAnim_TwirlWeaponMaxSize>Max weapon size for twirling</YayoAnim_TwirlWeaponMaxSize>
 
     <YayoAnim_AllJobs>All work animations</YayoAnim_AllJobs>
 

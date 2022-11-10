@@ -16,6 +16,10 @@ namespace yayoAni
 
         public bool combatEnabled = true;
         public bool combatTwirlEnabled = true;
+        public bool combatTwirlMaxMassEnabled = true;
+        public float combatTwirlMaxMass = 5f;
+        public bool combatTwirlMaxSizeEnabled = true;
+        public float combatTwirlMaxSize = 1f;
 
         public bool anyJobEnabled = true;
 
@@ -25,7 +29,7 @@ namespace yayoAni
         public bool mechanoidWalkEnabled = true;
         public bool mechanoidJobEnabled = true;
         public bool mechanoidCombatEnabled = true;
-        
+
         public bool animalWalkEnabled = true;
         public bool animalJobEnabled = true;
         public bool animalCombatEnabled = true;
@@ -52,6 +56,10 @@ namespace yayoAni
 
             Scribe_Values.Look(ref combatEnabled, "CombatAnim", true);
             Scribe_Values.Look(ref combatTwirlEnabled, "CombatTwirl", true);
+            Scribe_Values.Look(ref combatTwirlMaxMassEnabled, "CombatTwirlMaxMassEnabled", true);
+            Scribe_Values.Look(ref combatTwirlMaxMass, "CombatTwirlMaxMass", 5f);
+            Scribe_Values.Look(ref combatTwirlMaxSizeEnabled, "CombatTwirlMaxSizeEnabled", true);
+            Scribe_Values.Look(ref combatTwirlMaxSize, "CombatTwirlMaxSize", 1f);
 
             Scribe_Values.Look(ref anyJobEnabled, "AnyJobAnim", true);
 
@@ -61,11 +69,11 @@ namespace yayoAni
             Scribe_Values.Look(ref mechanoidWalkEnabled, "MechanoidWalk", true);
             Scribe_Values.Look(ref mechanoidJobEnabled, "MechanoidJob", true);
             Scribe_Values.Look(ref mechanoidCombatEnabled, "MechanoidCombat", true);
-            
+
             Scribe_Values.Look(ref animalWalkEnabled, "AnimalWalk", true);
             Scribe_Values.Look(ref animalJobEnabled, "AnimalJob", true);
             Scribe_Values.Look(ref animalWalkEnabled, "AnimalCombat", true);
-            
+
             Scribe_Values.Look(ref applyHarPatch, "ApplyHarPatch", true);
             Scribe_Values.Look(ref applyOversizedChanges, "applyOversizedChanges", true);
 
@@ -81,7 +89,7 @@ namespace yayoAni
 
             listing.CheckboxLabeled("YayoAnim_OnlyPlayerPawns".Translate(), ref onlyPlayerPawns, "YayoAnim_OnlyPlayerPawnsTooltip".Translate());
             buffer = null;
-            listing.TextFieldNumericLabeled("YayoAnim_UpdateFrequency".Translate(), ref updateFrequencyTicks, ref buffer, 1, 10);
+            listing.TextFieldNumericLabeled($"{"YayoAnim_UpdateFrequency".Translate()}  ", ref updateFrequencyTicks, ref buffer, 1, 10);
             if (listing.ButtonTextTooltip("YayoAnim_MaximumZoomLevel".Translate($"YayoAnim_MaximumZoomLevel_{maximumZoomLevel}".Translate()), "YayoAnim_MaximumZoomLevelTooltip".Translate()))
             {
                 FloatMenuUtility.MakeMenu(
@@ -94,9 +102,9 @@ namespace yayoAni
 
             listing.CheckboxLabeled("YayoAnim_Walk".Translate(), ref walkEnabled);
             buffer = null;
-            listing.TextFieldNumericLabeled("YayoAnim_WalkAnimSpeed".Translate(), ref walkSpeed, ref buffer, 0.1f, 10f);
+            listing.TextFieldNumericLabeled($"{"YayoAnim_WalkAnimSpeed".Translate()}  ", ref walkSpeed, ref buffer, 0.1f, 10f);
             buffer = null;
-            listing.TextFieldNumericLabeled("YayoAnim_WalkAnimAngle".Translate(), ref walkAngle, ref buffer, 0.1f, 10f);
+            listing.TextFieldNumericLabeled($"{"YayoAnim_WalkAnimAngle".Translate()}  ", ref walkAngle, ref buffer, 0.1f, 10f);
             walkSpeed = Mathf.Clamp(walkSpeed, 0.1f, 10f);
             walkAngle = Mathf.Clamp(walkAngle, 0.1f, 10f);
 
@@ -104,6 +112,12 @@ namespace yayoAni
 
             listing.CheckboxLabeled("YayoAnim_Combat".Translate(), ref combatEnabled);
             listing.CheckboxLabeled("YayoAnim_TwirlWeapon".Translate(), ref combatTwirlEnabled);
+            listing.CheckboxLabeled("YayoAnim_TwirlWeaponMaxMassEnabled".Translate(), ref combatTwirlMaxMassEnabled);
+            buffer = null;
+            listing.TextFieldNumericLabeled($"{"YayoAnim_TwirlWeaponMaxMass".Translate()}  ", ref combatTwirlMaxMass, ref buffer);
+            listing.CheckboxLabeled("YayoAnim_TwirlWeaponMaxSizeEnabled".Translate(), ref combatTwirlMaxSizeEnabled);
+            buffer = null;
+            listing.TextFieldNumericLabeled($"{"YayoAnim_TwirlWeaponMaxSize".Translate()}  ", ref combatTwirlMaxSize, ref buffer);
 
             listing.Gap();
 
@@ -131,7 +145,7 @@ namespace yayoAni
             listing.CheckboxLabeled("YayoAnim_ApplyHarPatch".Translate(), ref applyHarPatch, "YayoAnim_ApplyHarPatchTooltip".Translate());
             Core.SetHarPatch(applyHarPatch);
             listing.CheckboxLabeled("YayoAnim_ApplyOversizedChanges".Translate(), ref applyOversizedChanges, "YayoAnim_ApplyOversizedChangesTooltip".Translate());
-            
+
             listing.Gap();
 
             if (listing.ButtonText("YayoAnim_ResetToDefault".Translate()))
@@ -156,6 +170,10 @@ namespace yayoAni
 
             combatEnabled = true;
             combatTwirlEnabled = true;
+            combatTwirlMaxMassEnabled = true;
+            combatTwirlMaxMass = 5f;
+            combatTwirlMaxSizeEnabled = true;
+            combatTwirlMaxSize = 1f;
 
             anyJobEnabled = true;
 
