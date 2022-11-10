@@ -87,10 +87,12 @@ namespace yayoAni
 
                 usingOversizedWeapons = Temp();
             }
-            catch (TypeLoadException)
+            catch (Exception e)
             {
                 usingOversizedWeapons = false;
-                Log.Message("No oversized weapons.");
+                Log.Message(e is not TypeLoadException or TypeInitializationException
+                    ? $"No oversized weapons. Unexpected exception caught: {e.GetType()}" 
+                    : "No oversized weapons.");
             }
         }
 
