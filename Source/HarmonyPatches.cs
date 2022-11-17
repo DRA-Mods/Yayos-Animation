@@ -321,7 +321,7 @@ namespace yayoAni
 
                 if (Core.settings.debugMode)
                     if (pawn.IsColonist)
-                        Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName}");
+                        Log.Message($"[Yayo's Animation] - {pawn.NameShortColored} : {pawn.CurJob.def.defName}");
 
                 //if (pawn.IsColonist) Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName} / id {pawn.thingIDNumber}");
                 //float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f / pawn.pather.nextCellCostTotal);
@@ -1101,7 +1101,7 @@ namespace yayoAni
 
                     if (Core.settings.debugMode)
                         if (pawn.IsColonist)
-                            Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName}");
+                            Log.Message($"[Yayo's Animation] - {pawn.NameShortColored} : {pawn.CurJob.def.defName}");
 
 
                     int idTick = pawn.thingIDNumber * 20;
@@ -1412,7 +1412,7 @@ namespace yayoAni
             }
             catch (Exception ex)
             {
-                Log.Error("Error rendering pawn portrait: " + ex.Message);
+                Log.Error("[Yayo's Animation] - Error rendering pawn portrait: " + ex.Message);
             }
             finally
             {

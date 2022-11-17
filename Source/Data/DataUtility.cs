@@ -26,14 +26,14 @@ namespace yayoAni.Data
         {
             int prev = DrawDataDictionary.Keys.Count;
             DrawDataDictionary.RemoveAll(a => a.Key?.Map == null);
-            Log.Message($"GC : animation data count [{prev} -> {DrawDataDictionary.Keys.Count}]");
+            Log.Message($"[Yayo's Animation] GC : animation data count [{prev} -> {DrawDataDictionary.Keys.Count}]");
         }
 
         public static void Reset()
         {
             int prev = DrawDataDictionary.Keys.Count;
             DrawDataDictionary.Clear();
-            Log.Message($"GC : animation data count [{prev} -> {DrawDataDictionary.Keys.Count}]");
+            Log.Message($"[Yayo's Animation] GC : animation data count [{prev} -> {DrawDataDictionary.Keys.Count}]");
         }
     }
 }

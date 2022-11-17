@@ -47,11 +47,11 @@ public static class DebugTools
         if (!layingDownJobs.EnumerableNullOrEmpty())
             defNames.RemoveAll(job => layingDownJobs.Contains(job));
 
-        Log.Message($"Jobs potentially missing animations:\n{defNames.ToStringSafeEnumerable()}");
+        Log.Message($"[Yayo's Animation] - Jobs potentially missing animations:\n{defNames.ToStringSafeEnumerable()}");
         if (!normalJobs.EnumerableNullOrEmpty())
-            Log.Message($"Normal animations for jobs that may not exist (from inactive mods?):\n{normalJobs.Where(job => !defNamesSet.Contains(job)).ToStringSafeEnumerable()}");
+            Log.Message($"[Yayo's Animation] - Normal animations for jobs that may not exist (from inactive mods?):\n{normalJobs.Where(job => !defNamesSet.Contains(job)).ToStringSafeEnumerable()}");
         if (!layingDownJobs.EnumerableNullOrEmpty())
-            Log.Message($"Laying-down animations for jobs that may not exist (from inactive mods?):\n{layingDownJobs.Where(job => !defNamesSet.Contains(job)).ToStringSafeEnumerable()}");
+            Log.Message($"[Yayo's Animation] - Laying-down animations for jobs that may not exist (from inactive mods?):\n{layingDownJobs.Where(job => !defNamesSet.Contains(job)).ToStringSafeEnumerable()}");
     }
 
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instr)
