@@ -32,6 +32,7 @@ namespace yayoAni
         public static bool usingDualWield = false;
         public static bool usingHar = false;
         public static bool usingOversizedWeapons = false;
+        public static bool usingDeflector = false;
         public static bool usingGiddyUp = false;
         public static bool harPatchActive = false;
 
@@ -67,7 +68,6 @@ namespace yayoAni
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     return typeof(CompOversizedWeapon.CompOversizedWeapon) != null && 
                            typeof(CompProperties_OversizedWeapon) != null &&
-                           new CompOversizedWeapon.CompOversizedWeapon().compDeflectorIsAnimatingNow != null &&
                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                            new CompProperties_OversizedWeapon
                            {
@@ -93,6 +93,32 @@ namespace yayoAni
                 Log.Message(e is not TypeLoadException or TypeInitializationException or MissingFieldException
                     ? $"[Yayo's Animation] - No oversized weapons. Unexpected exception caught: {e.GetType()}" 
                     : "[Yayo's Animation] - No oversized weapons.");
+            }
+
+            try
+            {
+                // Basically a check to see if oversized weapons are active, and aren't an outdated version
+                // which (despite me checking the code with decompiler) are causing errors when accessing fields in props.
+                // Need to put it into a method other than this, as otherwise the static constructor will error.
+                bool Temp()
+                {
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    return typeof(CompDeflector.CompDeflector) != null && 
+                           // ReSharper disable once ConstantConditionalAccessQualifier
+                           new CompDeflector.CompDeflector
+                           {
+                               AnimationDeflectionTicks = 100,
+                           }?.IsAnimatingNow != null;
+                }
+
+                usingDeflector = Temp();
+            }
+            catch (Exception e)
+            {
+                usingDeflector = false;
+                Log.Message(e is not TypeLoadException or TypeInitializationException or MissingFieldException
+                    ? $"[Yayo's Animation] - No deflector. Unexpected exception caught: {e.GetType()}"
+                    : "[Yayo's Animation] - No deflector.");
             }
         }
 

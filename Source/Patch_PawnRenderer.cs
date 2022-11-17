@@ -507,11 +507,13 @@ namespace yayoAni
 
             if (eq is ThingWithComps eqComps)
             {
-                compEquippable = eqComps.GetComp<CompEquippable>();
-                if (Core.usingOversizedWeapons)
+                foreach (var comp in eqComps.AllComps)
                 {
-                    compOversized = pawn.equipment.Primary.GetOversizedComp();
-                    if (compOversized?.IsDeflectorAnimatingNow() == true)
+                    if (comp is CompEquippable equippable)
+                        compEquippable = equippable;
+                    else if (Core.usingOversizedWeapons && comp.IsOversizedComp())
+                        compOversized = comp;
+                    else if (Core.usingDeflector && comp.IsDeflectorAndAnimatingNow())
                         return false;
                 }
             }
