@@ -19,7 +19,7 @@ namespace yayoAni
         public bool combatTwirlMaxMassEnabled = true;
         public float combatTwirlMaxMass = 5f;
         public bool combatTwirlMaxSizeEnabled = true;
-        public float combatTwirlMaxSize = 1f;
+        public float combatTwirlMaxSize = 1.25f;
 
         public bool anyJobEnabled = true;
 
@@ -59,7 +59,7 @@ namespace yayoAni
             Scribe_Values.Look(ref combatTwirlMaxMassEnabled, "CombatTwirlMaxMassEnabled", true);
             Scribe_Values.Look(ref combatTwirlMaxMass, "CombatTwirlMaxMass", 5f);
             Scribe_Values.Look(ref combatTwirlMaxSizeEnabled, "CombatTwirlMaxSizeEnabled", true);
-            Scribe_Values.Look(ref combatTwirlMaxSize, "CombatTwirlMaxSize", 1f);
+            Scribe_Values.Look(ref combatTwirlMaxSize, "CombatTwirlMaxSize", 1.25f);
 
             Scribe_Values.Look(ref anyJobEnabled, "AnyJobAnim", true);
 
@@ -173,7 +173,7 @@ namespace yayoAni
             combatTwirlMaxMassEnabled = true;
             combatTwirlMaxMass = 5f;
             combatTwirlMaxSizeEnabled = true;
-            combatTwirlMaxSize = 1f;
+            combatTwirlMaxSize = 1.25f;
 
             anyJobEnabled = true;
 
