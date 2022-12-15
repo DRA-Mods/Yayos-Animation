@@ -608,7 +608,7 @@ namespace yayoAni
             //}
             //Graphics.DrawMesh(mesh, drawLoc, Quaternion.AngleAxis(num, Vector3.up), matSingle, 0);
 
-            Vector3 size = new(eq.def.graphicData.drawSize.x, 1f, eq.def.graphicData.drawSize.y);
+            Vector3 size = new(eq.Graphic.drawSize.x, 1f, eq.Graphic.drawSize.y);
             var mat = eq.Graphic is Graphic_StackCount graphicStackCount
                 ? graphicStackCount.SubGraphicForStackCount(1, eq.def).MatSingleFor(eq)
                 : eq.Graphic.MatSingleFor(eq);
