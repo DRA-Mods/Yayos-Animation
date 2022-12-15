@@ -84,7 +84,7 @@ namespace yayoAni
                 Core.settings.combatTwirlEnabled &&
                 !isMechanoid &&
                 (!Core.settings.combatTwirlMaxMassEnabled || thing.def.BaseMass < Core.settings.combatTwirlMaxMass) &&
-                (!Core.settings.combatTwirlMaxSizeEnabled || ((thing.StyleDef?.graphic ?? thing.def.graphic).drawSize is var graphic && 
+                (!Core.settings.combatTwirlMaxSizeEnabled || (thing.Graphic.drawSize is var graphic && 
                                                               graphic.x < Core.settings.combatTwirlMaxSize &&
                                                               graphic.y < Core.settings.combatTwirlMaxSize));
 
