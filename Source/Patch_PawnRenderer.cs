@@ -7,7 +7,7 @@ using yayoAni.Compat;
 namespace yayoAni
 {
     [HotSwappable]
-    [HarmonyPatch(typeof(PawnRenderer), "DrawEquipment")]
+    [HarmonyPatch(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipment))]
     public class Patch_DrawEquipment
     {
         [HarmonyPriority(0)]
@@ -478,7 +478,7 @@ namespace yayoAni
     }
 
     [HotSwappable]
-    [HarmonyPatch(typeof(PawnRenderer), "DrawEquipmentAiming")]
+    [HarmonyPatch(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipmentAiming))]
     internal static class patch_DrawEquipmentAiming
     {
         [HarmonyPriority(9999)]
