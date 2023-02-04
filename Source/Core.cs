@@ -23,6 +23,10 @@ namespace yayoAni
 
             if (usingHar && settings.applyHarPatch) 
                 LongEventHandler.ExecuteWhenFinished(() => SetHarPatch(true));
+#if BIOTECH_PLUS
+            if (usingReinforcedMechanoids)
+                LongEventHandler.ExecuteWhenFinished(Compat.ReinforcedMechanoids2.UnpatchReinforcedMechanoidsDrawingPatch);
+#endif
         }
 
         public override string SettingsCategory() => "Yayo's Animation";
@@ -34,6 +38,10 @@ namespace yayoAni
         public static bool usingOversizedWeapons = false;
         public static bool usingDeflector = false;
         public static bool usingGiddyUp = false;
+#if BIOTECH_PLUS
+        // public static bool usingVfeCore = false;
+        public static bool usingReinforcedMechanoids = false;
+#endif
         public static bool harPatchActive = false;
 
         static Core()
@@ -55,6 +63,16 @@ namespace yayoAni
                         usingGiddyUp = true;
                         Log.Message("[Yayo's Animation] - Giddy-up! Core detected");
                         break;
+#if BIOTECH_PLUS
+                    // case "oskarpotocki.vanillafactionsexpanded.core":
+                    //     usingVfeCore = true;
+                    //     Log.Message("[Yayo's Animation] - VFE Core detected");
+                    //     break;
+                    case "hlx.reinforcedmechanoids2":
+                        usingReinforcedMechanoids = true;
+                        Log.Message("[Yayo's Animation] - Reinforced Mechanoids 2 detected");
+                        break;
+#endif
                 }
             }
 
@@ -97,9 +115,7 @@ namespace yayoAni
 
             try
             {
-                // Basically a check to see if oversized weapons are active, and aren't an outdated version
-                // which (despite me checking the code with decompiler) are causing errors when accessing fields in props.
-                // Need to put it into a method other than this, as otherwise the static constructor will error.
+                // Basically a check to see if deflector is active.
                 bool Temp()
                 {
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse

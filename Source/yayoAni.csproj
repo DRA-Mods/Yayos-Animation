@@ -84,5 +84,9 @@
       <HintPath Condition=" '$(Configuration.EndsWith( 1.3))' ">..\..\..\..\..\workshop\content\294100\1216999901\1.3\Assemblies\GiddyUpCore.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="ReinforcedMechanoids2" Condition=" '$(Configuration.EndsWith( 1.4))' ">
+      <HintPath>..\..\..\..\..\workshop\content\294100\2910050186\1.4\Assemblies\ReinforcedMechanoids.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 </Project>

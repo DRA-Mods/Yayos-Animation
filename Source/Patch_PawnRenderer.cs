@@ -525,6 +525,11 @@ namespace yayoAni
 
             var isMeleeAtk = false;
             var flip = false;
+            var offset = eq.def.equippedAngleOffset;
+#if BIOTECH_PLUS
+            if (Core.usingReinforcedMechanoids)
+                pawn.GetAngleOffsetForPawn(ref offset);
+#endif
 
             var stance_Busy = pawn.stances.curStance as Stance_Busy;
 
@@ -550,12 +555,12 @@ namespace yayoAni
                 {
                     mesh = MeshPool.plane10Flip;
                     currentAngle -= 180f;
-                    currentAngle -= eq.def.equippedAngleOffset;
+                    currentAngle -= offset;
                 }
                 else
                 {
                     mesh = MeshPool.plane10;
-                    currentAngle += eq.def.equippedAngleOffset;
+                    currentAngle += offset;
                 }
             }
             else
@@ -563,7 +568,7 @@ namespace yayoAni
                 if (aimAngle is > 20f and < 160f)
                 {
                     mesh = MeshPool.plane10;
-                    currentAngle += eq.def.equippedAngleOffset;
+                    currentAngle += offset;
                 }
                 //else if ((aimAngle > 200f && aimAngle < 340f) || ignore)
                 else if (aimAngle is > 200f and < 340f || flip)
@@ -571,12 +576,12 @@ namespace yayoAni
                     flip = true;
                     mesh = MeshPool.plane10Flip;
                     currentAngle -= 180f;
-                    currentAngle -= eq.def.equippedAngleOffset;
+                    currentAngle -= offset;
                 }
                 else
                 {
                     mesh = MeshPool.plane10;
-                    currentAngle += eq.def.equippedAngleOffset;
+                    currentAngle += offset;
                 }
             }
 
