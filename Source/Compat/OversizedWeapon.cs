@@ -19,11 +19,13 @@ public static class OversizedWeapon
         return props is { isDualWeapon: true };
     }
 
-    public static void HandleOversizedDrawing(this ThingComp comp, ref Vector3 drawLoc, Rot4 pawnRotation, ref float aimAngle, Pawn pawn, bool flip)
+    public static void HandleOversizedDrawing(this ThingComp comp, ref Vector3 drawLoc, ref float aimAngle, Pawn pawn, bool flip)
     {
         var props = (comp as CompOversizedWeapon.CompOversizedWeapon)?.Props;
         if (props == null)
             return;
+
+        var pawnRotation = pawn.Rotation;
 
         if (pawnRotation == Rot4.North) drawLoc += props.northOffset;
         else if (pawnRotation == Rot4.East) drawLoc += props.eastOffset;
