@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AlienRace;
 using CompOversizedWeapon;
 using HarmonyLib;
 using RimWorld;
