@@ -139,13 +139,18 @@ namespace yayoAni
             if (!usingHar || harPatchActive == state) 
                 return;
 
+#if BIOTECH_PLUS
+            var method = MethodUtil.GetLocalFunc(typeof(AlienRace.HarmonyPatches), nameof(AlienRace.HarmonyPatches.DrawAddons), localFunc: "DrawAddon");
+#else
             var method = AccessTools.Method("AlienRace.HarmonyPatches:DrawAddons");
+#endif
+
             var patch = AccessTools.Method(
-                typeof(HumanoidAlienRaces.Prefix_AlienRace_HarmonyPatches_DrawAddons),
-                nameof(HumanoidAlienRaces.Prefix_AlienRace_HarmonyPatches_DrawAddons.Prefix));
+                typeof(HumanoidAlienRaces.AlienRace_DrawAddon_Transpiler),
+                nameof(HumanoidAlienRaces.AlienRace_DrawAddon_Transpiler.Transpiler));
 
             if (state)
-                harmony.Patch(method, prefix: new HarmonyMethod(patch, 0));
+                harmony.Patch(method, transpiler: new HarmonyMethod(patch, 0));
             else
                 harmony.Unpatch(method, patch);
 

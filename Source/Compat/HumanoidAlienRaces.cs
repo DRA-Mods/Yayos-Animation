@@ -1,67 +1,65 @@
-﻿using System.Collections.Generic;
-using AlienRace;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using HarmonyLib;
 using UnityEngine;
-using Verse;
 
-namespace yayoAni.Compat
+namespace yayoAni.Compat;
+
+public static class HumanoidAlienRaces
 {
-    public static class HumanoidAlienRaces
+    public static class AlienRace_DrawAddon_Transpiler
     {
-        public class Prefix_AlienRace_HarmonyPatches_DrawAddons
+        private static float DotReplacement(Quaternion identity, Quaternion b) => b.eulerAngles.y / (2f * Mathf.Rad2Deg);
+
+        private static float SimpleDotReplacement(Quaternion identity, Quaternion b) => b.eulerAngles.y;
+
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            public static bool Prefix(PawnRenderFlags renderFlags, Vector3 vector, Vector3 headOffset, Pawn pawn, Quaternion quat, Rot4 rotation)
+            var acosTarget = AccessTools.Method(typeof(Mathf), nameof(Mathf.Acos));
+            var dotTarget = AccessTools.Method(typeof(Quaternion), nameof(Quaternion.Dot));
+
+            CodeInstruction targetInstruction = null;
+            var removedMult = false;
+            var instr = instructions.ToArray();
+
+            for (var index = 0; index < instr.Length; index++)
             {
-                if (pawn.def is not ThingDef_AlienRace alienRace || renderFlags.FlagSet(PawnRenderFlags.Invisible))
+                var ci = instr[index];
+
+                if (ci.opcode == OpCodes.Call && ci.operand is MethodInfo method)
                 {
-                    return false;
-                }
-                List<AlienPartGenerator.BodyAddon> bodyAddons = alienRace.alienRace.generalSettings.alienPartGenerator.bodyAddons;
-                AlienPartGenerator.AlienComp comp = pawn.GetComp<AlienPartGenerator.AlienComp>();
-                for (int i = 0; i < bodyAddons.Count; i++)
-                {
-                    AlienPartGenerator.BodyAddon bodyAddon = bodyAddons[i];
-                    if (!bodyAddon.CanDrawAddon(pawn))
-                    {
+                    if (method == acosTarget)
                         continue;
-                    }
-#if IDEOLOGY
-                    Vector3 val = (bodyAddon.defaultOffsets.GetOffset(rotation)?.GetOffset(renderFlags.FlagSet(PawnRenderFlags.Portrait), pawn.story.bodyType, comp.crownType) ?? Vector3.zero) + (bodyAddon.offsets.GetOffset(rotation)?.GetOffset(renderFlags.FlagSet(PawnRenderFlags.Portrait), pawn.story.bodyType, comp.crownType) ?? Vector3.zero);
-#else
-                    Vector3 val = (bodyAddon.defaultOffsets.GetOffset(rotation)?.GetOffset(renderFlags.FlagSet(PawnRenderFlags.Portrait), pawn.story.bodyType, pawn.story.headType) ?? Vector3.zero) + (bodyAddon.offsets.GetOffset(rotation)?.GetOffset(renderFlags.FlagSet(PawnRenderFlags.Portrait), pawn.story.bodyType, pawn.story.headType) ?? Vector3.zero);
-#endif
-                    val.y = (bodyAddon.inFrontOfBody ? (0.3f + val.y) : (-0.3f - val.y));
-                    float num = bodyAddon.angle;
-                    if (rotation == Rot4.North)
-                    {
-                        if (bodyAddon.layerInvert)
-                        {
-                            val.y = 0f - val.y;
-                        }
-                        num = 0f;
-                    }
-                    if (rotation == Rot4.East)
-                    {
-                        num = 0f - num;
-                        val.x = 0f - val.x;
-                    }
-
-                    // yayo
-                    //float quatDot = Quaternion.Dot(Quaternion.identity, quat);
-                    //if (quat.eulerAngles.y > 180f) quatDot = -quatDot;
-                    //float acos = quat.eulerAngles.y;
-                    //float acos = Mathf.Acos(quatDot) * 2f * 57.29578f;
-
-                    //Log.Message($"{pawn.NameShortColored}: quatDot:{quatDot} quat.eulerAngles:{quat.eulerAngles} acos:{Mathf.Acos(quatDot) * 2f * 57.29578f}");
-                    //Log.Message($"{pawn.NameShortColored}: headOffset:{(bodyAddon.alignWithHead ? headOffset : Vector3.zero)}");
-
-                    Graphic graphic = comp.addonGraphics[i];
-                    graphic.drawSize = ((renderFlags.FlagSet(PawnRenderFlags.Portrait) && bodyAddon.drawSizePortrait != Vector2.zero) ? bodyAddon.drawSizePortrait : bodyAddon.drawSize) * ((!bodyAddon.scaleWithPawnDrawsize) ? Vector2.one : ((!bodyAddon.alignWithHead) ? (renderFlags.FlagSet(PawnRenderFlags.Portrait) ? comp.customPortraitDrawSize : comp.customDrawSize) : (renderFlags.FlagSet(PawnRenderFlags.Portrait) ? comp.customPortraitHeadDrawSize : comp.customHeadDrawSize))) * 1.5f;
-
-                    // yayo
-                    GenDraw.DrawMeshNowOrLater(graphic.MeshAt(rotation), vector + (bodyAddon.alignWithHead ? headOffset : Vector3.zero) + val.RotatedBy(quat.eulerAngles.y), Quaternion.AngleAxis(num, Vector3.up) * quat, graphic.MatAt(rotation), renderFlags.FlagSet(PawnRenderFlags.DrawNow));
+                    if (method == dotTarget)
+                        targetInstruction = ci;
                 }
-                return false;
+                else if (ci.opcode == OpCodes.Ldc_R4 && 
+                         index + 4 < instr.Length && 
+                         ci.operand is 2f &&
+                         instr[index + 1].opcode == OpCodes.Mul &&
+                         instr[index + 2].opcode == OpCodes.Ldc_R4 &&
+                         instr[index + 2].operand is Mathf.Rad2Deg &&
+                         instr[index + 3].opcode == OpCodes.Mul)
+                {
+                    index += 3;
+                    removedMult = true;
+                    continue;
+                }
+
+                yield return ci;
             }
+
+            if (targetInstruction == null)
+                throw new Exception($"[Yayo's Animation] - Failed patching HAR, could not find {nameof(Quaternion)}.{nameof(Quaternion.Dot)} method.");
+
+            targetInstruction.operand = AccessTools.Method(
+                typeof(AlienRace_DrawAddon_Transpiler),
+                removedMult
+                    ? nameof(SimpleDotReplacement)
+                    : nameof(DotReplacement));
         }
     }
 }
