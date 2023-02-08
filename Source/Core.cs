@@ -141,7 +141,10 @@ namespace yayoAni
                 return;
 
 #if BIOTECH_PLUS
-            var method = MethodUtil.GetLocalFunc(typeof(HarmonyPatches), nameof(HarmonyPatches.DrawAddons), localFunc: "DrawAddon");
+            var method = MethodUtil.GetLocalFunc(
+                AccessTools.TypeByName($"{nameof(AlienRace)}.{nameof(AlienRace.HarmonyPatches)}"), 
+                nameof(AlienRace.HarmonyPatches.DrawAddons), 
+                localFunc: "DrawAddon");
 #else
             var method = AccessTools.Method("AlienRace.HarmonyPatches:DrawAddons");
 #endif
