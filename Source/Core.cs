@@ -64,10 +64,6 @@ namespace yayoAni
                         Log.Message("[Yayo's Animation] - Giddy-up! Core detected");
                         break;
 #if BIOTECH_PLUS
-                    // case "oskarpotocki.vanillafactionsexpanded.core":
-                    //     usingVfeCore = true;
-                    //     Log.Message("[Yayo's Animation] - VFE Core detected");
-                    //     break;
                     case "hlx.reinforcedmechanoids2":
                         usingReinforcedMechanoids = true;
                         Log.Message("[Yayo's Animation] - Reinforced Mechanoids 2 detected");
