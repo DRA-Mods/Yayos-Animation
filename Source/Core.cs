@@ -153,12 +153,19 @@ namespace yayoAni
                 typeof(HumanoidAlienRaces.AlienRace_DrawAddon_Transpiler),
                 nameof(HumanoidAlienRaces.AlienRace_DrawAddon_Transpiler.Transpiler));
 
-            if (state)
-                harmony.Patch(method, transpiler: new HarmonyMethod(patch, 0));
-            else
-                harmony.Unpatch(method, patch);
+            try
+            {
+                if (state)
+                    harmony.Patch(method, transpiler: new HarmonyMethod(patch, 0));
+                else
+                    harmony.Unpatch(method, patch);
 
-            harPatchActive = state;
+                harPatchActive = state;
+            }
+            catch (Exception e)
+            {
+                Log.ErrorOnce($"[Yayo's Animation] - Encountered error applying HAR patch. Exception caught:\n{e}", -1266925295);
+            }
         }
 
         public static Rot4 getRot(Vector3 vel, Rot4 curRot)
