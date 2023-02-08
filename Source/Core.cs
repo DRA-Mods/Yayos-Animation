@@ -22,11 +22,11 @@ namespace yayoAni
             harmony = new Harmony("com.yayo.yayoAni");
             harmony.PatchAll();
 
-            if (usingHar && settings.applyHarPatch) 
+            if (usingHar && settings.applyHarPatch)
                 LongEventHandler.ExecuteWhenFinished(() => SetHarPatch(true));
 #if BIOTECH_PLUS
             if (usingReinforcedMechanoids)
-                LongEventHandler.ExecuteWhenFinished(Compat.ReinforcedMechanoids2.UnpatchReinforcedMechanoidsDrawingPatch);
+                LongEventHandler.ExecuteWhenFinished(ReinforcedMechanoids2.UnpatchReinforcedMechanoidsDrawingPatch);
 #endif
         }
 
@@ -81,7 +81,7 @@ namespace yayoAni
                 bool Temp()
                 {
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                    return typeof(CompOversizedWeapon.CompOversizedWeapon) != null && 
+                    return typeof(CompOversizedWeapon.CompOversizedWeapon) != null &&
                            typeof(CompProperties_OversizedWeapon) != null &&
                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                            new CompProperties_OversizedWeapon
@@ -106,7 +106,7 @@ namespace yayoAni
             {
                 usingOversizedWeapons = false;
                 Log.Message(e is not TypeLoadException or TypeInitializationException or MissingFieldException
-                    ? $"[Yayo's Animation] - No oversized weapons. Unexpected exception caught: {e.GetType()}" 
+                    ? $"[Yayo's Animation] - No oversized weapons. Unexpected exception caught: {e.GetType()}"
                     : "[Yayo's Animation] - No oversized weapons.");
             }
 
@@ -116,7 +116,7 @@ namespace yayoAni
                 bool Temp()
                 {
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                    return typeof(CompDeflector.CompDeflector) != null && 
+                    return typeof(CompDeflector.CompDeflector) != null &&
                            // ReSharper disable once ConstantConditionalAccessQualifier
                            new CompDeflector.CompDeflector
                            {
@@ -137,11 +137,11 @@ namespace yayoAni
 
         public static void SetHarPatch(bool state)
         {
-            if (!usingHar || harPatchActive == state) 
+            if (!usingHar || harPatchActive == state)
                 return;
 
 #if BIOTECH_PLUS
-            var method = MethodUtil.GetLocalFunc(typeof(AlienRace.HarmonyPatches), nameof(AlienRace.HarmonyPatches.DrawAddons), localFunc: "DrawAddon");
+            var method = MethodUtil.GetLocalFunc(typeof(HarmonyPatches), nameof(HarmonyPatches.DrawAddons), localFunc: "DrawAddon");
 #else
             var method = AccessTools.Method("AlienRace.HarmonyPatches:DrawAddons");
 #endif
@@ -314,7 +314,7 @@ namespace yayoAni
         public static bool Ani(ref int tick, int duration, ref int? nextUpdateTick, ref float angle, float t_angle, float centerY, ref Vector3 pos, Vector3 t_pos, Rot4? rot = null,
             tweenType tween = tweenType.sin, Rot4? axis = null)
         {
-            if (!Ani(ref tick, duration, ref angle, t_angle, t_angle, centerY, ref pos, t_pos, t_pos, rot, tween, axis)) 
+            if (!Ani(ref tick, duration, ref angle, t_angle, t_angle, centerY, ref pos, t_pos, t_pos, rot, tween, axis))
                 return false;
 
             nextUpdateTick = Find.TickManager.TicksGame + (tick - duration);
@@ -328,7 +328,7 @@ namespace yayoAni
 
         public static bool Ani(ref int tick, int duration, ref int? nextUpdateTick, ref float angle, float t_angle, float centerY, ref Vector3 pos, Rot4? rot = null, tweenType tween = tweenType.sin)
         {
-            if (!Ani(ref tick, duration, ref angle, t_angle, t_angle, centerY, ref pos, Vector3.zero, Vector3.zero, rot, tween)) 
+            if (!Ani(ref tick, duration, ref angle, t_angle, t_angle, centerY, ref pos, Vector3.zero, Vector3.zero, rot, tween))
                 return false;
 
             nextUpdateTick = Find.TickManager.TicksGame + (tick - duration);
