@@ -80,7 +80,7 @@
       <Private>false</Private>
     </Reference>
     <Reference Include="GiddyUpCore">
-      <HintPath Condition=" '$(Configuration.EndsWith( 1.4))' ">..\..\..\..\..\workshop\content\294100\1216999901\1.4\Assemblies\GiddyUpCore.dll</HintPath>
+      <HintPath Condition=" '$(Configuration.EndsWith( 1.4))' ">..\..\..\..\..\workshop\content\294100\2925824994\1.4\Assemblies\GiddyUpCore.dll</HintPath>
       <HintPath Condition=" '$(Configuration.EndsWith( 1.3))' ">..\..\..\..\..\workshop\content\294100\1216999901\1.3\Assemblies\GiddyUpCore.dll</HintPath>
       <Private>false</Private>
     </Reference>

@@ -60,9 +60,13 @@ namespace yayoAni
                         usingHar = true;
                         Log.Message("[Yayo's Animation] - HumanoidAlienRaces detected");
                         break;
+#if BIOTECH_PLUS
+                    case "owlchemist.giddyup":
+#else
                     case "roolo.giddyupcore":
+#endif
                         usingGiddyUp = true;
-                        Log.Message("[Yayo's Animation] - Giddy-up! Core detected");
+                        Log.Message("[Yayo's Animation] - Giddy-up! detected");
                         break;
 #if BIOTECH_PLUS
                     case "hlx.reinforcedmechanoids2":
