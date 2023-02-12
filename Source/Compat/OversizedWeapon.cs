@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using System.Runtime.CompilerServices;
+using RimWorld;
 using UnityEngine;
 using Verse;
 
@@ -6,12 +7,15 @@ namespace yayoAni.Compat;
 
 public static class OversizedWeapon
 {
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static ThingComp GetOversizedComp(this ThingWithComps thing)
         => thing.GetComp<CompOversizedWeapon.CompOversizedWeapon>();
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static bool IsOversizedComp(this ThingComp comp)
         => comp is CompOversizedWeapon.CompOversizedWeapon;
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static bool IsOversizedDualWield(this Pawn_EquipmentTracker instance)
     {
         var comp = instance.Primary.GetComp<CompOversizedWeapon.CompOversizedWeapon>();
@@ -19,6 +23,7 @@ public static class OversizedWeapon
         return props is { isDualWeapon: true };
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static void HandleOversizedDrawing(this ThingComp comp, ref Vector3 drawLoc, ref float aimAngle, Pawn pawn, bool flip)
     {
         var props = (comp as CompOversizedWeapon.CompOversizedWeapon)?.Props;

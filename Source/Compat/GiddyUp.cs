@@ -6,6 +6,7 @@ using GiddyUpCore;
 using GiddyUpCore.Jobs;
 using GiddyUpCore.Utilities;
 #endif
+using System.Runtime.CompilerServices;
 using Verse;
 
 namespace yayoAni.Compat;
@@ -13,8 +14,10 @@ namespace yayoAni.Compat;
 public static class GiddyUp
 {
 #if BIOTECH_PLUS
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static bool HasMount(this Pawn pawn) => ExtendedDataStorage.isMounted.Contains(pawn.thingIDNumber);
     
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static Pawn MountingPawn(this Pawn animal)
     {
         if (animal.CurJob == null || animal.CurJob.def != ResourceBank.JobDefOf.Mounted || animal.jobs.curDriver is not JobDriver_Mounted driver)
@@ -27,8 +30,10 @@ public static class GiddyUp
         return rider;
     }
 #else
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static bool HasMount(this Pawn pawn) => pawn.CurMount() != null;
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static Pawn MountingPawn(this Pawn animal)
     {
         if (animal.CurJob == null || animal.CurJob.def != GUC_JobDefOf.Mounted || animal.jobs.curDriver is not JobDriver_Mounted driver)

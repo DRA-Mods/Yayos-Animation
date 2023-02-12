@@ -1,4 +1,5 @@
 ﻿#if BIOTECH_PLUS
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using ReinforcedMechanoids;
 using Verse;
@@ -7,6 +8,7 @@ namespace yayoAni.Compat;
 
 public static class ReinforcedMechanoids2
 {
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static void UnpatchReinforcedMechanoidsDrawingPatch()
     {
         var original = AccessTools.Method(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipmentAiming));
