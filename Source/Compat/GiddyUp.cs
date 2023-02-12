@@ -20,7 +20,7 @@ public static class GiddyUp
         if (animal.CurJob == null || animal.CurJob.def != ResourceBank.JobDefOf.Mounted || animal.jobs.curDriver is not JobDriver_Mounted driver)
             return null;
     
-        var rider = driver.Rider;
+        var rider = driver.rider;
         if (!ExtendedDataStorage.isMounted.Contains(rider.thingIDNumber))
             return null;
     
