@@ -231,7 +231,7 @@ namespace yayoAni
 
         public static void CheckAni(Pawn pawn, ref Vector3 pos, Rot4 rot, PawnDrawData pdd)
         {
-            if (pawn.Dead)
+            if (!pawn.Spawned || pawn.Dead)
                 return;
             if (pdd.jobName != null && // Make sure we've cached some job before cancelling
                 pdd.jobName == pawn.CurJob?.def.defName && // Check if the current pawn's job is the same as cached
@@ -305,7 +305,11 @@ namespace yayoAni
                         if (defName is "Hunt" or "GR_AnimalHuntJob" || mounted)
                             walkSpeed *= 0.6f;
 
-                        float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f * walkSpeed / targetPawn.pather.nextCellCostTotal);
+                        var nextCellCost = targetPawn.pather.nextCellCostTotal;
+                        if (nextCellCost <= 0)
+                            nextCellCost = Mathf.Epsilon;
+
+                        var wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f * walkSpeed / nextCellCost);
                         oa = wiggle * 9f * Core.settings.walkAngle;
                         op = new Vector3(wiggle * 0.025f, 0f, 0f);
                     }
@@ -1276,6 +1280,9 @@ namespace yayoAni
         [HarmonyPriority(0)]
         public static void Prefix(PawnRenderer __instance, Pawn ___pawn, ref Vector3 drawLoc, Rot4? rotOverride = null, bool neverAimWeapon = false)
         {
+            if (___pawn == null)
+                return;
+            
             var pdd = DataUtility.GetData(___pawn);
             Yayo.CheckAni(___pawn, ref drawLoc, rotOverride ?? ___pawn.Rotation, pdd);
         }

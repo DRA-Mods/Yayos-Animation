@@ -20,8 +20,8 @@ namespace yayoAni
             if (Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
                 return true;
 
-            Pawn pawn = __instance.pawn;
-            if (pawn.Dead || !pawn.Spawned)
+            var pawn = __instance.pawn;
+            if (pawn == null || pawn.Dead || pawn.Downed || !pawn.Spawned)
                 return false;
 
             if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns)
@@ -491,7 +491,13 @@ namespace yayoAni
             if (Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel)
                 return true;
 
+            if (eq == null)
+                return true;
+
             var pawn = __instance.pawn;
+
+            if (pawn == null || pawn.Dead || pawn.Downed || !pawn.Spawned)
+                return true;
 
             if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns)
                 return true;
