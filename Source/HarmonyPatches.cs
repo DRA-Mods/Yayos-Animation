@@ -268,9 +268,9 @@ namespace yayoAni
 
         public static void Ani0(Pawn pawn, ref Vector3 pos, Rot4 rot, PawnDrawData pdd)
         {
-            bool changed = false;
-            float oa = 0f;
-            Vector3 op = Vector3.zero;
+            var changed = false;
+            var oa = 0f;
+            var op = Vector3.zero;
             int? nextUpdate = null;
             var defName = pawn.CurJob?.def.defName;
             var mounted = defName is "Mounted";
@@ -300,8 +300,8 @@ namespace yayoAni
                         (!targetPawn.RaceProps.Animal || Core.settings.animalWalkEnabled))
                     {
                         changed = true;
-                        int IdTick = targetPawn.thingIDNumber * 20;
-                        float walkSpeed = Core.settings.walkSpeed;
+                        var IdTick = targetPawn.thingIDNumber * 20;
+                        var walkSpeed = Core.settings.walkSpeed;
                         if (defName is "Hunt" or "GR_AnimalHuntJob" || mounted)
                             walkSpeed *= 0.6f;
 
@@ -321,7 +321,7 @@ namespace yayoAni
             {
                 changed = true;
                 pdd.jobName = pawn.CurJob.def.defName;
-                int IdTick = pawn.thingIDNumber * 20;
+                var IdTick = pawn.thingIDNumber * 20;
 
                 if (Core.settings.debugMode)
                     if (pawn.IsColonist)
@@ -329,10 +329,10 @@ namespace yayoAni
 
                 //if (pawn.IsColonist) Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName} / id {pawn.thingIDNumber}");
                 //float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f / pawn.pather.nextCellCostTotal);
-                int t = 0;
+                var t = 0;
                 int t2;
                 int total;
-                AniType aniType = AniType.none;
+                var aniType = AniType.none;
                 float f;
                 Rot4 r;
                 Rot4 tr;
@@ -635,7 +635,7 @@ namespace yayoAni
 
                         break;
                     case "SpectateCeremony": // 각종 행사, 의식 (결혼식, 장례식, 이념행사)
-                        LordJob_Ritual ritualJob = Core.GetPawnRitual(pawn);
+                        var ritualJob = Core.GetPawnRitual(pawn);
                         if (ritualJob == null) // 기본
                         {
                             aniType = AniType.crowd;
@@ -708,19 +708,19 @@ namespace yayoAni
 
                     case "ExtinguishSelf": // 스스로 불 끄기
 
-                        int tg = 10; // 틱 갭
+                        var tg = 10; // 틱 갭
                         t = (Find.TickManager.TicksGame + IdTick) % (12 * tg);
                         r = Rot4.East;
 
-                        float cx = -0.5f;
-                        float cy = 0f; // 중심점
+                        var cx = -0.5f;
+                        var cy = 0f; // 중심점
 
-                        float gx = -0.25f; // 이동 갭
-                        float gy = 0.25f; // 이동 갭
+                        var gx = -0.25f; // 이동 갭
+                        var gy = 0.25f; // 이동 갭
 
-                        int step = 0; // 이동 단계
+                        var step = 0; // 이동 단계
 
-                        float a = 45f;
+                        var a = 45f;
 
                         if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r,
                                 Core.tweenType.line))

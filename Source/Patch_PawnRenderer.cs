@@ -48,7 +48,7 @@ namespace yayoAni
                 offHandEquip = pawn.equipment.Primary;
 
             // 주무기
-            Stance_Busy stance_Busy = pawn.stances.curStance as Stance_Busy;
+            var stance_Busy = pawn.stances.curStance as Stance_Busy;
             PawnRenderer_Override.AnimateEquip(__instance, pawn, rootLoc, pawn.equipment.Primary, stance_Busy, new Vector3(0f, 0f, 0.0005f));
 
             // 보조무기
@@ -73,14 +73,14 @@ namespace yayoAni
     {
         public static void AnimateEquip(PawnRenderer __instance, Pawn pawn, Vector3 rootLoc, ThingWithComps thing, Stance_Busy stanceBusy, Vector3 offset, bool isSub = false)
         {
-            Vector3 rootLoc2 = rootLoc;
+            var rootLoc2 = rootLoc;
 
-            bool isMechanoid = pawn.RaceProps.IsMechanoid;
+            var isMechanoid = pawn.RaceProps.IsMechanoid;
 
             offset.z += (pawn.Rotation == Rot4.North) ? (-0.00289575267f) : 0.03474903f;
 
             // 설정과 무기 무게에 따른 회전 애니메이션 사용 여부
-            bool useTwirl = 
+            var useTwirl = 
                 Core.settings.combatTwirlEnabled &&
                 !isMechanoid &&
                 (!Core.settings.combatTwirlMaxMassEnabled || thing.def.BaseMass <= Core.settings.combatTwirlMaxMass) &&
@@ -95,10 +95,9 @@ namespace yayoAni
                     // 원거리용
 
                     //Log.Message((pawn.LastAttackTargetTick + thing.thingIDNumber).ToString());
-                    int ticksToNextBurstShot = stanceBusy.verb.ticksToNextBurstShot;
-                    int atkType = (pawn.LastAttackTargetTick + thing.thingIDNumber) % 10000 % 1000 % 100 % 5; // 랜덤 공격타입 결정
+                    var ticksToNextBurstShot = stanceBusy.verb.ticksToNextBurstShot;
+                    var atkType = (pawn.LastAttackTargetTick + thing.thingIDNumber) % 10000 % 1000 % 100 % 5; // 랜덤 공격타입 결정
                     // Stance_Cooldown Stance_Cooldown = pawn.stances.curStance as Stance_Cooldown;
-                    Stance_Warmup Stance_Warmup = pawn.stances.curStance as Stance_Warmup;
 
                     if (ticksToNextBurstShot > 10)
                     {
@@ -110,16 +109,16 @@ namespace yayoAni
                     float ani_burst = ticksToNextBurstShot;
                     float ani_cool = stanceBusy.ticksLeft;
 
-                    float ani = 0f;
+                    var ani = 0f;
                     if (!isMechanoid)
                         ani = Mathf.Max(ani_cool, 25f) * 0.001f;
 
                     if (ticksToNextBurstShot > 0)
                         ani = ani_burst * 0.02f;
 
-                    float addAngle = 0f;
-                    float addX = offset.x;
-                    float addY = offset.y;
+                    var addAngle = 0f;
+                    var addX = offset.x;
+                    var addY = offset.y;
 
 
                     // 준비동작 애니메이션
@@ -165,18 +164,18 @@ namespace yayoAni
                                     {
                                         case > 78:
                                             break;
-                                        case > 48 when Stance_Warmup == null:
+                                        case > 48 when pawn.stances.curStance is not Stance_Warmup:
                                         {
-                                            float wiggle = Mathf.Sin(ani_cool * 0.1f) * 0.05f;
+                                            var wiggle = Mathf.Sin(ani_cool * 0.1f) * 0.05f;
                                             addX += wiggle - 0.2f;
                                             addY += wiggle + 0.2f;
                                             addAngle += wiggle + 30f + ani_cool * 0.5f;
                                             break;
                                         }
-                                        case > 40 when Stance_Warmup == null:
+                                        case > 40 when pawn.stances.curStance is not Stance_Warmup:
                                         {
-                                            float wiggle = Mathf.Sin(ani_cool * 0.1f) * 0.05f;
-                                            float wiggle_fast = Mathf.Sin(ani_cool) * 0.05f;
+                                            var wiggle = Mathf.Sin(ani_cool * 0.1f) * 0.05f;
+                                            var wiggle_fast = Mathf.Sin(ani_cool) * 0.05f;
                                             addX += wiggle_fast + 0.05f;
                                             addY += wiggle - 0.05f;
                                             addAngle += wiggle_fast * 100f - 15f;
@@ -199,8 +198,8 @@ namespace yayoAni
                         }
                     }
 
-                    Vector3 a = stanceBusy.focusTarg.Thing?.DrawPos ?? stanceBusy.focusTarg.Cell.ToVector3Shifted();
-                    float num = 0f;
+                    var a = stanceBusy.focusTarg.Thing?.DrawPos ?? stanceBusy.focusTarg.Cell.ToVector3Shifted();
+                    var num = 0f;
                     if ((a - pawn.DrawPos).MagnitudeHorizontalSquared() > 0.001f)
                         num = (a - pawn.DrawPos).AngleFlat();
 
@@ -230,7 +229,7 @@ namespace yayoAni
                     // 근접용
 
                     //Log.Message("A");
-                    int atkType = (pawn.LastAttackTargetTick + thing.thingIDNumber) % 10000 % 1000 % 100 % 3; // 랜덤 공격타입 결정
+                    var atkType = (pawn.LastAttackTargetTick + thing.thingIDNumber) % 10000 % 1000 % 100 % 3; // 랜덤 공격타입 결정
 
                     //Log.Message("B");
                     //atkType = 1; // 공격 타입 테스트
@@ -261,18 +260,18 @@ namespace yayoAni
                     {
                         //Log.Message("F");
                         // 애니메이션
-                        Vector3 a = stanceBusy.focusTarg.Thing?.DrawPos ?? stanceBusy.focusTarg.Cell.ToVector3Shifted();
+                        var a = stanceBusy.focusTarg.Thing?.DrawPos ?? stanceBusy.focusTarg.Cell.ToVector3Shifted();
 
-                        float num = 0f;
+                        var num = 0f;
                         if ((a - pawn.DrawPos).MagnitudeHorizontalSquared() > 0.001f)
                         {
                             num = (a - pawn.DrawPos).AngleFlat();
                         }
 
-                        float ani = Mathf.Min(stanceBusy.ticksLeft, 60f);
-                        float ani2 = ani * 0.0075f; // 0.45f -> 0f
-                        float addZ = offset.x;
-                        float addX = offset.y;
+                        var ani = Mathf.Min(stanceBusy.ticksLeft, 60f);
+                        var ani2 = ani * 0.0075f; // 0.45f -> 0f
+                        var addZ = offset.x;
+                        var addX = offset.y;
 
                         switch (atkType)
                         {
@@ -303,7 +302,7 @@ namespace yayoAni
                         // 캐릭터 방향에 따라 적용
                         if (pawn.Rotation == Rot4.West)
                         {
-                            Vector3 drawLoc = rootLoc2 + new Vector3(-addX, offset.z, addZ).RotatedBy(num);
+                            var drawLoc = rootLoc2 + new Vector3(-addX, offset.z, addZ).RotatedBy(num);
                             //drawLoc.y += 0.03787879f;
                             num -= addAngle;
 
@@ -311,7 +310,7 @@ namespace yayoAni
                         }
                         else if (pawn.Rotation == Rot4.East)
                         {
-                            Vector3 drawLoc = rootLoc2 + new Vector3(addX, offset.z, addZ).RotatedBy(num);
+                            var drawLoc = rootLoc2 + new Vector3(addX, offset.z, addZ).RotatedBy(num);
                             //drawLoc.y += 0.03787879f;
                             num += addAngle;
 
@@ -319,7 +318,7 @@ namespace yayoAni
                         }
                         else if (pawn.Rotation != Rot4.Invalid)
                         {
-                            Vector3 drawLoc = rootLoc2 + new Vector3(-addX, offset.z, addZ).RotatedBy(num);
+                            var drawLoc = rootLoc2 + new Vector3(-addX, offset.z, addZ).RotatedBy(num);
                             //drawLoc.y += 0.03787879f;
                             num += addAngle;
 
@@ -328,15 +327,15 @@ namespace yayoAni
                     }
                     else
                     {
-                        Vector3 a = stanceBusy.focusTarg.Thing?.DrawPos ?? stanceBusy.focusTarg.Cell.ToVector3Shifted();
+                        var a = stanceBusy.focusTarg.Thing?.DrawPos ?? stanceBusy.focusTarg.Cell.ToVector3Shifted();
 
-                        float num = 0f;
+                        var num = 0f;
                         if ((a - pawn.DrawPos).MagnitudeHorizontalSquared() > 0.001f)
                         {
                             num = (a - pawn.DrawPos).AngleFlat();
                         }
 
-                        Vector3 drawLoc = rootLoc2 + new Vector3(0f, offset.z, readyZ).RotatedBy(num);
+                        var drawLoc = rootLoc2 + new Vector3(0f, offset.z, readyZ).RotatedBy(num);
                         //drawLoc.y += 0.03787879f;
 
                         __instance.DrawEquipmentAiming(thing, drawLoc, num);
@@ -351,7 +350,7 @@ namespace yayoAni
             if ((pawn.carryTracker?.CarriedThing == null) &&
                 (pawn.Drafted || (pawn.CurJob != null && pawn.CurJob.def.alwaysShowWeapon) || (pawn.mindState.duty != null && pawn.mindState.duty.def.alwaysShowWeapon)))
             {
-                int tick = Mathf.Abs(pawn.HashOffsetTicks() % 1000000000);
+                var tick = Mathf.Abs(pawn.HashOffsetTicks() % 1000000000);
                 tick %= 100000000;
                 tick %= 10000000;
                 tick %= 1000000;
@@ -365,8 +364,8 @@ namespace yayoAni
                 else
                     wiggle = Mathf.Sin(tick * 0.05f + 0.5f);
 
-                float aniAngle = -5f;
-                float addAngle = 0f;
+                var aniAngle = -5f;
+                var addAngle = 0f;
 
                 if (useTwirl)
                 {
@@ -537,11 +536,9 @@ namespace yayoAni
                 pawn.GetAngleOffsetForPawn(ref offset);
 #endif
 
-            var stance_Busy = pawn.stances.curStance as Stance_Busy;
-
             var flag = !(pawn.CurJob != null && pawn.CurJob.def.neverShowWeapon);
 
-            if (flag && stance_Busy is { neverAimWeapon: false, focusTarg: { IsValid: true } })
+            if (flag && pawn.stances.curStance is Stance_Busy { neverAimWeapon: false, focusTarg: { IsValid: true } } stance_Busy)
             {
                 if (pawnRotation == Rot4.West)
                 {
