@@ -281,7 +281,7 @@ namespace yayoAni
             {
                 // Ignored
             }
-            else if (pawn.pather is { MovingNow: true } || mounted)
+            else if ((pawn.pather.lastMovedTick >= Find.TickManager.TicksGame - 1 && pawn.pather is { MovingNow: true }) || mounted)
             {
                 if (Core.settings.walkEnabled)
                 {
@@ -289,7 +289,7 @@ namespace yayoAni
                     if (mounted && Core.settings.animalWalkEnabled)
                     {
                         var rider = pawn.MountingPawn();
-                        if (rider is { pather.MovingNow: true })
+                        if (rider is { pather.MovingNow: true } && rider.pather.lastMovedTick >= Find.TickManager.TicksGame - 1)
                             targetPawn = rider;
                         else
                             targetPawn = null;
