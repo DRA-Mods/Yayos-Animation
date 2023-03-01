@@ -26,7 +26,7 @@ namespace yayoAni
                 LongEventHandler.ExecuteWhenFinished(() => SetHarPatch(true));
 #if BIOTECH_PLUS
             if (usingReinforcedMechanoids)
-                LongEventHandler.ExecuteWhenFinished(ReinforcedMechanoids2.UnpatchReinforcedMechanoidsDrawingPatch);
+                LongEventHandler.ExecuteWhenFinished(() => ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(settings.combatEnabled));
 #endif
         }
 

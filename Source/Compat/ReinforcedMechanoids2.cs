@@ -8,15 +8,39 @@ namespace yayoAni.Compat;
 
 public static class ReinforcedMechanoids2
 {
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void UnpatchReinforcedMechanoidsDrawingPatch()
+    public static bool rm2PatchActive = false;
+
+    public static void SetReinforcedMechanoidsPatch(bool state)
+    {
+        if (!Core.usingReinforcedMechanoids || rm2PatchActive == state)
+            return;
+
+        if (state)
+            UnpatchReinforcedMechanoidsDrawingPatch();
+        else
+            RepatchReinforcedMechanoidsDrawingPatch();
+
+        rm2PatchActive = state;
+    }
+    
+    private static void UnpatchReinforcedMechanoidsDrawingPatch()
     {
         var original = AccessTools.Method(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipmentAiming));
 
-        Core.harmony.Unpatch(original, HarmonyPatchType.Prefix, HarmonyPatches.harmony.Id);
-        Core.harmony.Unpatch(original, HarmonyPatchType.Postfix, HarmonyPatches.harmony.Id);
+        Core.harmony.Unpatch(original, AccessTools.DeclaredMethod(typeof(PawnRenderer_DrawEquipmentAiming_Patch), nameof(PawnRenderer_DrawEquipmentAiming_Patch.Prefix)));
+        Core.harmony.Unpatch(original, AccessTools.DeclaredMethod(typeof(PawnRenderer_DrawEquipmentAiming_Patch), nameof(PawnRenderer_DrawEquipmentAiming_Patch.Postfix)));
     }
 
+    private static void RepatchReinforcedMechanoidsDrawingPatch()
+    {
+        var original = AccessTools.Method(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipmentAiming));
+
+        Core.harmony.Patch(original,
+            prefix: new HarmonyMethod(typeof(PawnRenderer_DrawEquipmentAiming_Patch), nameof(PawnRenderer_DrawEquipmentAiming_Patch.Prefix)),
+            postfix: new HarmonyMethod(typeof(PawnRenderer_DrawEquipmentAiming_Patch), nameof(PawnRenderer_DrawEquipmentAiming_Patch.Postfix)));
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public static void GetAngleOffsetForPawn(this Pawn pawn, ref float aimAngle)
     {
         var extension = pawn.def.GetModExtension<EquipmentDrawPositionOffsetExtension>();

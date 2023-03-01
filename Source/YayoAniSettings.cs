@@ -1,6 +1,7 @@
 ﻿using RimWorld;
 using UnityEngine;
 using Verse;
+using yayoAni.Compat;
 
 namespace yayoAni
 {
@@ -111,6 +112,9 @@ namespace yayoAni
             listing.Gap();
 
             listing.CheckboxLabeled("YayoAnim_Combat".Translate(), ref combatEnabled);
+#if BIOTECH_PLUS
+            ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(combatEnabled);
+#endif
             listing.CheckboxLabeled("YayoAnim_TwirlWeapon".Translate(), ref combatTwirlEnabled);
             listing.CheckboxLabeled("YayoAnim_TwirlWeaponMaxMassEnabled".Translate(), ref combatTwirlMaxMassEnabled);
             buffer = null;
@@ -169,6 +173,9 @@ namespace yayoAni
             walkAngle = 0.6f;
 
             combatEnabled = true;
+#if BIOTECH_PLUS
+            ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(combatEnabled);
+#endif
             combatTwirlEnabled = true;
             combatTwirlMaxMassEnabled = true;
             combatTwirlMaxMass = 5f;
