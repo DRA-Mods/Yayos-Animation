@@ -10,6 +10,11 @@ namespace yayoAni
     [HarmonyPatch(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipment))]
     public class Patch_DrawEquipment
     {
+        private static readonly Vector3 Offset = new(0f, 0f, 0.0005f + 0.03474903f);
+        private static readonly Vector3 OffsetNorth = new(0f, 0f, 0.0005f + -0.00289575267f);
+        private static readonly Vector3 OffsetOffhand = new(0.1f, 0.1f, 0f + 0.03474903f);
+        private static readonly Vector3 OffsetOffhandNorth = new(0.1f, 0.1f, 0f + -0.00289575267f);
+
         [HarmonyPriority(0)]
         [HarmonyPrefix]
         [HarmonyBefore("com.SYS.rimworld.mod")]
@@ -34,7 +39,8 @@ namespace yayoAni
             if (pawn.RaceProps.Animal && !Core.settings.animalCombatEnabled)
                 return true;
 
-            if (pawn.equipment?.Primary == null)
+            var primaryWeapon = pawn.equipment?.Primary;
+            if (primaryWeapon == null)
                 return false;
 
             if (pawn.CurJob != null && pawn.CurJob.def.neverShowWeapon)
@@ -65,18 +71,22 @@ namespace yayoAni
 
             // 주무기
             var stance_Busy = pawn.stances.curStance as Stance_Busy;
-            PawnRenderer_Override.AnimateEquip(__instance, pawn, rootLoc, pawn.equipment.Primary, stance_Busy, new Vector3(0f, 0f, 0.0005f));
+            var north = pawn.Rotation == Rot4.North;
+            PawnRenderer_Override.AnimateEquip(__instance, pawn, ref rootLoc, primaryWeapon, stance_Busy, north ? OffsetNorth : Offset);
 
             // 보조무기
             if (offHandEquip != null)
             {
                 Stance_Busy offHandStance = null;
-                if (offHandEquip == pawn.equipment.Primary)
+                if (offHandEquip == primaryWeapon)
                     offHandStance = stance_Busy;
-                else if (pawn.GetStancesOffHand() != null) 
-                    offHandStance = pawn.GetStancesOffHand().curStance as Stance_Busy;
+                else
+                {
+                    if (pawn.GetStancesOffHand() != null)
+                        offHandStance = pawn.GetStancesOffHand().curStance as Stance_Busy;
+                }
 
-                PawnRenderer_Override.AnimateEquip(__instance, pawn, rootLoc, offHandEquip, offHandStance, new Vector3(0.1f, 0.1f, 0f), true);
+                PawnRenderer_Override.AnimateEquip(__instance, pawn, ref rootLoc, offHandEquip, offHandStance, north ? OffsetOffhandNorth : OffsetOffhand, true);
             }
 
             return false;
@@ -87,25 +97,27 @@ namespace yayoAni
     [HotSwappable]
     public static class PawnRenderer_Override
     {
-        public static void AnimateEquip(PawnRenderer __instance, Pawn pawn, Vector3 rootLoc, ThingWithComps thing, Stance_Busy stanceBusy, Vector3 offset, bool isSub = false)
+        private static readonly Vector3 Offset = new(-0.2f, 0f, 0.1f);
+        private static readonly Vector3 OffsetSub = new(0.2f, 0f, 0.1f);
+        
+        public static void AnimateEquip(PawnRenderer __instance, Pawn pawn, ref Vector3 rootLoc, ThingWithComps thing, Stance_Busy stanceBusy, in Vector3 offset, in bool isSub = false)
         {
-            var rootLoc2 = rootLoc;
-
             var isMechanoid = pawn.RaceProps.IsMechanoid;
 
-            offset.z += (pawn.Rotation == Rot4.North) ? (-0.00289575267f) : 0.03474903f;
-
             // 설정과 무기 무게에 따른 회전 애니메이션 사용 여부
-            var useTwirl = 
+            var useTwirl =
                 Core.settings.combatTwirlEnabled &&
                 !isMechanoid &&
                 (!Core.settings.combatTwirlMaxMassEnabled || thing.def.BaseMass <= Core.settings.combatTwirlMaxMass) &&
-                (!Core.settings.combatTwirlMaxSizeEnabled || (thing.Graphic.drawSize is var graphic && 
+                (!Core.settings.combatTwirlMaxSizeEnabled || (thing.Graphic.drawSize is var graphic &&
                                                               graphic.x <= Core.settings.combatTwirlMaxSize &&
                                                               graphic.y <= Core.settings.combatTwirlMaxSize));
 
             if (stanceBusy != null && !stanceBusy.neverAimWeapon && stanceBusy.focusTarg.IsValid)
             {
+                if (Core.usingSheathYourSword && thing.SheathExtensionDrawLittleLower())
+                    rootLoc.z -= 0.2f;
+                
                 if (thing.def.IsRangedWeapon && !stanceBusy.verb.IsMeleeAttack)
                 {
                     // 원거리용
@@ -221,9 +233,9 @@ namespace yayoAni
 
                     Vector3 drawLoc;
                     if (pawn.Rotation == Rot4.West)
-                        drawLoc = rootLoc2 + new Vector3(addY, offset.z, 0.4f + addX - ani).RotatedBy(num);
+                        drawLoc = rootLoc + new Vector3(addY, offset.z, 0.4f + addX - ani).RotatedBy(num);
                     else if (pawn.Rotation != Rot4.Invalid)
-                        drawLoc = rootLoc2 + new Vector3(-addY, offset.z, 0.4f + addX - ani).RotatedBy(num);
+                        drawLoc = rootLoc + new Vector3(-addY, offset.z, 0.4f + addX - ani).RotatedBy(num);
                     else
                         drawLoc = Vector3.zero;
 
@@ -315,30 +327,37 @@ namespace yayoAni
                         //     //addAngle += ani2 * 5000f;
                         // }
 
-                        // 캐릭터 방향에 따라 적용
-                        if (pawn.Rotation == Rot4.West)
+                        switch (pawn.Rotation.AsInt)
                         {
-                            var drawLoc = rootLoc2 + new Vector3(-addX, offset.z, addZ).RotatedBy(num);
-                            //drawLoc.y += 0.03787879f;
-                            num -= addAngle;
+                            // 캐릭터 방향에 따라 적용
+                            case Rot4.WestInt:
+                            {
+                                var drawLoc = rootLoc + new Vector3(-addX, offset.z, addZ).RotatedBy(num);
+                                //drawLoc.y += 0.03787879f;
+                                num -= addAngle;
 
-                            __instance.DrawEquipmentAiming(thing, drawLoc, num - ani);
-                        }
-                        else if (pawn.Rotation == Rot4.East)
-                        {
-                            var drawLoc = rootLoc2 + new Vector3(addX, offset.z, addZ).RotatedBy(num);
-                            //drawLoc.y += 0.03787879f;
-                            num += addAngle;
+                                __instance.DrawEquipmentAiming(thing, drawLoc, num - ani);
+                                break;
+                            }
+                            case Rot4.EastInt:
+                            {
+                                var drawLoc = rootLoc + new Vector3(addX, offset.z, addZ).RotatedBy(num);
+                                //drawLoc.y += 0.03787879f;
+                                num += addAngle;
 
-                            __instance.DrawEquipmentAiming(thing, drawLoc, num + ani);
-                        }
-                        else if (pawn.Rotation != Rot4.Invalid)
-                        {
-                            var drawLoc = rootLoc2 + new Vector3(-addX, offset.z, addZ).RotatedBy(num);
-                            //drawLoc.y += 0.03787879f;
-                            num += addAngle;
+                                __instance.DrawEquipmentAiming(thing, drawLoc, num + ani);
+                                break;
+                            }
+                            case Rot4.NorthInt:
+                            case Rot4.SouthInt:
+                            {
+                                var drawLoc = rootLoc + new Vector3(-addX, offset.z, addZ).RotatedBy(num);
+                                //drawLoc.y += 0.03787879f;
+                                num += addAngle;
 
-                            __instance.DrawEquipmentAiming(thing, drawLoc, num + ani);
+                                __instance.DrawEquipmentAiming(thing, drawLoc, num + ani);
+                                break;
+                            }
                         }
                     }
                     else
@@ -346,12 +365,10 @@ namespace yayoAni
                         var a = stanceBusy.focusTarg.Thing?.DrawPos ?? stanceBusy.focusTarg.Cell.ToVector3Shifted();
 
                         var num = 0f;
-                        if ((a - pawn.DrawPos).MagnitudeHorizontalSquared() > 0.001f)
-                        {
+                        if ((a - pawn.DrawPos).MagnitudeHorizontalSquared() > 0.001f) 
                             num = (a - pawn.DrawPos).AngleFlat();
-                        }
 
-                        var drawLoc = rootLoc2 + new Vector3(0f, offset.z, readyZ).RotatedBy(num);
+                        var drawLoc = rootLoc + new Vector3(0f, offset.z, readyZ).RotatedBy(num);
                         //drawLoc.y += 0.03787879f;
 
                         __instance.DrawEquipmentAiming(thing, drawLoc, num);
@@ -366,6 +383,7 @@ namespace yayoAni
             if ((pawn.carryTracker?.CarriedThing == null) &&
                 (pawn.Drafted || (pawn.CurJob != null && pawn.CurJob.def.alwaysShowWeapon) || (pawn.mindState.duty != null && pawn.mindState.duty.def.alwaysShowWeapon)))
             {
+                
                 var tick = Mathf.Abs(pawn.HashOffsetTicks() % 1000000000);
                 tick %= 100000000;
                 tick %= 10000000;
@@ -390,7 +408,7 @@ namespace yayoAni
                         if (tick is < 80 and >= 40)
                         {
                             addAngle += tick * 36f;
-                            rootLoc2 += new Vector3(-0.2f, 0f, 0.1f);
+                            rootLoc += Offset;
                         }
                     }
                     else
@@ -398,7 +416,7 @@ namespace yayoAni
                         if (tick < 40)
                         {
                             addAngle += (tick - 40) * -36f;
-                            rootLoc2 += new Vector3(0.2f, 0f, 0.1f);
+                            rootLoc += OffsetSub;
                         }
                     }
                 }
@@ -409,12 +427,12 @@ namespace yayoAni
                     float angle;
                     if (!isSub)
                     {
-                        drawLoc = rootLoc2 + new Vector3(0f, offset.z, -0.22f + wiggle * 0.05f);
                         angle = 143f;
+                        drawLoc = rootLoc + new Vector3(0f, offset.z, -0.22f + wiggle * 0.05f);
                     }
                     else
                     {
-                        drawLoc = rootLoc2 + new Vector3(0f, offset.z, -0.22f + wiggle * 0.05f);
+                        drawLoc = rootLoc + new Vector3(0f, offset.z, -0.22f + wiggle * 0.05f);
                         angle = 350f - 143f;
                         aniAngle *= -1f;
                     }
@@ -430,12 +448,12 @@ namespace yayoAni
                     float angle;
                     if (!isSub)
                     {
-                        drawLoc = rootLoc2 + new Vector3(0f, offset.z, -0.11f + wiggle * 0.05f);
                         angle = 143f;
+                        drawLoc = rootLoc + new Vector3(0f, offset.z, -0.11f + wiggle * 0.05f);
                     }
                     else
                     {
-                        drawLoc = rootLoc2 + new Vector3(0f, offset.z, -0.11f + wiggle * 0.05f);
+                        drawLoc = rootLoc + new Vector3(0f, offset.z, -0.11f + wiggle * 0.05f);
                         angle = 350f - 143f;
                         aniAngle *= -1f;
                     }
@@ -451,12 +469,12 @@ namespace yayoAni
                     float angle;
                     if (!isSub)
                     {
-                        drawLoc = rootLoc2 + new Vector3(0.2f, offset.z, -0.22f + wiggle * 0.05f);
                         angle = 143f;
+                        drawLoc = rootLoc + new Vector3(0.2f, offset.z, -0.22f + wiggle * 0.05f);
                     }
                     else
                     {
-                        drawLoc = rootLoc2 + new Vector3(0.2f, offset.z, -0.22f + wiggle * 0.05f);
+                        drawLoc = rootLoc + new Vector3(0.2f, offset.z, -0.22f + wiggle * 0.05f);
                         angle = 350f - 143f;
                         aniAngle *= -1f;
                     }
@@ -472,12 +490,12 @@ namespace yayoAni
                     float angle;
                     if (!isSub)
                     {
-                        drawLoc = rootLoc2 + new Vector3(-0.2f, offset.z, -0.22f + wiggle * 0.05f);
                         angle = 217f;
+                        drawLoc = rootLoc + new Vector3(-0.2f, offset.z, -0.22f + wiggle * 0.05f);
                     }
                     else
                     {
-                        drawLoc = rootLoc2 + new Vector3(-0.2f, offset.z, -0.22f + wiggle * 0.05f);
+                        drawLoc = rootLoc + new Vector3(-0.2f, offset.z, -0.22f + wiggle * 0.05f);
                         angle = 350f - 217f;
                         aniAngle *= -1f;
                     }
@@ -525,6 +543,7 @@ namespace yayoAni
 
             CompEquippable compEquippable = null;
             ThingComp compOversized = null;
+            // ThingComp compSheathWeaponExtension = null;
 
             if (eq is ThingWithComps eqComps)
             {
@@ -536,6 +555,8 @@ namespace yayoAni
                         compOversized = comp;
                     else if (Core.usingDeflector && comp.IsDeflectorAndAnimatingNow())
                         return false;
+                    // else if (Core.usingSheathYourSword && comp.IsSheathWeaponExtension())
+                    //     compSheathWeaponExtension = comp;
                 }
             }
 
@@ -616,8 +637,10 @@ namespace yayoAni
                 drawLoc += drawOffset;
                 currentAngle += angleOffset;
             }
+
             if (Core.settings.applyOversizedChanges)
                 compOversized?.HandleOversizedDrawing(ref drawLoc, ref currentAngle, pawn, flip);
+            // compSheathWeaponExtension?.HandleSheathExtensionDrawing(ref drawLoc, ref currentAngle, pawn);
 
             currentAngle %= 360f;
 

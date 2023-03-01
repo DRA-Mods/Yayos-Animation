@@ -205,6 +205,29 @@ namespace yayoAni
     [HotSwappable]
     public static class Yayo
     {
+        private static readonly Vector3 XOffset005 = new(0.05f, 0f, 0f);
+        private static readonly Vector3 ZOffset005 = new(0f, 0f, 0.05f);
+        private static readonly Vector3 ZOffset05 = new(0, 0f, 0.5f);
+        private static readonly Vector3 ZOffset06 = new(0f, 0f, 0.60f);
+        private static readonly Vector3 XZOffset005 = new(0.05f, 0f, 0.05f);
+        private static readonly Vector3 XOffset005ZOffset01 = new(0.05f, 0f, 0.1f);
+        private static readonly Vector3 YOffset01 = new(0f, 0.1f, 0f);
+        private static readonly Vector3 ZOffset003 = new(0f, 0f, 0.03f);
+        private static readonly Vector3 ZOffsetM003 = new(0f, 0f, -0.03f);
+
+        // private const float Cx = -0.5f;
+        // private const float Cy = 0f; // 중심점
+        // private const float Gx = -0.25f; // 이동 갭
+        // private const float Gy = 0.25f; // 이동 갭
+        // private static readonly Vector3 PosStepX = new(Cx + Gx * step, 0f, Cy + Gy * step);
+        private static readonly Vector3 PosStepM3 = new(-0.5f + -0.25f * -3, 0f, 0f + 0.25f * -3);
+        private static readonly Vector3 PosStepM2 = new(-0.5f + -0.25f * -2, 0f, 0f + 0.25f * -2);
+        private static readonly Vector3 PosStepM1 = new(-0.5f + -0.25f * -1, 0f, 0f + 0.25f * -1);
+        private static readonly Vector3 PosStep0 = new(-0.5f, 0f, 0f);
+        private static readonly Vector3 PosStep1 = new(-0.5f + -0.25f * 1, 0f, 0f + 0.25f * 1);
+        private static readonly Vector3 PosStep2 = new(-0.5f + -0.25f * 2, 0f, 0f + 0.25f * 2);
+        private static readonly Vector3 PosStep3 = new(-0.5f + -0.25f * 3, 0f, 0f + 0.25f * 3);
+
         public static Mesh GetBlitMeshUpdatedFrame(PawnTextureAtlasFrameSet frameSet, Rot4 rotation, PawnDrawMode drawMode, Pawn p)
         {
             var pdd = DataUtility.GetData(p);
@@ -275,7 +298,7 @@ namespace yayoAni
             var defName = pawn.CurJob?.def.defName;
             var mounted = defName is "Mounted";
 
-            if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns || 
+            if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns ||
                 Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel ||
                 Core.usingGiddyUp && pawn.HasMount())
             {
@@ -333,7 +356,6 @@ namespace yayoAni
                 int t2;
                 int total;
                 var aniType = AniType.none;
-                float f;
                 Rot4 r;
                 Rot4 tr;
 
@@ -606,14 +628,14 @@ namespace yayoAni
 
                     case "Vomit":
                         t = (Find.TickManager.TicksGame + IdTick) % 200;
-                        if (!Core.Ani(ref t, 25, ref oa, 15f, 35f, -1f, ref op, rot))
-                            if (!Core.Ani(ref t, 25, ref oa, 35f, 25f, -1f, ref op, rot))
-                                if (!Core.Ani(ref t, 25, ref oa, 25f, 35f, -1f, ref op, rot))
-                                    if (!Core.Ani(ref t, 25, ref oa, 35f, 25f, -1f, ref op, rot))
-                                        if (!Core.Ani(ref t, 25, ref oa, 25f, 35f, -1f, ref op, rot))
-                                            if (!Core.Ani(ref t, 25, ref oa, 35f, 25f, -1f, ref op, rot))
-                                                if (!Core.Ani(ref t, 25, ref oa, 25f, 35f, -1f, ref op, rot))
-                                                    Core.Ani(ref t, 25, ref oa, 35f, 15f, -1f, ref op, rot);
+                        if (!Core.Ani(ref t, 25, ref oa, 15f, 35f, -1f, ref op, rot) &&
+                            !Core.Ani(ref t, 25, ref oa, 35f, 25f, -1f, ref op, rot) &&
+                            !Core.Ani(ref t, 25, ref oa, 25f, 35f, -1f, ref op, rot) &&
+                            !Core.Ani(ref t, 25, ref oa, 35f, 25f, -1f, ref op, rot) &&
+                            !Core.Ani(ref t, 25, ref oa, 25f, 35f, -1f, ref op, rot) &&
+                            !Core.Ani(ref t, 25, ref oa, 35f, 25f, -1f, ref op, rot) &&
+                            !Core.Ani(ref t, 25, ref oa, 25f, 35f, -1f, ref op, rot))
+                            Core.Ani(ref t, 25, ref oa, 35f, 15f, -1f, ref op, rot);
 
                         break;
 
@@ -625,13 +647,11 @@ namespace yayoAni
                     case "MarryAdjacentPawn":
                         t = (Find.TickManager.TicksGame) % 310;
 
-                        if (!Core.Ani(ref t, 150, ref nextUpdate))
-                        {
-                            if (!Core.Ani(ref t, 20, ref oa, 0f, 5f, -1f, ref op, Vector3.zero, new Vector3(0.05f, 0f, 0f), rot))
-                                if (!Core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0f), new Vector3(0.05f, 0f, 0f), rot))
-                                    if (!Core.Ani(ref t, 50, ref nextUpdate, ref oa, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0f), rot))
-                                        Core.Ani(ref t, 40, ref oa, 10f, 0f, -1f, ref op, new Vector3(0.05f, 0f, 0f), Vector3.zero, rot);
-                        }
+                        if (!Core.Ani(ref t, 150, ref nextUpdate) && 
+                            !Core.Ani(ref t, 20, ref oa, 0f, 5f, -1f, ref op, Vector3.zero, XOffset005, rot) &&
+                            !Core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, XOffset005, XOffset005, rot) &&
+                            !Core.Ani(ref t, 50, ref nextUpdate, ref oa, 10f, -1f, ref op, XOffset005, rot))
+                            Core.Ani(ref t, 40, ref oa, 10f, 0f, -1f, ref op, XOffset005, Vector3.zero, rot);
 
                         break;
                     case "SpectateCeremony": // 각종 행사, 의식 (결혼식, 장례식, 이념행사)
@@ -677,10 +697,8 @@ namespace yayoAni
                     // Vanilla Furniture Core
                     case "Play_DartsBoard":
                         t = (Find.TickManager.TicksGame + IdTick) % 60;
-                        if (!Core.Ani(ref t, 30, ref oa, 10f, -20f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
-                        {
-                            Core.Ani(ref t, 30, ref oa, -20f, 10f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot);
-                        }
+                        if (!Core.Ani(ref t, 30, ref oa, 10f, -20f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
+                            Core.Ani(ref t, 30, ref oa, -20f, 10f, -1f, ref op, Vector3.zero, Vector3.zero, rot);
 
                         break;
 
@@ -712,82 +730,44 @@ namespace yayoAni
                         t = (Find.TickManager.TicksGame + IdTick) % (12 * tg);
                         r = Rot4.East;
 
-                        var cx = -0.5f;
-                        var cy = 0f; // 중심점
+                        const float extinguish = 45f;
 
-                        var gx = -0.25f; // 이동 갭
-                        var gy = 0.25f; // 이동 갭
-
-                        var step = 0; // 이동 단계
-
-                        var a = 45f;
-
-                        if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r,
-                                Core.tweenType.line))
+                        if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStep0, PosStep1, r, Core.tweenType.line))
                         {
-                            rot = Core.Rot90(rot);
-                            step++;
-                            if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r,
-                                    Core.tweenType.line))
+                            rot.Rotate(RotationDirection.Clockwise);
+                            if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStep1, PosStep2, r, Core.tweenType.line))
                             {
-                                rot = Core.Rot90(rot);
-                                step++;
-                                if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r,
-                                        Core.tweenType.line))
+                                rot.Rotate(RotationDirection.Clockwise);
+                                if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStep2, PosStep3, r, Core.tweenType.line))
                                 {
-                                    rot = Core.Rot90(rot);
-                                    step++;
-
-
+                                    rot.Rotate(RotationDirection.Clockwise);
                                     // reverse
-                                    if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step), new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r,
-                                            Core.tweenType.line))
+                                    if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStep3, PosStep2, r, Core.tweenType.line))
                                     {
-                                        rot = Core.Rot90b(rot);
-                                        step--;
-                                        if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
-                                                new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, Core.tweenType.line))
+                                        rot.Rotate(RotationDirection.Counterclockwise);
+                                        if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStep2, PosStep1, r, Core.tweenType.line))
                                         {
-                                            rot = Core.Rot90b(rot);
-                                            step--;
-                                            if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
-                                                    new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, Core.tweenType.line))
+                                            rot.Rotate(RotationDirection.Counterclockwise);
+                                            if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStep1, PosStep0, r, Core.tweenType.line))
                                             {
-                                                rot = Core.Rot90b(rot);
-                                                step--;
-                                                if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
-                                                        new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, Core.tweenType.line))
+                                                rot.Rotate(RotationDirection.Counterclockwise);
+                                                if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStep0, PosStepM1, r, Core.tweenType.line))
                                                 {
-                                                    rot = Core.Rot90b(rot);
-                                                    step--;
-                                                    if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
-                                                            new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, Core.tweenType.line))
+                                                    rot.Rotate(RotationDirection.Counterclockwise);
+                                                    if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStepM1, PosStepM2, r, Core.tweenType.line))
                                                     {
-                                                        rot = Core.Rot90b(rot);
-                                                        step--;
-                                                        if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
-                                                                new Vector3(cx + gx * (step - 1), 0f, cy + gy * (step - 1)), r, Core.tweenType.line))
+                                                        rot.Rotate(RotationDirection.Counterclockwise);
+                                                        if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStepM2, PosStepM3, r, Core.tweenType.line))
                                                         {
-                                                            rot = Core.Rot90b(rot);
-                                                            step--;
-
+                                                            rot.Rotate(RotationDirection.Counterclockwise);
                                                             // reverse
-                                                            if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
-                                                                    new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, Core.tweenType.line))
+                                                            if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStepM3, PosStepM2, r, Core.tweenType.line))
                                                             {
-                                                                rot = Core.Rot90(rot);
-                                                                step++;
-                                                                if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
-                                                                        new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, Core.tweenType.line))
+                                                                rot.Rotate(RotationDirection.Clockwise);
+                                                                if (!Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStepM2, PosStepM1, r, Core.tweenType.line))
                                                                 {
-                                                                    rot = Core.Rot90(rot);
-                                                                    step++;
-                                                                    if (!Core.Ani(ref t, tg, ref oa, a, a, -1f, ref op, new Vector3(cx + gx * step, 0f, cy + gy * step),
-                                                                            new Vector3(cx + gx * (step + 1), 0f, cy + gy * (step + 1)), r, Core.tweenType.line))
-                                                                    {
-                                                                        rot = Core.Rot90(rot);
-                                                                        // step++;
-                                                                    }
+                                                                    rot.Rotate(RotationDirection.Clockwise);
+                                                                    Core.Ani(ref t, tg, ref oa, extinguish, extinguish, -1f, ref op, PosStepM1, PosStep0, r, Core.tweenType.line);
                                                                 }
                                                             }
                                                         }
@@ -803,7 +783,7 @@ namespace yayoAni
                         try
                         {
                             nextUpdate = int.MinValue; // Drawing extra stuff, don't cache this job
-                            pawn.CurJob.targetA.Thing.DrawAt(pos + op + new Vector3(0f, 0.1f, 0f));
+                            pawn.CurJob.targetA.Thing.DrawAt(pos + op + YOffset01);
                         }
                         catch
                         {
@@ -817,9 +797,9 @@ namespace yayoAni
                     case "Sow": // 씨뿌리기
                         t = (Find.TickManager.TicksGame + IdTick) % 50;
 
-                        if (!Core.Ani(ref t, 35, ref nextUpdate))
-                            if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, rot))
-                                Core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot);
+                        if (!Core.Ani(ref t, 35, ref nextUpdate) &&
+                            !Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, rot)) 
+                            Core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot);
 
                         break;
 
@@ -829,13 +809,9 @@ namespace yayoAni
                     case "Harvest": // 자동 수확
                     case "HarvestDesignated": // 수동 수확
                         if (pawn.CurJob.targetA.Thing?.def.plant?.IsTree != null && pawn.CurJob.targetA.Thing.def.plant.IsTree)
-                        {
                             aniType = AniType.smash;
-                        }
                         else
-                        {
                             aniType = AniType.doSomeThing;
-                        }
 
                         break;
 
@@ -855,16 +831,15 @@ namespace yayoAni
                     // Vanilla Social Interactions
                     case "VSIE_HaveMealTogether":
                         t = (Find.TickManager.TicksGame + IdTick) % 150;
-                        f = 0.03f;
-                        if (!Core.Ani(ref t, 10, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
-                            if (!Core.Ani(ref t, 10, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
-                                if (!Core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, Vector3.zero, new Vector3(0f, 0f, f), rot))
-                                    if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, f), new Vector3(0f, 0f, -f), rot))
-                                        if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot))
-                                            if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, f), new Vector3(0f, 0f, -f), rot))
-                                                if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot))
-                                                    if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, f), new Vector3(0f, 0f, -f), rot))
-                                                        Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot);
+                        if (!Core.Ani(ref t, 10, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot) && 
+                            !Core.Ani(ref t, 10, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot) &&
+                            !Core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, Vector3.zero, ZOffset003, rot) &&
+                            !Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, ZOffset003, ZOffsetM003, rot) &&
+                            !Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, ZOffsetM003, ZOffset003, rot) &&
+                            !Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, ZOffset003, ZOffsetM003, rot) &&
+                            !Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, ZOffsetM003, ZOffset003, rot) &&
+                            !Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, ZOffset003, ZOffsetM003, rot))
+                            Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, ZOffsetM003, ZOffset003, rot);
 
                         break;
 
@@ -879,12 +854,10 @@ namespace yayoAni
                     case AniType.solemn:
                         t = (Find.TickManager.TicksGame + (IdTick % 25)) % 660;
 
-                        if (!Core.Ani(ref t, 300, ref nextUpdate))
-                        {
-                            if (!Core.Ani(ref t, 30, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
-                                if (!Core.Ani(ref t, 300, ref nextUpdate, ref oa, 15f, -1f, ref op, Vector3.zero, rot))
-                                    Core.Ani(ref t, 30, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot);
-                        }
+                        if (!Core.Ani(ref t, 300, ref nextUpdate) &&
+                            !Core.Ani(ref t, 30, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot) &&
+                            !Core.Ani(ref t, 300, ref nextUpdate, ref oa, 15f, -1f, ref op, Vector3.zero, rot)) 
+                            Core.Ani(ref t, 30, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot);
 
                         break;
 
@@ -892,36 +865,32 @@ namespace yayoAni
                         total = 143;
                         t2 = (Find.TickManager.TicksGame + IdTick) % (total * 2);
                         t = t2 % total;
-                        r = Core.Rot90(rot);
+                        r = rot.Rotated(RotationDirection.Clockwise);
                         tr = rot;
-                        if (!Core.Ani(ref t, 20, ref nextUpdate))
+                        if (!Core.Ani(ref t, 20, ref nextUpdate) && 
+                            !Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 20, ref nextUpdate, ref oa, 10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 20, ref nextUpdate, ref oa, -10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 5, ref oa, -10f, 0f, -1f, ref op, r))
                         {
-                            if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r))
-                                if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 10f, -1f, ref op, r))
-                                    if (!Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r))
-                                        if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, -10f, -1f, ref op, r))
-                                        {
-                                            if (!Core.Ani(ref t, 5, ref oa, -10f, 0f, -1f, ref op, r))
-                                            {
-                                                tr = t2 >= total ? Core.Rot90(rot) : Core.Rot90b(rot);
-                                                if (!Core.Ani(ref t, 15, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 85
-                                                {
-                                                    tr = rot;
-                                                    if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 105
-
-
-                                                        if (t2 >= total)
-                                                        {
-                                                            if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.60f), rot))
-                                                                Core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.60f), new Vector3(0f, 0f, 0f), rot, Core.tweenType.line);
-                                                        }
-                                                        else
-                                                        {
-                                                            Core.Ani(ref t, 33, ref nextUpdate);
-                                                        }
-                                                }
-                                            }
-                                        }
+                            tr = t2 >= total 
+                                ? rot.Rotated(RotationDirection.Clockwise) 
+                                : rot.Rotated(RotationDirection.Counterclockwise);
+                            if (!Core.Ani(ref t, 15, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 85
+                            {
+                                tr = rot;
+                                if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 105
+                                    if (t2 >= total)
+                                    {
+                                        if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, Vector3.zero, ZOffset06, rot))
+                                            Core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, ZOffset06, Vector3.zero, rot, Core.tweenType.line);
+                                    }
+                                    else
+                                    {
+                                        Core.Ani(ref t, 33, ref nextUpdate);
+                                    }
+                            }
                         }
 
                         rot = tr;
@@ -934,32 +903,28 @@ namespace yayoAni
                         // r = Core.Rot90(rot);
                         // tr = rot;
 
-                        if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.60f), rot))
+                        if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, Vector3.zero, ZOffset06, rot) &&
+                            !Core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, ZOffset06, Vector3.zero, rot, Core.tweenType.line) &&
+                            !Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, Vector3.zero, ZOffset06, rot) &&
+                            !Core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, ZOffset06, Vector3.zero, rot, Core.tweenType.line))
                         {
-                            if (!Core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.60f), new Vector3(0f, 0f, 0f), rot, Core.tweenType.line))
-
-                                if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.60f), rot))
-                                    if (!Core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.60f), new Vector3(0f, 0f, 0f), rot, Core.tweenType.line))
+                            rot.Rotate(RotationDirection.Counterclockwise);
+                            if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, Vector3.zero, rot))
+                            {
+                                rot.Rotate(RotationDirection.Counterclockwise);
+                                if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, Vector3.zero, rot) &&
+                                    !Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, Vector3.zero, ZOffset06, rot) &&
+                                    !Core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, ZOffset06, Vector3.zero, rot, Core.tweenType.line) &&
+                                    !Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, Vector3.zero, rot))
+                                {
+                                    rot.Rotate(RotationDirection.Counterclockwise);
+                                    if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, Vector3.zero, rot))
                                     {
-                                        rot = Core.Rot90b(rot);
-                                        if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot))
-                                        {
-                                            rot = Core.Rot90b(rot);
-                                            if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot))
-
-                                                if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.60f), rot))
-                                                    if (!Core.Ani(ref t, 13, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.60f), new Vector3(0f, 0f, 0f), rot, Core.tweenType.line))
-                                                        if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot))
-                                                        {
-                                                            rot = Core.Rot90b(rot);
-                                                            if (!Core.Ani(ref t, 10, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot))
-                                                            {
-                                                                rot = Core.Rot90b(rot);
-                                                                Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot);
-                                                            }
-                                                        }
-                                        }
+                                        rot.Rotate(RotationDirection.Counterclockwise);
+                                        Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, Vector3.zero, rot);
                                     }
+                                }
+                            }
                         }
 
 
@@ -967,35 +932,33 @@ namespace yayoAni
 
                     case AniType.idle:
                         t = (Find.TickManager.TicksGame + IdTick * 13) % 800;
-                        f = 4.5f;
-                        r = Core.Rot90(rot);
-                        if (!Core.Ani(ref t, 500, ref nextUpdate, ref oa, 0f, -1f, ref op, r))
-                            if (!Core.Ani(ref t, 25, ref oa, 0f, f, -1f, ref op, r))
-                                if (!Core.Ani(ref t, 50, ref oa, f, -f, -1f, ref op, r))
-                                    if (!Core.Ani(ref t, 50, ref oa, -f, f, -1f, ref op, r))
-                                        if (!Core.Ani(ref t, 50, ref oa, f, -f, -1f, ref op, r))
-                                            if (!Core.Ani(ref t, 50, ref oa, -f, f, -1f, ref op, r))
-                                                if (!Core.Ani(ref t, 50, ref oa, f, -f, -1f, ref op, r))
-                                                    Core.Ani(ref t, 25, ref oa, -f, 0f, -1f, ref op, r);
+                        const float idleAngle = 4.5f;
+                        r = rot.Rotated(RotationDirection.Clockwise);
+                        if (!Core.Ani(ref t, 500, ref nextUpdate, ref oa, 0f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 25, ref oa, 0f, idleAngle, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 50, ref oa, idleAngle, -idleAngle, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 50, ref oa, -idleAngle, idleAngle, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 50, ref oa, idleAngle, -idleAngle, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 50, ref oa, -idleAngle, idleAngle, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 50, ref oa, idleAngle, -idleAngle, -1f, ref op, r))
+                            Core.Ani(ref t, 25, ref oa, -idleAngle, 0f, -1f, ref op, r);
                         break;
 
                     case AniType.wiggleGentle:
                         t = (Find.TickManager.TicksGame + IdTick * 13) % 200;
-                        f = 2.5f;
-                        r = Core.Rot90(rot);
-                        if (!Core.Ani(ref t, 100, ref oa, -f, f, -1f, ref op, r))
-                            Core.Ani(ref t, 100, ref oa, f, -f, -1f, ref op, r);
+                        const float wiggleGentleAngle = 2.5f;
+                        r = rot.Rotated(RotationDirection.Clockwise);
+                        if (!Core.Ani(ref t, 100, ref oa, -wiggleGentleAngle, wiggleGentleAngle, -1f, ref op, r))
+                            Core.Ani(ref t, 100, ref oa, wiggleGentleAngle, -wiggleGentleAngle, -1f, ref op, r);
                         break;
 
                     case AniType.smash:
                         t = (Find.TickManager.TicksGame + IdTick) % 133;
 
-                        if (!Core.Ani(ref t, 70, ref oa, 0f, -20f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
-                        {
-                            if (!Core.Ani(ref t, 3, ref oa, -20f, 10f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot, Core.tweenType.line))
-                                if (!Core.Ani(ref t, 20, ref oa, 10f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), rot))
-                                    Core.Ani(ref t, 40, ref nextUpdate, ref oa, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), rot);
-                        }
+                        if (!Core.Ani(ref t, 70, ref oa, 0f, -20f, -1f, ref op, Vector3.zero, Vector3.zero, rot) &&
+                            !Core.Ani(ref t, 3, ref oa, -20f, 10f, -1f, ref op, Vector3.zero, Vector3.zero, rot, Core.tweenType.line) &&
+                            !Core.Ani(ref t, 20, ref oa, 10f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot))
+                            Core.Ani(ref t, 40, ref nextUpdate, ref oa, 0f, -1f, ref op, Vector3.zero, rot);
 
                         break;
 
@@ -1003,27 +966,22 @@ namespace yayoAni
                         total = 121;
                         t2 = (Find.TickManager.TicksGame + IdTick) % (total * 2);
                         t = t2 % total;
-                        r = Core.Rot90(rot);
+                        r = rot.Rotated(RotationDirection.Clockwise);
                         tr = rot;
-                        if (!Core.Ani(ref t, 20, ref nextUpdate))
-                            if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r))
-                                if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 10f, -1f, ref op, r))
-                                    if (!Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r))
-                                        if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, -10f, -1f, ref op, r))
-                                        {
-                                            if (!Core.Ani(ref t, 5, ref oa, -10f, 0f, -1f, ref op, r))
-                                            {
-                                                //tr = t2 >= total ? core.Rot90(rot) : core.Rot90b(rot);
-                                                // if (!Core.Ani(ref t, 15, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 85
-                                                if (!Core.Ani(ref t, 35, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 105
-                                                {
-                                                    //tr = rot;
-                                                    // if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 105
-                                                    if (!Core.Ani(ref t, 5, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.05f), rot))
-                                                        Core.Ani(ref t, 6, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.05f), new Vector3(0f, 0f, 0f), rot);
-                                                }
-                                            }
-                                        }
+                        if (!Core.Ani(ref t, 20, ref nextUpdate) &&
+                            !Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 20, ref nextUpdate, ref oa, 10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 20, ref nextUpdate, ref oa, -10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 5, ref oa, -10f, 0f, -1f, ref op, r) &&
+                            //tr = t2 >= total ? core.Rot90(rot) : core.Rot90b(rot);
+                            // if (!Core.Ani(ref t, 15, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 85
+                            !Core.Ani(ref t, 35, ref nextUpdate, ref oa, 0f, -1f, ref op, rot) &&
+                            // 105
+                            //tr = rot;
+                            // if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 105
+                            !Core.Ani(ref t, 5, ref oa, 0f, 0f, -1f, ref op, Vector3.zero, ZOffset005, rot))
+                            Core.Ani(ref t, 6, ref oa, 0f, 0f, -1f, ref op, ZOffset005, Vector3.zero, rot);
 
                         rot = tr;
                         break;
@@ -1033,32 +991,32 @@ namespace yayoAni
                         total = 221;
                         t2 = (Find.TickManager.TicksGame + IdTick) % (total * 2);
                         t = t2 % total;
-                        r = Core.Rot90(rot);
+                        r = rot.Rotated(RotationDirection.Clockwise);
                         tr = rot;
-                        if (!Core.Ani(ref t, 20, ref nextUpdate))
-                            if (!Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r))
-                                if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 10f, -1f, ref op, r))
-                                    if (!Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r))
-                                        if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, -10f, -1f, ref op, r))
-                                        {
-                                            if (!Core.Ani(ref t, 5, ref oa, -10f, 0f, -1f, ref op, r))
-                                            {
-                                                tr = t2 >= total ? Core.Rot90(rot) : Core.Rot90b(rot);
-                                                if (!Core.Ani(ref t, 15, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 85
-                                                {
-                                                    tr = rot;
-                                                    if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 105
-                                                        if (!Core.Ani(ref t, 5, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0.05f), rot))
-                                                            if (!Core.Ani(ref t, 6, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, 0.05f), new Vector3(0f, 0f, 0f), rot))
-                                                                if (!Core.Ani(ref t, 35, ref nextUpdate, ref oa, 0f, -1f, ref op, rot))
-                                                                    if (!Core.Ani(ref t, 10, ref oa, 0f, 10f, -1f, ref op, rot))
-                                                                        if (!Core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot))
-                                                                            if (!Core.Ani(ref t, 10, ref oa, 0f, 10f, -1f, ref op, rot))
-                                                                                if (!Core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot))
-                                                                                    Core.Ani(ref t, 25, ref nextUpdate, ref oa, 0f, -1f, ref op, rot);
-                                                }
-                                            }
-                                        }
+                        if (!Core.Ani(ref t, 20, ref nextUpdate) &&
+                            !Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 20, ref nextUpdate, ref oa, 10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 20, ref nextUpdate, ref oa, -10f, -1f, ref op, r) &&
+                            !Core.Ani(ref t, 5, ref oa, -10f, 0f, -1f, ref op, r))
+                        {
+                            tr = t2 >= total
+                                ? rot.Rotated(RotationDirection.Clockwise)
+                                : rot.Rotated(RotationDirection.Counterclockwise);
+                            if (!Core.Ani(ref t, 15, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 85
+                            {
+                                tr = rot;
+                                if (!Core.Ani(ref t, 20, ref nextUpdate, ref oa, 0f, -1f, ref op, rot) && // 105
+                                    !Core.Ani(ref t, 5, ref oa, 0f, 0f, -1f, ref op, Vector3.zero, ZOffset005, rot) &&
+                                    !Core.Ani(ref t, 6, ref oa, 0f, 0f, -1f, ref op, ZOffset005, Vector3.zero, rot) &&
+                                    !Core.Ani(ref t, 35, ref nextUpdate, ref oa, 0f, -1f, ref op, rot) &&
+                                    !Core.Ani(ref t, 10, ref oa, 0f, 10f, -1f, ref op, rot) &&
+                                    !Core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot) &&
+                                    !Core.Ani(ref t, 10, ref oa, 0f, 10f, -1f, ref op, rot) &&
+                                    !Core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot))
+                                    Core.Ani(ref t, 25, ref nextUpdate, ref oa, 0f, -1f, ref op, rot);
+                            }
+                        }
 
                         rot = tr;
                         break;
@@ -1122,23 +1080,22 @@ namespace yayoAni
                             Building_Bed bed = pawn.CurrentBed();
                             if (bed == null) break;
                             var t = (Find.TickManager.TicksGame + idTick % 30) % 360;
-                            const float f = 0.03f;
                             if (pawn.RaceProps.Humanlike)
                             {
                                 rot = Core.getRot(pawn.CurJob.targetA.Pawn.DrawPos - pawn.DrawPos, bed.Rotation);
 
                                 if (t <= 160)
                                 {
-                                    if (!Core.Ani(ref t, 20, ref oa, 0f, 5f, -1f, ref op, Vector3.zero, new Vector3(0.05f, 0f, 0.05f), rot, Core.tweenType.sin, bed.Rotation))
-                                        if (!Core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0.05f), new Vector3(0.05f, 0f, 0.1f), rot, Core.tweenType.sin, bed.Rotation))
-                                            if (!Core.Ani(ref t, 50, ref nextUpdate, ref oa, 10f, -1f, ref op, new Vector3(0.05f, 0f, 0.1f), rot, Core.tweenType.sin, bed.Rotation))
-                                                Core.Ani(ref t, 40, ref oa, 10f, 0f, -1f, ref op, new Vector3(0.05f, 0f, 0.1f), Vector3.zero, rot, Core.tweenType.sin, bed.Rotation);
+                                    if (!Core.Ani(ref t, 20, ref oa, 0f, 5f, -1f, ref op, Vector3.zero, XZOffset005, rot, Core.tweenType.sin, bed.Rotation) &&
+                                        !Core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, XZOffset005, XOffset005ZOffset01, rot, Core.tweenType.sin, bed.Rotation) &&
+                                        !Core.Ani(ref t, 50, ref nextUpdate, ref oa, 10f, -1f, ref op, XOffset005ZOffset01, rot, Core.tweenType.sin, bed.Rotation))
+                                        Core.Ani(ref t, 40, ref oa, 10f, 0f, -1f, ref op, XOffset005ZOffset01, Vector3.zero, rot, Core.tweenType.sin, bed.Rotation);
                                 }
                                 else
                                 {
                                     t = (Find.TickManager.TicksGame + idTick) % 40;
-                                    if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, f), new Vector3(0f, 0f, -f), rot, Core.tweenType.sin, bed.Rotation))
-                                        Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, new Vector3(0f, 0f, -f), new Vector3(0f, 0f, f), rot, Core.tweenType.sin, bed.Rotation);
+                                    if (!Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, ZOffset003, ZOffsetM003, rot, Core.tweenType.sin, bed.Rotation))
+                                        Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, ZOffsetM003, ZOffset003, rot, Core.tweenType.sin, bed.Rotation);
                                 }
                             }
 
@@ -1215,7 +1172,7 @@ namespace yayoAni
                             nextUpdate = int.MaxValue;
                             if (Rand.ChanceSeeded(0.5f, pawn.CurJob.loadID + idTick))
                             {
-                                op = new Vector3(0, 0f, 0.5f);
+                                op = ZOffset05;
                                 oa = 180f;
                             }
 
@@ -1282,7 +1239,7 @@ namespace yayoAni
         {
             if (___pawn == null)
                 return;
-            
+
             var pdd = DataUtility.GetData(___pawn);
             Yayo.CheckAni(___pawn, ref drawLoc, rotOverride ?? ___pawn.Rotation, pdd);
         }
@@ -1338,9 +1295,8 @@ namespace yayoAni
             bool renderHead, bool renderBody, bool portrait, bool renderHeadgear, bool renderClothes, Dictionary<Apparel, Color> overrideApparelColor = null, Color? overrideHairColor = null,
             bool stylingStation = false)
         {
-            Vector3 zero = Vector3.zero;
             //PawnRenderFlags pawnRenderFlags = GetDefaultRenderFlags(pawn);
-            PawnRenderFlags pawnRenderFlags = __instance.GetDefaultRenderFlags(___pawn);
+            var pawnRenderFlags = __instance.GetDefaultRenderFlags(___pawn);
             if (portrait)
             {
                 pawnRenderFlags |= PawnRenderFlags.Portrait;
@@ -1375,7 +1331,7 @@ namespace yayoAni
                 {
                     foreach (var (key, value) in overrideApparelColor)
                     {
-                        CompColorable compColorable = key.TryGetComp<CompColorable>();
+                        var compColorable = key.TryGetComp<CompColorable>();
                         if (compColorable != null)
                         {
                             ___tmpOriginalColors.Add(key, (compColorable.Color, compColorable.Active));
@@ -1384,7 +1340,7 @@ namespace yayoAni
                     }
                 }
 
-                Color hairColor = Color.white;
+                var hairColor = Color.white;
                 if (___pawn.story != null)
                 {
                     hairColor = ___pawn.story.hairColor;
@@ -1397,9 +1353,9 @@ namespace yayoAni
 
                 //RenderPawnInternal(zero + positionOffset, angle, renderBody, rotation, ___CurRotDrawMode, pawnRenderFlags);
                 Patch_PawnRenderer_RenderPawnInternal.skipPatch = true;
-                RotDrawMode curRotDrawMode = __instance.CurRotDrawMode;
-                __instance.RenderPawnInternal(zero + positionOffset, angle, renderBody, rotation, curRotDrawMode, pawnRenderFlags);
-                foreach (KeyValuePair<Apparel, (Color, bool)> tmpOriginalColor in ___tmpOriginalColors)
+                var curRotDrawMode = __instance.CurRotDrawMode;
+                __instance.RenderPawnInternal(Vector3.zero + positionOffset, angle, renderBody, rotation, curRotDrawMode, pawnRenderFlags);
+                foreach (var tmpOriginalColor in ___tmpOriginalColors)
                 {
                     if (!tmpOriginalColor.Value.Item2)
                     {

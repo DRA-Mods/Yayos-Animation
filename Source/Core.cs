@@ -86,9 +86,9 @@ namespace yayoAni
             SheathYourSword.CheckSheathYourSwordActive();
         }
 
-        public static Rot4 getRot(Vector3 vel, Rot4 curRot)
+        public static Rot4 getRot(in Vector3 vel, in Rot4 curRot)
         {
-            Rot4 r = Rot4.South;
+            var r = Rot4.South;
             if (curRot == Rot4.North || curRot == Rot4.East)
             {
                 if (Mathf.Abs(vel.x) > Mathf.Abs(vel.z))
@@ -136,8 +136,7 @@ namespace yayoAni
             sin
         }
 
-        public static bool Ani(ref int tick, int duration, ref float angle, float s_angle, float t_angle, float centerY, ref Vector3 pos, Vector3 s_pos, Vector3 t_pos, Rot4? rot = null,
-            tweenType tween = tweenType.sin, Rot4? axis = null)
+        public static bool Ani(ref int tick, int duration, ref float angle, float s_angle, float t_angle, float centerY, ref Vector3 pos, Vector3 s_pos, Vector3 t_pos, Rot4? rot = null, tweenType tween = tweenType.sin, Rot4? axis = null)
         {
             if (tick >= duration)
             {
@@ -199,26 +198,26 @@ namespace yayoAni
             }
             else if (rot != null)
             {
-                if (rot == Rot4.West)
+                switch (rot.Value.AsInt)
                 {
-                    s_angle = -s_angle;
-                    t_angle = -t_angle;
-                    s_pos = new Vector3(-s_pos.x, 0f, s_pos.z);
-                    t_pos = new Vector3(-t_pos.x, 0f, t_pos.z);
-                }
-                else if ((Rot4)rot == Rot4.South)
-                {
-                    s_angle *= angleReduce;
-                    t_angle *= angleReduce;
-                    s_pos = new Vector3(0f, 0f, s_pos.z - s_pos.x - s_angle * angleToPos);
-                    t_pos = new Vector3(0f, 0f, t_pos.z - t_pos.x - t_angle * angleToPos);
-                }
-                else if ((Rot4)rot == Rot4.North)
-                {
-                    s_angle *= -angleReduce;
-                    t_angle *= -angleReduce;
-                    s_pos = new Vector3(0f, 0f, s_pos.z + s_pos.x - s_angle * angleToPos);
-                    t_pos = new Vector3(0f, 0f, t_pos.z + t_pos.x - t_angle * angleToPos);
+                    case Rot4.WestInt:
+                        s_angle = -s_angle;
+                        t_angle = -t_angle;
+                        s_pos = new Vector3(-s_pos.x, 0f, s_pos.z);
+                        t_pos = new Vector3(-t_pos.x, 0f, t_pos.z);
+                        break;
+                    case Rot4.SouthInt:
+                        s_angle *= angleReduce;
+                        t_angle *= angleReduce;
+                        s_pos = new Vector3(0f, 0f, s_pos.z - s_pos.x - s_angle * angleToPos);
+                        t_pos = new Vector3(0f, 0f, t_pos.z - t_pos.x - t_angle * angleToPos);
+                        break;
+                    case Rot4.NorthInt:
+                        s_angle *= -angleReduce;
+                        t_angle *= -angleReduce;
+                        s_pos = new Vector3(0f, 0f, s_pos.z + s_pos.x - s_angle * angleToPos);
+                        t_pos = new Vector3(0f, 0f, t_pos.z + t_pos.x - t_angle * angleToPos);
+                        break;
                 }
             }
 
@@ -239,8 +238,7 @@ namespace yayoAni
             return true;
         }
 
-        public static bool Ani(ref int tick, int duration, ref int? nextUpdateTick, ref float angle, float t_angle, float centerY, ref Vector3 pos, Vector3 t_pos, Rot4? rot = null,
-            tweenType tween = tweenType.sin, Rot4? axis = null)
+        public static bool Ani(ref int tick, int duration, ref int? nextUpdateTick, ref float angle, float t_angle, float centerY, ref Vector3 pos, Vector3 t_pos, Rot4? rot = null, tweenType tween = tweenType.sin, Rot4? axis = null)
         {
             if (!Ani(ref tick, duration, ref angle, t_angle, t_angle, centerY, ref pos, t_pos, t_pos, rot, tween, axis))
                 return false;
@@ -280,18 +278,14 @@ namespace yayoAni
             return true;
         }
 
-        public static Rot4 Rot90(Rot4 rot) => new(rot.AsInt + 1);
-        public static Rot4 Rot90b(Rot4 rot) => new(rot.AsInt - 1);
-
-        private static List<LordJob_Ritual> ar_lordJob_ritual = new();
-
         public static LordJob_Ritual GetPawnRitual(Pawn p)
         {
-            ar_lordJob_ritual = Find.IdeoManager.GetActiveRituals(p.Map);
+            var ar_lordJob_ritual = Find.IdeoManager.GetActiveRituals(p.Map);
             if (ar_lordJob_ritual == null) return null;
-            foreach (LordJob_Ritual l in ar_lordJob_ritual)
+            foreach (var l in ar_lordJob_ritual)
             {
-                if (l.PawnsToCountTowardsPresence.Contains(p)) return l;
+                if (l.PawnsToCountTowardsPresence.Contains(p))
+                    return l;
             }
 
             return null;
