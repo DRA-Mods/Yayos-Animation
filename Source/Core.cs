@@ -37,6 +37,7 @@ namespace yayoAni
         public static bool usingOversizedWeapons = false;
         public static bool usingDeflector = false;
         public static bool usingGiddyUp = false;
+        public static bool usingSheathYourSword = false;
 #if BIOTECH_PLUS
         // public static bool usingVfeCore = false;
         public static bool usingReinforcedMechanoids = false;
@@ -77,6 +78,7 @@ namespace yayoAni
 
             OversizedWeapon.CheckOversizedActive();
             Deflector.CheckDeflectorActive();
+            SheathYourSword.CheckSheathYourSwordActive();
         }
 
         public static Rot4 getRot(Vector3 vel, Rot4 curRot)

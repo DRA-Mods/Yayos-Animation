@@ -12,6 +12,7 @@ namespace yayoAni
     {
         [HarmonyPriority(0)]
         [HarmonyPrefix]
+        [HarmonyBefore("com.SYS.rimworld.mod")]
         private static bool Prefix(PawnRenderer __instance, Vector3 rootLoc)
         {
             if (!Core.settings.combatEnabled)
@@ -37,15 +38,30 @@ namespace yayoAni
                 return false;
 
             if (pawn.CurJob != null && pawn.CurJob.def.neverShowWeapon)
+            {
+                if (Core.usingSheathYourSword)
+                {
+                    primaryWeapon.DrawFullSheath(pawn, rootLoc);
+                    if (Core.usingDualWield && pawn.equipment.TryGetOffHandEquipment(out var offHandSheath))
+                        offHandSheath.DrawFullSheath(pawn, rootLoc);
+                }
+
                 return false;
+            }
 
             // duelWeld
             ThingWithComps offHandEquip = null;
             if (Core.usingDualWield && pawn.equipment.TryGetOffHandEquipment(out offHandEquip))
+                offHandEquip.DrawEmptySheath(pawn, rootLoc);
+            else if (Core.usingOversizedWeapons && pawn.equipment.IsOversizedDualWield())
+                offHandEquip = primaryWeapon;
+
+            if (Core.usingSheathYourSword)
             {
+                primaryWeapon.DrawEmptySheath(pawn, rootLoc);
+                if (offHandEquip != null && offHandEquip != primaryWeapon)
+                    offHandEquip.DrawEmptySheath(pawn, rootLoc);
             }
-            else if (Core.usingOversizedWeapons && pawn.equipment.IsOversizedDualWield()) 
-                offHandEquip = pawn.equipment.Primary;
 
             // 주무기
             var stance_Busy = pawn.stances.curStance as Stance_Busy;
