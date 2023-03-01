@@ -543,6 +543,11 @@ public static class Yayo
                 // Vanilla Ideology - Memes and Structures
                 case "VME_DeconstructBuilding":
                 case "VME_MaintainInsectNest":
+                // Research Reinvented
+                case "RR_AnalyseInPlace":
+                case "RR_Analyse":
+                case "RR_AnalyseTerrain":
+                case "RR_Research":
                     aniType = AniType.doSomeThing;
                     break;
 
