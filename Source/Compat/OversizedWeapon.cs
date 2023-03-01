@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
+using CompOversizedWeapon;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -26,28 +28,75 @@ public static class OversizedWeapon
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static void HandleOversizedDrawing(this ThingComp comp, ref Vector3 drawLoc, ref float aimAngle, Pawn pawn, bool flip)
     {
-        var props = (comp as CompOversizedWeapon.CompOversizedWeapon)?.Props;
-        if (props == null)
+        if (comp.props is not CompProperties_OversizedWeapon props)
             return;
 
         var pawnRotation = pawn.Rotation;
 
-        if (pawnRotation == Rot4.North) drawLoc += props.northOffset;
-        else if (pawnRotation == Rot4.East) drawLoc += props.eastOffset;
-        else if (pawnRotation == Rot4.West) drawLoc += props.westOffset;
-        else drawLoc += props.southOffset;
-
-        if (!pawn.IsFighting())
+        drawLoc += pawnRotation.AsInt switch
         {
-            if (flip && props.verticalFlipOutsideCombat)
-                aimAngle += 180f;
-            if (props.verticalFlipNorth && pawnRotation == Rot4.North)
-                aimAngle += 180f;
+            Rot4.NorthInt => props.northOffset,
+            Rot4.EastInt => props.eastOffset,
+            Rot4.WestInt => props.westOffset,
+            _ => props.southOffset
+        };
 
-            if (pawnRotation == Rot4.North) aimAngle += props.angleAdjustmentNorth;
-            else if (pawnRotation == Rot4.East) aimAngle += props.angleAdjustmentEast;
-            else if (pawnRotation == Rot4.West) aimAngle += props.angleAdjustmentWest;
-            else aimAngle += props.angleAdjustmentSouth;
+        if (pawn.IsFighting())
+            return;
+        if (flip && props.verticalFlipOutsideCombat)
+            aimAngle += 180f;
+        if (props.verticalFlipNorth && pawnRotation == Rot4.North)
+            aimAngle += 180f;
+
+        aimAngle += pawnRotation.AsInt switch
+        {
+            Rot4.NorthInt => props.angleAdjustmentNorth,
+            Rot4.EastInt => props.angleAdjustmentEast,
+            Rot4.WestInt => props.angleAdjustmentWest,
+            _ => props.angleAdjustmentSouth
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public static void CheckOversizedActive()
+    {
+        try
+        {
+            // Basically a check to see if oversized weapons are active, and aren't an outdated version
+            // which (despite me checking the code with decompiler) are causing errors when accessing fields in props.
+            // Need to put it into a method other than this, as otherwise the static constructor will error.
+            bool Temp()
+            {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                return typeof(CompOversizedWeapon.CompOversizedWeapon) != null &&
+                       typeof(CompProperties_OversizedWeapon) != null &&
+                       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                       new CompProperties_OversizedWeapon
+                       {
+                           northOffset = Vector3.zero,
+                           eastOffset = Vector3.zero,
+                           southOffset = Vector3.zero,
+                           westOffset = Vector3.zero,
+                           verticalFlipOutsideCombat = true,
+                           verticalFlipNorth = true,
+                           isDualWeapon = true,
+                           angleAdjustmentEast = 1,
+                           angleAdjustmentWest = 1,
+                           angleAdjustmentNorth = 1,
+                           angleAdjustmentSouth = 1,
+                       } != null;
+            }
+
+            Core.usingOversizedWeapons = Temp();
+            if (Core.usingOversizedWeapons)
+                Log.Message("[Yayo's Animation] - CompOversizedWeapons detected");
+        }
+        catch (Exception e)
+        {
+            Core.usingOversizedWeapons = false;
+            Log.Message(e is not TypeLoadException or TypeInitializationException or MissingFieldException
+                ? $"[Yayo's Animation] - No CompOversizedWeapons detected. Unexpected exception caught: {e.GetType()}"
+                : "[Yayo's Animation] - No CompOversizedWeapons detected.");
         }
     }
 }

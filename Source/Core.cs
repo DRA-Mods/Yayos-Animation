@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AlienRace;
-using CompOversizedWeapon;
 using HarmonyLib;
 using RimWorld;
 using UnityEngine;
@@ -77,99 +75,8 @@ namespace yayoAni
                 }
             }
 
-            try
-            {
-                // Basically a check to see if oversized weapons are active, and aren't an outdated version
-                // which (despite me checking the code with decompiler) are causing errors when accessing fields in props.
-                // Need to put it into a method other than this, as otherwise the static constructor will error.
-                bool Temp()
-                {
-                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                    return typeof(CompOversizedWeapon.CompOversizedWeapon) != null &&
-                           typeof(CompProperties_OversizedWeapon) != null &&
-                           // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                           new CompProperties_OversizedWeapon
-                           {
-                               northOffset = Vector3.zero,
-                               eastOffset = Vector3.zero,
-                               southOffset = Vector3.zero,
-                               westOffset = Vector3.zero,
-                               verticalFlipOutsideCombat = true,
-                               verticalFlipNorth = true,
-                               isDualWeapon = true,
-                               angleAdjustmentEast = 1,
-                               angleAdjustmentWest = 1,
-                               angleAdjustmentNorth = 1,
-                               angleAdjustmentSouth = 1,
-                           } != null;
-                }
-
-                usingOversizedWeapons = Temp();
-            }
-            catch (Exception e)
-            {
-                usingOversizedWeapons = false;
-                Log.Message(e is not TypeLoadException or TypeInitializationException or MissingFieldException
-                    ? $"[Yayo's Animation] - No oversized weapons. Unexpected exception caught: {e.GetType()}"
-                    : "[Yayo's Animation] - No oversized weapons.");
-            }
-
-            try
-            {
-                // Basically a check to see if deflector is active.
-                bool Temp()
-                {
-                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                    return typeof(CompDeflector.CompDeflector) != null &&
-                           // ReSharper disable once ConstantConditionalAccessQualifier
-                           new CompDeflector.CompDeflector
-                           {
-                               AnimationDeflectionTicks = 100,
-                           }?.IsAnimatingNow != null;
-                }
-
-                usingDeflector = Temp();
-            }
-            catch (Exception e)
-            {
-                usingDeflector = false;
-                Log.Message(e is not TypeLoadException or TypeInitializationException or MissingFieldException
-                    ? $"[Yayo's Animation] - No deflector. Unexpected exception caught: {e.GetType()}"
-                    : "[Yayo's Animation] - No deflector.");
-            }
-        }
-
-        public static void SetHarPatch(bool state)
-        {
-            if (!usingHar || harPatchActive == state)
-                return;
-
-#if BIOTECH_PLUS
-            var method = MethodUtil.GetLocalFunc(
-                AccessTools.TypeByName($"{nameof(AlienRace)}.{nameof(AlienRace.HarmonyPatches)}"), 
-                nameof(AlienRace.HarmonyPatches.DrawAddons), 
-                localFunc: "DrawAddon");
-#else
-            var method = AccessTools.Method("AlienRace.HarmonyPatches:DrawAddons");
-#endif
-
-            var patch = AccessTools.Method(
-                typeof(HumanoidAlienRaces.AlienRace_DrawAddon_Transpiler),
-                nameof(HumanoidAlienRaces.AlienRace_DrawAddon_Transpiler.Transpiler));
-
-            try
-            {
-                if (state)
-                    harmony.Patch(method, transpiler: new HarmonyMethod(patch, 0));
-                else
-                    harmony.Unpatch(method, patch);
-
-                harPatchActive = state;
-            }
-            catch (Exception e)
-            {
-                Log.ErrorOnce($"[Yayo's Animation] - Encountered error applying HAR patch. Exception caught:\n{e}", -1266925295);
-            }
+            OversizedWeapon.CheckOversizedActive();
+            Deflector.CheckDeflectorActive();
         }
 
         public static Rot4 getRot(Vector3 vel, Rot4 curRot)
