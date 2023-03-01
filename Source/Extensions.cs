@@ -5,12 +5,12 @@ namespace yayoAni;
 
 public static class Extensions
 {
-    public static bool ButtonTextTooltip(this Listing_Standard listing, string label, string tooltip, string highlightTag = null, float widthPct = 1f)
+    public static bool ButtonTextTooltip(this Listing_Standard listing, string label, string tooltip, string highlightTag = null)
     {
 #if IDEOLOGY
             var rect = listing.GetRect(30f);
 #else
-        var rect = listing.GetRect(30f, widthPct);
+        var rect = listing.GetRect(30f, 1f);
 #endif
         var pressed = false;
 

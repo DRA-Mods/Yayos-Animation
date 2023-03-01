@@ -9,7 +9,7 @@ namespace yayoAni;
 
 public static class DebugTools
 {
-    private static HashSet<string> tempSet;
+    private static HashSet<string> TempSet;
 
     [DebugAction("Yayo's Animation", "Log unsupported jobs", allowedGameStates = AllowedGameStates.Entry)]
     private static void LogAllMissingJobs()
@@ -24,7 +24,7 @@ public static class DebugTools
             // ignored
         }
 
-        var normalJobs = tempSet;
+        var normalJobs = TempSet;
 
         try
         {
@@ -36,8 +36,8 @@ public static class DebugTools
             // ignored
         }
 
-        var layingDownJobs = tempSet;
-        tempSet = null;
+        var layingDownJobs = TempSet;
+        TempSet = null;
 
         var defNames = DefDatabase<JobDef>.AllDefs.Select(def => def.defName).Where(name => name != null).ToList();
         var defNamesSet = defNames.ToHashSet();
@@ -56,12 +56,12 @@ public static class DebugTools
 
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instr)
     {
-        tempSet = new HashSet<string>();
+        TempSet = new HashSet<string>();
 
         foreach (var ci in instr)
         {
             if (ci.opcode == OpCodes.Ldstr && ci.operand is string s && s.IndexOf(' ') == -1)
-                tempSet.Add(s);
+                TempSet.Add(s);
         }
 
         throw new Exception();

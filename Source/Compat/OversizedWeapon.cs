@@ -35,9 +35,9 @@ public static class OversizedWeapon
 
         drawLoc += pawnRotation.AsInt switch
         {
-            Rot4.NorthInt => props.northOffset,
-            Rot4.EastInt => props.eastOffset,
-            Rot4.WestInt => props.westOffset,
+            Core.RotNorth => props.northOffset,
+            Core.RotEast => props.eastOffset,
+            Core.RotWest => props.westOffset,
             _ => props.southOffset
         };
 
@@ -50,9 +50,9 @@ public static class OversizedWeapon
 
         aimAngle += pawnRotation.AsInt switch
         {
-            Rot4.NorthInt => props.angleAdjustmentNorth,
-            Rot4.EastInt => props.angleAdjustmentEast,
-            Rot4.WestInt => props.angleAdjustmentWest,
+            Core.RotNorth => props.angleAdjustmentNorth,
+            Core.RotEast => props.angleAdjustmentEast,
+            Core.RotWest => props.angleAdjustmentWest,
             _ => props.angleAdjustmentSouth
         };
     }

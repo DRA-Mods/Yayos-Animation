@@ -43,17 +43,17 @@ public static class SheathYourSword
     //
     //     switch (pawnRotation.AsInt)
     //     {
-    //         case Rot4.NorthInt:
+    //         case Core.RotNorth:
     //             // Log.Error(props.northOffset.position.ToString());
     //             // drawLoc += props.northOffset.position;
     //             aimAngle += props.northOffset.angle;
     //             break;
-    //         case Rot4.EastInt:
+    //         case Core.RotEast:
     //             // Log.Error(props.eastOffset.position.ToString());
     //             // drawLoc += props.eastOffset.position;
     //             aimAngle += props.eastOffset.angle;
     //             break;
-    //         case Rot4.WestInt:
+    //         case Core.RotWest:
     //             // Log.Error(props.westOffset.position.ToString());
     //             // drawLoc += props.westOffset.position;
     //             aimAngle += props.westOffset.angle;
