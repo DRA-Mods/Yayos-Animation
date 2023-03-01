@@ -20,8 +20,10 @@ namespace yayoAni
             harmony = new Harmony("com.yayo.yayoAni");
             harmony.PatchAll();
 
+#if IDEOLOGY
             if (usingHar && settings.applyHarPatch)
-                LongEventHandler.ExecuteWhenFinished(() => SetHarPatch(true));
+                LongEventHandler.ExecuteWhenFinished(() => HumanoidAlienRaces.SetHarPatch(true));
+#endif
 #if BIOTECH_PLUS
             if (usingReinforcedMechanoids)
                 LongEventHandler.ExecuteWhenFinished(() => ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(settings.combatEnabled));
@@ -33,7 +35,9 @@ namespace yayoAni
         public override void DoSettingsWindowContents(Rect inRect) => settings.DoSettingsWindowContents(inRect);
 
         public static bool usingDualWield = false;
+#if IDEOLOGY
         public static bool usingHar = false;
+#endif
         public static bool usingOversizedWeapons = false;
         public static bool usingDeflector = false;
         public static bool usingGiddyUp = false;
@@ -42,7 +46,6 @@ namespace yayoAni
         // public static bool usingVfeCore = false;
         public static bool usingReinforcedMechanoids = false;
 #endif
-        public static bool harPatchActive = false;
 
         static Core()
         {
@@ -55,10 +58,12 @@ namespace yayoAni
                         Compat.DualWield.Init();
                         Log.Message("[Yayo's Animation] - DualWield detected");
                         break;
+#if IDEOLOGY
                     case "erdelf.humanoidalienraces":
                         usingHar = true;
                         Log.Message("[Yayo's Animation] - HumanoidAlienRaces detected");
                         break;
+#endif
 #if BIOTECH_PLUS
                     case "owlchemist.giddyup":
 #else

@@ -35,7 +35,9 @@ namespace yayoAni
         public bool animalJobEnabled = true;
         public bool animalCombatEnabled = true;
 
+#if IDEOLOGY
         public bool applyHarPatch = true;
+#endif
         public bool applyOversizedChanges = true;
 
         public bool debugMode = false;
@@ -75,7 +77,9 @@ namespace yayoAni
             Scribe_Values.Look(ref animalJobEnabled, "AnimalJob", true);
             Scribe_Values.Look(ref animalWalkEnabled, "AnimalCombat", true);
 
+#if IDEOLOGY
             Scribe_Values.Look(ref applyHarPatch, "ApplyHarPatch", true);
+#endif
             Scribe_Values.Look(ref applyOversizedChanges, "applyOversizedChanges", true);
 
             Scribe_Values.Look(ref debugMode, "Debug", false);
@@ -146,8 +150,10 @@ namespace yayoAni
 
             listing.Gap();
 
+#if IDEOLOGY
             listing.CheckboxLabeled("YayoAnim_ApplyHarPatch".Translate(), ref applyHarPatch, "YayoAnim_ApplyHarPatchTooltip".Translate());
-            Core.SetHarPatch(applyHarPatch);
+            HumanoidAlienRaces.SetHarPatch(applyHarPatch);
+#endif
             listing.CheckboxLabeled("YayoAnim_ApplyOversizedChanges".Translate(), ref applyOversizedChanges, "YayoAnim_ApplyOversizedChangesTooltip".Translate());
 
             listing.Gap();
@@ -195,8 +201,10 @@ namespace yayoAni
             animalJobEnabled = true;
             animalCombatEnabled = true;
 
+#if IDEOLOGY
             applyHarPatch = true;
-            Core.SetHarPatch(applyHarPatch);
+            HumanoidAlienRaces.SetHarPatch(applyHarPatch);
+#endif
             applyOversizedChanges = true;
 
             debugMode = false;
