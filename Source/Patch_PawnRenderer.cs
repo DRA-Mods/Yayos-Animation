@@ -58,7 +58,8 @@ public class Patch_DrawEquipment
         // duelWeld
         ThingWithComps offHandEquip = null;
         if (Core.usingDualWield && pawn.equipment.TryGetOffHandEquipment(out offHandEquip))
-            offHandEquip.DrawEmptySheath(pawn, rootLoc);
+        {
+        }
         else if (Core.usingOversizedWeapons && pawn.equipment.IsOversizedDualWield())
             offHandEquip = primaryWeapon;
 
