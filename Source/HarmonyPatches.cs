@@ -297,7 +297,7 @@ public static class Yayo
         var op = Vector3.zero;
         int? nextUpdate = null;
         var defName = pawn.CurJob?.def.defName;
-        var mounted = defName is "Mounted";
+        var mounted = Core.usingGiddyUp && defName is "Mounted";
 
         if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns ||
             Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel ||
