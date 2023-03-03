@@ -56,6 +56,7 @@
   <ItemGroup>
     <Publicize Include="Assembly-CSharp" />
     <Publicize Include="CompOversizedWeapon" />
+    <Publicize Include="Tacticowl" />
   </ItemGroup>
 
   <ItemGroup>
@@ -91,6 +92,10 @@
     <Reference Include="SheathYourSword">
       <HintPath Condition=" '$(Configuration.EndsWith( 1.4))' ">..\..\..\..\..\workshop\content\294100\1586105873\1.4\Assemblies\SYS.dll</HintPath>
       <HintPath Condition=" '$(Configuration.EndsWith( 1.3))' ">..\..\..\..\..\workshop\content\294100\1586105873\1.3\Assemblies\SYS.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Tacticowl" Condition=" '$(Configuration.EndsWith( 1.4))' ">
+      <HintPath>..\..\..\..\..\workshop\content\294100\2936140288\1.4\Assemblies\Tacticowl.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

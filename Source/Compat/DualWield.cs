@@ -21,7 +21,7 @@ public static class DualWield
         DualWieldInstanceGetter = AccessTools.MethodDelegate<GetInstance>(AccessTools.PropertyGetter(typeof(Base), nameof(Base.Instance)));
         ExtendedDataStorageField = AccessTools.FieldRefAccess<WorldComponent>(typeof(Base), "_extendedDataStorage");
     }
-        
+
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static bool TryGetOffHandEquipment(this Pawn_EquipmentTracker instance, out ThingWithComps result)
     {

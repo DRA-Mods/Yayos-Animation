@@ -10,10 +10,15 @@ namespace yayoAni;
 [HarmonyPatch(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipment))]
 public class Patch_DrawEquipment
 {
-    private static readonly Vector3 Offset = new(0f, 0f, 0.0005f + 0.03474903f);
-    private static readonly Vector3 OffsetNorth = new(0f, 0f, 0.0005f + -0.00289575267f);
-    private static readonly Vector3 OffsetOffhand = new(0.1f, 0.1f, 0f + 0.03474903f);
-    private static readonly Vector3 OffsetOffhandNorth = new(0.1f, 0.1f, 0f + -0.00289575267f);
+    private static readonly Vector3 Offset = new(0f, 0.0005f + 0.03474903f, 0f);
+    private static readonly Vector3 OffsetNorth = new(0f, 0.0005f + -0.00289575267f, 0f);
+    private static readonly Vector3 OffsetOffhand = new(0.1f, 0f + 0.03474903f, 0.1f);
+    private static readonly Vector3 OffsetOffhandNorth = new(0.1f, 0f + -0.00289575267f, 0.1f);
+
+#if BIOTECH_PLUS
+    private static Vector3 TempOffset;
+    private static Vector3 TempOffsetOffhand;
+#endif
 
     [HarmonyPriority(0)]
     [HarmonyPrefix]
@@ -48,8 +53,13 @@ public class Patch_DrawEquipment
             if (Core.usingSheathYourSword)
             {
                 primaryWeapon.DrawFullSheath(pawn, rootLoc);
-                if (Core.usingDualWield && pawn.equipment.TryGetOffHandEquipment(out var offHandSheath))
+                ThingWithComps offHandSheath;
+                if (Core.usingDualWield && pawn.equipment.TryGetOffHandEquipment(out offHandSheath))
                     offHandSheath.DrawFullSheath(pawn, rootLoc);
+#if BIOTECH_PLUS
+                else if (Core.usingTacticowl && pawn.TryGetOffHandEquipmentOwl(out offHandSheath))
+                    offHandSheath.DrawFullSheath(pawn, rootLoc);
+#endif
             }
 
             return false;
@@ -57,11 +67,20 @@ public class Patch_DrawEquipment
 
         // duelWeld
         ThingWithComps offHandEquip = null;
+        var primaryStance = pawn.stances.curStance as Stance_Busy;
+        Stance_Busy offHandStance = null;
+
         if (Core.usingDualWield && pawn.equipment.TryGetOffHandEquipment(out offHandEquip))
-        {
-        }
+            offHandStance = pawn.GetStancesOffHand()?.curStance as Stance_Busy;
+#if BIOTECH_PLUS
+        else if (Core.usingTacticowl && pawn.TryGetOffHandEquipmentOwl(out offHandEquip))
+            offHandStance = pawn.GetStancesOffHandOwl()?.curStance as Stance_Busy;
+#endif
         else if (Core.usingOversizedWeapons && pawn.equipment.IsOversizedDualWield())
+        {
             offHandEquip = primaryWeapon;
+            offHandStance = primaryStance;
+        }
 
         if (Core.usingSheathYourSword)
         {
@@ -71,24 +90,28 @@ public class Patch_DrawEquipment
         }
 
         // 주무기
-        var stance_Busy = pawn.stances.curStance as Stance_Busy;
-        var north = pawn.Rotation == Rot4.North;
-        PawnRenderer_Override.AnimateEquip(__instance, pawn, ref rootLoc, primaryWeapon, stance_Busy, north ? OffsetNorth : Offset);
-
-        // 보조무기
-        if (offHandEquip != null)
+        ref readonly var offset = ref Offset;
+        ref readonly var offsetOffhand = ref OffsetOffhand;
+        if (pawn.Rotation.AsByte == Core.RotNorth)
         {
-            Stance_Busy offHandStance = null;
-            if (offHandEquip == primaryWeapon)
-                offHandStance = stance_Busy;
-            else
-            {
-                if (pawn.GetStancesOffHand() != null)
-                    offHandStance = pawn.GetStancesOffHand().curStance as Stance_Busy;
-            }
-
-            PawnRenderer_Override.AnimateEquip(__instance, pawn, ref rootLoc, offHandEquip, offHandStance, north ? OffsetOffhandNorth : OffsetOffhand, true);
+            offset = ref OffsetNorth;
+            offsetOffhand = ref OffsetOffhandNorth;
         }
+
+#if BIOTECH_PLUS
+        if (Core.usingTacticowl && offHandEquip != null)
+        {
+            TacticowlComp.GetOffsets(offHandEquip, pawn, out TempOffset, out TempOffsetOffhand, primaryStance, offHandStance);
+            
+            TempOffset += offset;
+            TempOffsetOffhand += offsetOffhand;
+            offset = ref TempOffset;
+            offsetOffhand = ref TempOffsetOffhand;
+        }
+#endif
+
+        PawnRenderer_Override.AnimateEquip(__instance, pawn, ref rootLoc, primaryWeapon, primaryStance, offset);
+        PawnRenderer_Override.AnimateEquip(__instance, pawn, ref rootLoc, offHandEquip, offHandStance, offsetOffhand, true);
 
         return false;
     }
@@ -100,8 +123,11 @@ public static class PawnRenderer_Override
     private static readonly Vector3 Offset = new(-0.2f, 0f, 0.1f);
     private static readonly Vector3 OffsetSub = new(0.2f, 0f, 0.1f);
 
-    public static void AnimateEquip(PawnRenderer __instance, Pawn pawn, ref Vector3 rootLoc, ThingWithComps thing, Stance_Busy stanceBusy, in Vector3 offset, in bool isSub = false)
+    public static void AnimateEquip(PawnRenderer renderer, Pawn pawn, ref Vector3 rootLoc, ThingWithComps thing, Stance_Busy stanceBusy, in Vector3 offset, in bool isSub = false)
     {
+        if (thing == null)
+            return;
+
         var isMechanoid = pawn.RaceProps.IsMechanoid;
 
         // 설정과 무기 무게에 따른 회전 애니메이션 사용 여부
@@ -117,6 +143,10 @@ public static class PawnRenderer_Override
         {
             if (Core.usingSheathYourSword && thing.SheathExtensionDrawLittleLower())
                 rootLoc.z -= 0.2f;
+
+            if (pawn.Rotation.IsHorizontal)
+            {
+            }
 
             if (thing.def.IsRangedWeapon && !stanceBusy.verb.IsMeleeAttack)
             {
@@ -146,7 +176,7 @@ public static class PawnRenderer_Override
 
                 var addAngle = 0f;
                 var addX = offset.x;
-                var addY = offset.y;
+                var addY = offset.z;
 
 
                 // 준비동작 애니메이션
@@ -233,23 +263,26 @@ public static class PawnRenderer_Override
 
                 Vector3 drawLoc;
                 if (pawn.Rotation == Rot4.West)
-                    drawLoc = rootLoc + new Vector3(addY, offset.z, 0.4f + addX - ani).RotatedBy(num);
+                    drawLoc = rootLoc + new Vector3(addY, offset.y, 0.4f + addX - ani).RotatedBy(num);
                 else if (pawn.Rotation != Rot4.Invalid)
-                    drawLoc = rootLoc + new Vector3(-addY, offset.z, 0.4f + addX - ani).RotatedBy(num);
+                    drawLoc = rootLoc + new Vector3(-addY, offset.y, 0.4f + addX - ani).RotatedBy(num);
                 else
                     drawLoc = Vector3.zero;
-
 
                 //drawLoc.y += 0.03787879f;
 
                 // 반동 계수
                 const float reboundFactor = 70f;
 
+                float aimAngle;
                 if (pawn.Rotation == Rot4.West)
-                    __instance.DrawEquipmentAiming(thing, drawLoc, num + ani * reboundFactor + addAngle);
+                    aimAngle = num + ani * reboundFactor + addAngle;
                 else if (pawn.Rotation != Rot4.Invalid)
-                    __instance.DrawEquipmentAiming(thing, drawLoc, num - ani * reboundFactor - addAngle);
+                    aimAngle = num - ani * reboundFactor - addAngle;
+                else
+                    aimAngle = 0f;
 
+                renderer.DrawEquipmentAiming(thing, drawLoc, aimAngle);
                 return;
             }
             else
@@ -290,16 +323,14 @@ public static class PawnRenderer_Override
                     // 애니메이션
                     var a = stanceBusy.focusTarg.Thing?.DrawPos ?? stanceBusy.focusTarg.Cell.ToVector3Shifted();
 
-                    var num = 0f;
+                    var aimAngle = 0f;
                     if ((a - pawn.DrawPos).MagnitudeHorizontalSquared() > 0.001f)
-                    {
-                        num = (a - pawn.DrawPos).AngleFlat();
-                    }
+                        aimAngle = (a - pawn.DrawPos).AngleFlat();
 
                     var ani = Mathf.Min(stanceBusy.ticksLeft, 60f);
                     var ani2 = ani * 0.0075f; // 0.45f -> 0f
                     var addZ = offset.x;
-                    var addX = offset.y;
+                    var addX = offset.z;
 
                     switch (atkType)
                     {
@@ -327,51 +358,52 @@ public static class PawnRenderer_Override
                     //     //addAngle += ani2 * 5000f;
                     // }
 
+                    Vector3 drawLoc;
                     switch (pawn.Rotation.AsInt)
                     {
                         // 캐릭터 방향에 따라 적용
                         case Core.RotWest:
                         {
-                            var drawLoc = rootLoc + new Vector3(-addX, offset.z, addZ).RotatedBy(num);
+                            drawLoc = rootLoc + new Vector3(-addX, offset.y, addZ).RotatedBy(aimAngle);
                             //drawLoc.y += 0.03787879f;
-                            num -= addAngle;
-
-                            __instance.DrawEquipmentAiming(thing, drawLoc, num - ani);
+                            aimAngle -= addAngle;
+                            aimAngle -= ani;
                             break;
                         }
                         case Core.RotEast:
                         {
-                            var drawLoc = rootLoc + new Vector3(addX, offset.z, addZ).RotatedBy(num);
+                            drawLoc = rootLoc + new Vector3(addX, offset.y, addZ).RotatedBy(aimAngle);
                             //drawLoc.y += 0.03787879f;
-                            num += addAngle;
-
-                            __instance.DrawEquipmentAiming(thing, drawLoc, num + ani);
+                            aimAngle += addAngle;
+                            aimAngle += ani;
                             break;
                         }
                         case Core.RotNorth:
                         case Core.RotSouth:
                         {
-                            var drawLoc = rootLoc + new Vector3(-addX, offset.z, addZ).RotatedBy(num);
+                            drawLoc = rootLoc + new Vector3(-addX, offset.y, addZ).RotatedBy(aimAngle);
                             //drawLoc.y += 0.03787879f;
-                            num += addAngle;
-
-                            __instance.DrawEquipmentAiming(thing, drawLoc, num + ani);
+                            aimAngle += addAngle;
+                            aimAngle += ani;
                             break;
                         }
+                        default:
+                            drawLoc = Vector3.zero;
+                            break;
                     }
+
+                    renderer.DrawEquipmentAiming(thing, drawLoc, aimAngle);
                 }
                 else
                 {
                     var a = stanceBusy.focusTarg.Thing?.DrawPos ?? stanceBusy.focusTarg.Cell.ToVector3Shifted();
 
-                    var num = 0f;
+                    var aimAngle = 0f;
                     if ((a - pawn.DrawPos).MagnitudeHorizontalSquared() > 0.001f)
-                        num = (a - pawn.DrawPos).AngleFlat();
+                        aimAngle = (a - pawn.DrawPos).AngleFlat();
 
-                    var drawLoc = rootLoc + new Vector3(0f, offset.z, readyZ).RotatedBy(num);
-                    //drawLoc.y += 0.03787879f;
-
-                    __instance.DrawEquipmentAiming(thing, drawLoc, num);
+                    var drawLoc = rootLoc + new Vector3(0f, offset.y, readyZ).RotatedBy(aimAngle);
+                    renderer.DrawEquipmentAiming(thing, drawLoc, aimAngle);
                 }
 
                 return;
@@ -418,92 +450,102 @@ public static class PawnRenderer_Override
                 }
             }
 
-            if (pawn.Rotation == Rot4.South)
+            switch (pawn.Rotation.AsByte)
             {
-                Vector3 drawLoc;
-                float angle;
-                if (!isSub)
+                case Core.RotSouth:
                 {
-                    angle = 143f;
-                    drawLoc = rootLoc + new Vector3(0f, offset.z, -0.22f + wiggle * 0.05f);
-                }
-                else
-                {
-                    drawLoc = rootLoc + new Vector3(0f, offset.z, -0.22f + wiggle * 0.05f);
-                    angle = 350f - 143f;
-                    aniAngle *= -1f;
-                }
+                    float aimAngle;
+                    Vector3 drawLoc;
 
-                //drawLoc2.y += 0.03787879f;
-                __instance.DrawEquipmentAiming(thing, drawLoc, addAngle + angle + wiggle * aniAngle);
-                return;
-            }
+                    if (!isSub)
+                    {
+                        aimAngle = 143f;
+                        drawLoc = rootLoc + new Vector3(0f, offset.y, -0.22f + wiggle * 0.05f);
+                    }
+                    else
+                    {
+                        drawLoc = rootLoc + new Vector3(0f, offset.y, -0.22f + wiggle * 0.05f);
+                        aimAngle = 350f - 143f;
+                        aniAngle *= -1f;
+                    }
 
-            if (pawn.Rotation == Rot4.North)
-            {
-                Vector3 drawLoc;
-                float angle;
-                if (!isSub)
-                {
-                    angle = 143f;
-                    drawLoc = rootLoc + new Vector3(0f, offset.z, -0.11f + wiggle * 0.05f);
-                }
-                else
-                {
-                    drawLoc = rootLoc + new Vector3(0f, offset.z, -0.11f + wiggle * 0.05f);
-                    angle = 350f - 143f;
-                    aniAngle *= -1f;
-                }
+                    //drawLoc2.y += 0.03787879f;
+                    aimAngle = addAngle + aimAngle + wiggle * aniAngle;
 
-                //drawLoc3.y += 0f;
-                __instance.DrawEquipmentAiming(thing, drawLoc, addAngle + angle + wiggle * aniAngle);
-                return;
-            }
-
-            if (pawn.Rotation == Rot4.East)
-            {
-                Vector3 drawLoc;
-                float angle;
-                if (!isSub)
-                {
-                    angle = 143f;
-                    drawLoc = rootLoc + new Vector3(0.2f, offset.z, -0.22f + wiggle * 0.05f);
+                    renderer.DrawEquipmentAiming(thing, drawLoc, aimAngle);
+                    return;
                 }
-                else
+                case Core.RotNorth:
                 {
-                    drawLoc = rootLoc + new Vector3(0.2f, offset.z, -0.22f + wiggle * 0.05f);
-                    angle = 350f - 143f;
-                    aniAngle *= -1f;
+                    float aimAngle;
+                    Vector3 drawLoc;
+
+                    if (!isSub)
+                    {
+                        aimAngle = 143f;
+                        drawLoc = rootLoc + new Vector3(0f, offset.y, -0.11f + wiggle * 0.05f);
+                    }
+                    else
+                    {
+                        drawLoc = rootLoc + new Vector3(0f, offset.y, -0.11f + wiggle * 0.05f);
+                        aimAngle = 350f - 143f;
+                        aniAngle *= -1f;
+                    }
+
+                    //drawLoc3.y += 0f;
+                    aimAngle = addAngle + aimAngle + wiggle * aniAngle;
+
+                    renderer.DrawEquipmentAiming(thing, drawLoc, aimAngle);
+                    return;
                 }
-
-                //drawLoc4.y += 0.03787879f;
-                __instance.DrawEquipmentAiming(thing, drawLoc, addAngle + angle + wiggle * aniAngle);
-                return;
-            }
-
-            if (pawn.Rotation == Rot4.West)
-            {
-                Vector3 drawLoc;
-                float angle;
-                if (!isSub)
+                case Core.RotEast:
                 {
-                    angle = 217f;
-                    drawLoc = rootLoc + new Vector3(-0.2f, offset.z, -0.22f + wiggle * 0.05f);
-                }
-                else
-                {
-                    drawLoc = rootLoc + new Vector3(-0.2f, offset.z, -0.22f + wiggle * 0.05f);
-                    angle = 350f - 217f;
-                    aniAngle *= -1f;
-                }
+                    float aimAngle;
+                    Vector3 drawLoc;
 
-                //drawLoc5.y += 0.03787879f;
-                __instance.DrawEquipmentAiming(thing, drawLoc, addAngle + angle + wiggle * aniAngle);
-                return;
+                    if (!isSub)
+                    {
+                        aimAngle = 143f;
+                        drawLoc = rootLoc + new Vector3(0.2f, offset.y, -0.22f + wiggle * 0.05f);
+                    }
+                    else
+                    {
+                        drawLoc = rootLoc + new Vector3(0.2f, offset.y, -0.22f + wiggle * 0.05f);
+                        aimAngle = 350f - 143f;
+                        aniAngle *= -1f;
+                    }
+
+                    //drawLoc4.y += 0.03787879f;
+                    aimAngle = addAngle + aimAngle + wiggle * aniAngle;
+
+                    renderer.DrawEquipmentAiming(thing, drawLoc, aimAngle);
+                    return;
+                }
+                case Core.RotWest:
+                {
+                    float aimAngle;
+                    Vector3 drawLoc;
+
+                    if (!isSub)
+                    {
+                        aimAngle = 217f;
+                        drawLoc = rootLoc + new Vector3(-0.2f, offset.y, -0.22f + wiggle * 0.05f);
+                    }
+                    else
+                    {
+                        drawLoc = rootLoc + new Vector3(-0.2f, offset.y, -0.22f + wiggle * 0.05f);
+                        aimAngle = 350f - 217f;
+                        aniAngle *= -1f;
+                    }
+
+                    //drawLoc5.y += 0.03787879f;
+                    aimAngle = addAngle + aimAngle + wiggle * aniAngle;
+
+                    renderer.DrawEquipmentAiming(thing, drawLoc, aimAngle);
+                    return;
+                }
             }
         }
-
-        return;
     }
 }
 
@@ -566,8 +608,8 @@ internal static class patch_DrawEquipmentAiming
         var flip = false;
         var offset = eq.def.equippedAngleOffset;
 #if BIOTECH_PLUS
-            if (Core.usingReinforcedMechanoids)
-                pawn.GetAngleOffsetForPawn(ref offset);
+        if (Core.usingReinforcedMechanoids)
+            pawn.GetAngleOffsetForPawn(ref offset);
 #endif
 
         var flag = !(pawn.CurJob != null && pawn.CurJob.def.neverShowWeapon);

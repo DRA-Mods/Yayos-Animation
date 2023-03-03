@@ -14,10 +14,10 @@ public class Core : Mod
     public static Harmony harmony;
 
 #if BIOTECH_PLUS
-        public const byte RotNorth = Rot4.NorthInt;
-        public const byte RotEast = Rot4.EastInt;
-        public const byte RotSouth = Rot4.SouthInt;
-        public const byte RotWest = Rot4.WestInt;
+    public const byte RotNorth = Rot4.NorthInt;
+    public const byte RotEast = Rot4.EastInt;
+    public const byte RotSouth = Rot4.SouthInt;
+    public const byte RotWest = Rot4.WestInt;
 #else
     public const byte RotNorth = 0;
     public const byte RotEast = 1;
@@ -36,8 +36,8 @@ public class Core : Mod
             LongEventHandler.ExecuteWhenFinished(() => HumanoidAlienRaces.SetHarPatch(true));
 #endif
 #if BIOTECH_PLUS
-            if (usingReinforcedMechanoids)
-                LongEventHandler.ExecuteWhenFinished(() => ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(settings.combatEnabled));
+        if (usingReinforcedMechanoids)
+            LongEventHandler.ExecuteWhenFinished(() => ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(settings.combatEnabled));
 #endif
     }
 
@@ -54,8 +54,9 @@ public class Core : Mod
     public static bool usingGiddyUp = false;
     public static bool usingSheathYourSword = false;
 #if BIOTECH_PLUS
-        // public static bool usingVfeCore = false;
-        public static bool usingReinforcedMechanoids = false;
+    // public static bool usingVfeCore = false;
+    public static bool usingReinforcedMechanoids = false;
+    public static bool usingTacticowl = false;
 #endif
 
     static Core()
@@ -76,7 +77,7 @@ public class Core : Mod
                     break;
 #endif
 #if BIOTECH_PLUS
-                    case "owlchemist.giddyup":
+                case "owlchemist.giddyup":
 #else
                 case "roolo.giddyupcore":
 #endif
@@ -84,10 +85,14 @@ public class Core : Mod
                     Log.Message("[Yayo's Animation] - Giddy-up! detected");
                     break;
 #if BIOTECH_PLUS
-                    case "hlx.reinforcedmechanoids2":
-                        usingReinforcedMechanoids = true;
-                        Log.Message("[Yayo's Animation] - Reinforced Mechanoids 2 detected");
-                        break;
+                case "hlx.reinforcedmechanoids2":
+                    usingReinforcedMechanoids = true;
+                    Log.Message("[Yayo's Animation] - Reinforced Mechanoids 2 detected");
+                    break;
+                case "owlchemist.tacticowl":
+                    usingTacticowl = true;
+                    Log.Message("[Yayo's Animation] - Tacticowl detected");
+                    break;
 #endif
             }
         }
