@@ -201,7 +201,6 @@ public static class Patch_RenderPawnAt2
     }
 }
 
-
 [HotSwappable]
 public static class Yayo
 {
@@ -383,7 +382,7 @@ public static class Yayo
 #if IDEOLOGY
                 case "StudyThing":
 #elif BIOTECH_PLUS
-                    case "StudyBuilding":
+                case "StudyBuilding":
 #endif
                 case "Strip":
                 case "SmoothFloor":
@@ -439,18 +438,18 @@ public static class Yayo
                 case "HaulToContainer": // Bury pawn
                 case "PrepareSkylantern":
 #if BIOTECH_PLUS
-                    case "PaintBuilding":
-                    case "PaintFloor":
-                    case "RemovePaintBuilding":
-                    case "RemovePaintFloor":
-                    case "InstallMechlink":
-                    case "RemoveMechlink":
-                    case "DisassembleMech":
-                    case "CreateXenogerm":
-                    case "ReadDatacore":
-                    case "ClearPollution":
-                    case "RepairMech":
-                    case "Floordrawing":
+                case "PaintBuilding":
+                case "PaintFloor":
+                case "RemovePaintBuilding":
+                case "RemovePaintFloor":
+                case "InstallMechlink":
+                case "RemoveMechlink":
+                case "DisassembleMech":
+                case "CreateXenogerm":
+                case "ReadDatacore":
+                case "ClearPollution":
+                case "RepairMech":
+                case "Floordrawing":
 #endif
                 // Dubs Paint Shop
                 case "PaintThings":
@@ -559,12 +558,12 @@ public static class Yayo
                 case "SocialRelax":
                 case "WatchTelevision":
 #if BIOTECH_PLUS
-                    case "Radiotalking":
-                    case "Workwatching":
-                    case "Lessontaking":
-                    case "Lessongiving":
-                    case "PlayStatic":
-                    case "PlayToys":
+                case "Radiotalking":
+                case "Workwatching":
+                case "Lessontaking":
+                case "Lessongiving":
+                case "PlayStatic":
+                case "PlayToys":
 #endif
                 // Dubs Bad Hygiene
                 case "WatchWashingMachine":
@@ -625,10 +624,10 @@ public static class Yayo
                     break;
 
 #if BIOTECH_PLUS
-                    case "BottleFeedBaby":
-                    case "Breastfeed":
-                        aniType = AniType.wiggleGentle;
-                        break;
+                case "BottleFeedBaby":
+                case "Breastfeed":
+                    aniType = AniType.wiggleGentle;
+                    break;
 #endif
 
 
@@ -653,7 +652,7 @@ public static class Yayo
                 case "MarryAdjacentPawn":
                     t = (Find.TickManager.TicksGame) % 310;
 
-                    if (!Core.Ani(ref t, 150, ref nextUpdate) && 
+                    if (!Core.Ani(ref t, 150, ref nextUpdate) &&
                         !Core.Ani(ref t, 20, ref oa, 0f, 5f, -1f, ref op, Vector3.zero, XOffset005, rot) &&
                         !Core.Ani(ref t, 50, ref oa, 5f, 10f, -1f, ref op, XOffset005, XOffset005, rot) &&
                         !Core.Ani(ref t, 50, ref nextUpdate, ref oa, 10f, -1f, ref op, XOffset005, rot))
@@ -804,7 +803,7 @@ public static class Yayo
                     t = (Find.TickManager.TicksGame + IdTick) % 50;
 
                     if (!Core.Ani(ref t, 35, ref nextUpdate) &&
-                        !Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, rot)) 
+                        !Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, rot))
                         Core.Ani(ref t, 10, ref oa, 10f, 0f, -1f, ref op, rot);
 
                     break;
@@ -837,7 +836,7 @@ public static class Yayo
                 // Vanilla Social Interactions
                 case "VSIE_HaveMealTogether":
                     t = (Find.TickManager.TicksGame + IdTick) % 150;
-                    if (!Core.Ani(ref t, 10, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot) && 
+                    if (!Core.Ani(ref t, 10, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot) &&
                         !Core.Ani(ref t, 10, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot) &&
                         !Core.Ani(ref t, 10, ref oa, 0f, 0f, -1f, ref op, Vector3.zero, ZOffset003, rot) &&
                         !Core.Ani(ref t, 20, ref oa, 0f, 0f, -1f, ref op, ZOffset003, ZOffsetM003, rot) &&
@@ -862,7 +861,7 @@ public static class Yayo
 
                     if (!Core.Ani(ref t, 300, ref nextUpdate) &&
                         !Core.Ani(ref t, 30, ref oa, 0f, 15f, -1f, ref op, Vector3.zero, Vector3.zero, rot) &&
-                        !Core.Ani(ref t, 300, ref nextUpdate, ref oa, 15f, -1f, ref op, Vector3.zero, rot)) 
+                        !Core.Ani(ref t, 300, ref nextUpdate, ref oa, 15f, -1f, ref op, Vector3.zero, rot))
                         Core.Ani(ref t, 30, ref oa, 15f, 0f, -1f, ref op, Vector3.zero, Vector3.zero, rot);
 
                     break;
@@ -873,15 +872,15 @@ public static class Yayo
                     t = t2 % total;
                     r = rot.Rotated(RotationDirection.Clockwise);
                     tr = rot;
-                    if (!Core.Ani(ref t, 20, ref nextUpdate) && 
+                    if (!Core.Ani(ref t, 20, ref nextUpdate) &&
                         !Core.Ani(ref t, 5, ref oa, 0f, 10f, -1f, ref op, r) &&
                         !Core.Ani(ref t, 20, ref nextUpdate, ref oa, 10f, -1f, ref op, r) &&
                         !Core.Ani(ref t, 5, ref oa, 10f, -10f, -1f, ref op, r) &&
                         !Core.Ani(ref t, 20, ref nextUpdate, ref oa, -10f, -1f, ref op, r) &&
                         !Core.Ani(ref t, 5, ref oa, -10f, 0f, -1f, ref op, r))
                     {
-                        tr = t2 >= total 
-                            ? rot.Rotated(RotationDirection.Clockwise) 
+                        tr = t2 >= total
+                            ? rot.Rotated(RotationDirection.Clockwise)
                             : rot.Rotated(RotationDirection.Counterclockwise);
                         if (!Core.Ani(ref t, 15, ref nextUpdate, ref oa, 0f, -1f, ref op, rot)) // 85
                         {
@@ -1114,7 +1113,7 @@ public static class Yayo
                         if (!Core.settings.sleepEnabled) break;
                         if (!(pawn.jobs?.curDriver?.asleep ?? false)) break;
 #if BIOTECH
-                            if (pawn.DevelopmentalStage.Newborn() || pawn.DevelopmentalStage.Baby()) break;
+                        if (pawn.DevelopmentalStage.Newborn() || pawn.DevelopmentalStage.Baby()) break;
 #endif
 
                         idTickMult = idTick * 5;
@@ -1155,7 +1154,7 @@ public static class Yayo
 
                     case "Skygaze":
 #if BIOTECH_PLUS
-                        case "Skydreaming":
+                    case "Skydreaming":
 #endif
                     case "VSIE_Skygaze":
                         seed = pawn.CurJob.loadID + idTick * 5;
@@ -1235,7 +1234,6 @@ public static class Yayo
         }
     }
 }
-
 
 // ---------------------------------------------------
 [HotSwappable]
@@ -1394,7 +1392,6 @@ public class Patch_PawnRenderer_RenderCache
     }
 }
 
-
 [HotSwappable]
 [HarmonyPatch(typeof(PawnRenderer), "GetBodyPos")]
 internal class Patch_PawnRenderer_GetBodyPos
@@ -1419,7 +1416,6 @@ internal class Patch_PawnRenderer_BodyAngle
         __result += pdd.angleOffset;
     }
 }
-
 
 [HotSwappable]
 [HarmonyPatch(typeof(PawnRenderer), "LayingFacing")]
