@@ -117,6 +117,7 @@ public class YayoAniSettings : ModSettings
 
         listing.CheckboxLabeled("YayoAnim_Combat".Translate(), ref combatEnabled);
 #if BIOTECH_PLUS
+        if (Core.usingReinforcedMechanoids)
             ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(combatEnabled);
 #endif
         listing.CheckboxLabeled("YayoAnim_TwirlWeapon".Translate(), ref combatTwirlEnabled);
@@ -180,6 +181,7 @@ public class YayoAniSettings : ModSettings
 
         combatEnabled = true;
 #if BIOTECH_PLUS
+        if (Core.usingReinforcedMechanoids)
             ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(combatEnabled);
 #endif
         combatTwirlEnabled = true;

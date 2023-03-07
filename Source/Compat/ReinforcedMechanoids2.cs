@@ -16,13 +16,13 @@ public static class ReinforcedMechanoids2
             return;
 
         if (state)
-            UnpatchReinforcedMechanoidsDrawingPatch();
+            LongEventHandler.ExecuteWhenFinished(UnpatchReinforcedMechanoidsDrawingPatch);
         else
-            RepatchReinforcedMechanoidsDrawingPatch();
+            LongEventHandler.ExecuteWhenFinished(RepatchReinforcedMechanoidsDrawingPatch);
 
         rm2PatchActive = state;
     }
-    
+
     private static void UnpatchReinforcedMechanoidsDrawingPatch()
     {
         var original = AccessTools.Method(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipmentAiming));
