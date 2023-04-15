@@ -44,6 +44,9 @@ public class Patch_DrawEquipment
         if (pawn.RaceProps.Animal && !Core.settings.animalCombatEnabled)
             return true;
 
+        if (PlaSteelTorrent.IsCrewOrVehicle(pawn))
+            return false;
+
         var primaryWeapon = pawn.equipment?.Primary;
         if (primaryWeapon == null)
             return false;
