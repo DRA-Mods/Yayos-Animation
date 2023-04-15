@@ -94,6 +94,11 @@
       <HintPath Condition=" '$(Configuration.EndsWith( 1.3))' ">..\..\..\..\..\workshop\content\294100\1586105873\1.3\Assemblies\SYS.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="PlaSteelTorrent">
+      <HintPath Condition=" '$(Configuration.EndsWith( 1.4))' ">..\..\..\..\..\workshop\content\294100\2743947189\1.4\Assemblies\PLA.Vehicle.dll</HintPath>
+      <HintPath Condition=" '$(Configuration.EndsWith( 1.3))' ">..\..\..\..\..\workshop\content\294100\2743947189\1.3\Assemblies\PLA.Vehicle.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Tacticowl" Condition=" '$(Configuration.EndsWith( 1.4))' ">
       <HintPath>..\..\..\..\..\workshop\content\294100\2936140288\1.4\Assemblies\Tacticowl.dll</HintPath>
       <Private>false</Private>
