@@ -6,12 +6,12 @@ namespace yayoAni.Compat;
 
 public static class PlaSteelTorrent
 {
-    public static Func<Pawn, bool> IsCrewOrVehicle { get; private set; } = DefaultHandler;
+    public static Func<Pawn, bool> IsVehicle { get; private set; } = DefaultHandler;
 
-    public static void Init() => IsCrewOrVehicle = SteelTorrentHandler;
+    public static void Init() => IsVehicle = SteelTorrentHandler;
 
     private static bool DefaultHandler(Pawn _) => false;
 
     private static bool SteelTorrentHandler(Pawn pawn) => 
-        pawn is DroneVehicle || VehicleUtility.InVehicle(pawn);
+        pawn.GetType() == typeof(DroneVehicle);
 }

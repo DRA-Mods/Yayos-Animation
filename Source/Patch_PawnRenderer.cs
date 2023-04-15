@@ -35,9 +35,6 @@ public class Patch_DrawEquipment
         if (pawn == null || pawn.Dead || pawn.Downed || !pawn.Spawned)
             return false;
 
-        if (PlaSteelTorrent.IsCrewOrVehicle(pawn))
-            return true;
-
         if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns)
             return true;
 
@@ -572,9 +569,6 @@ internal static class patch_DrawEquipmentAiming
         var pawn = __instance.pawn;
 
         if (pawn == null || pawn.Dead || pawn.Downed || !pawn.Spawned)
-            return true;
-
-        if (PlaSteelTorrent.IsCrewOrVehicle(pawn))
             return true;
 
         if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns)
