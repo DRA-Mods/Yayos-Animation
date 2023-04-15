@@ -35,6 +35,9 @@ public class Patch_DrawEquipment
         if (pawn == null || pawn.Dead || pawn.Downed || !pawn.Spawned)
             return false;
 
+        if (PlaSteelTorrent.IsCrewOrVehicle(pawn))
+            return true;
+
         if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns)
             return true;
 
@@ -43,9 +46,6 @@ public class Patch_DrawEquipment
 
         if (pawn.RaceProps.Animal && !Core.settings.animalCombatEnabled)
             return true;
-
-        if (PlaSteelTorrent.IsCrewOrVehicle(pawn))
-            return false;
 
         var primaryWeapon = pawn.equipment?.Primary;
         if (primaryWeapon == null)
@@ -572,6 +572,9 @@ internal static class patch_DrawEquipmentAiming
         var pawn = __instance.pawn;
 
         if (pawn == null || pawn.Dead || pawn.Downed || !pawn.Spawned)
+            return true;
+
+        if (PlaSteelTorrent.IsCrewOrVehicle(pawn))
             return true;
 
         if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns)
