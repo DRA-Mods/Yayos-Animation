@@ -139,7 +139,7 @@ public static class PawnRenderer_Override
                                                           graphic.x <= Core.settings.combatTwirlMaxSize &&
                                                           graphic.y <= Core.settings.combatTwirlMaxSize));
 
-        if (stanceBusy is { neverAimWeapon: false } && stanceBusy.focusTarg.IsValid)
+        if (stanceBusy is { neverAimWeapon: false, focusTarg.IsValid: true, verb: not null })
         {
             if (Core.usingSheathYourSword && thing.SheathExtensionDrawLittleLower())
                 rootLoc.z -= 0.2f;
