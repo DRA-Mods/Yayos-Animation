@@ -53,6 +53,7 @@ public class Core : Mod
     public static bool usingDeflector = false;
     public static bool usingGiddyUp = false;
     public static bool usingSheathYourSword = false;
+    public static bool usingSteelTorrent = false;
 #if BIOTECH_PLUS
     // public static bool usingVfeCore = false;
     public static bool usingReinforcedMechanoids = false;
@@ -61,7 +62,7 @@ public class Core : Mod
 
     static Core()
     {
-        foreach (var mod in ModsConfig.ActiveModsInLoadOrder)
+        foreach (ModMetaData mod in ModsConfig.ActiveModsInLoadOrder)
         {
             switch (mod.PackageId.ToLower())
             {
@@ -94,6 +95,12 @@ public class Core : Mod
                     Log.Message("[Yayo's Animation] - Tacticowl detected");
                     break;
 #endif
+                case "issaczhuang.pla.vehicle":
+                    usingSteelTorrent = true;
+                    PlaSteelTorrent.Init();
+                    Log.Message("[Yayo's Animation] - PLA Steel Torrent detected");
+                    break;
+
             }
         }
 
