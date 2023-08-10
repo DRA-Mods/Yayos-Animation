@@ -255,7 +255,10 @@ public static class Yayo
     public static void CheckAni(Pawn pawn, ref Vector3 pos, Rot4 rot, PawnDrawData pdd)
     {
         if (!pawn.Spawned || pawn.Dead)
+        {
+            pdd.Reset();
             return;
+        }
         if (pdd.jobName != null && // Make sure we've cached some job before cancelling
             pdd.jobName == pawn.CurJob?.def.defName && // Check if the current pawn's job is the same as cached
             Find.TickManager.TicksGame < pdd.nextUpdateTick && // Check if it's the proper tick to update
