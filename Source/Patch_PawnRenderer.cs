@@ -621,7 +621,7 @@ internal static class patch_DrawEquipmentAiming
                 flip = true;
             }
 
-            if (!pawn.equipment.Primary.def.IsRangedWeapon || stance_Busy.verb.IsMeleeAttack)
+            if (!pawn.equipment.Primary.def.IsRangedWeapon || (stance_Busy.verb?.IsMeleeAttack ?? true))
             {
                 // 근접공격
                 isMeleeAtk = true;
