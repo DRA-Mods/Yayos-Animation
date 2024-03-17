@@ -50,7 +50,7 @@ public static class AimingPatch
         SetCurrentPawnTick();
 
         // TODO: Re-add dual wielding support in the future
-        Wiggle = Mathf.Sin(CurrentPawnTick / 0.05f);
+        Wiggle = Mathf.Sin(CurrentPawnTick * 0.05f);
         // var wiggle = !isSub
         //     ? Mathf.Sin(tick * 0.05f)
         //     : Mathf.Sin(tick * 0.05f + 0.5f);
