@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 using HarmonyLib;
 using Verse;
 
-namespace yayoAni;
+namespace YayoAnimation;
 
 // Original classes used:
 // https://github.com/rwmt/Multiplayer/blob/master/Source/Client/Util/MpMethodUtil.cs
@@ -13,6 +13,8 @@ namespace yayoAni;
 // The style and naming was modified to match the rest of the project.
 public static class MethodUtil
 {
+    #region Lambdas
+    
     private const string DisplayClassPrefix = "<>c__DisplayClass";
     private const string SharedDisplayClass = "<>c";
     private const string LambdaMethodInfix = "b__";
@@ -164,4 +166,12 @@ public static class MethodUtil
 
         return null;
     }
+
+    #endregion
+
+    #region MethodOf
+
+    public static MethodInfo MethodOf(Delegate d) => d.Method;
+
+    #endregion
 }

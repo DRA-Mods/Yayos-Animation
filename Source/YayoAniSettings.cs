@@ -1,9 +1,8 @@
 ﻿using RimWorld;
 using UnityEngine;
 using Verse;
-using yayoAni.Compat;
 
-namespace yayoAni;
+namespace YayoAnimation;
 
 public class YayoAniSettings : ModSettings
 {
@@ -19,8 +18,6 @@ public class YayoAniSettings : ModSettings
     public bool combatTwirlEnabled = true;
     public bool combatTwirlMaxMassEnabled = true;
     public float combatTwirlMaxMass = 5f;
-    public bool combatTwirlMaxSizeEnabled = true;
-    public float combatTwirlMaxSize = 1.25f;
 
     public bool anyJobEnabled = true;
 
@@ -35,9 +32,6 @@ public class YayoAniSettings : ModSettings
     public bool animalJobEnabled = true;
     public bool animalCombatEnabled = true;
 
-#if IDEOLOGY
-    public bool applyHarPatch = true;
-#endif
     public bool applyOversizedChanges = true;
 
     public bool debugMode = false;
@@ -61,8 +55,6 @@ public class YayoAniSettings : ModSettings
         Scribe_Values.Look(ref combatTwirlEnabled, "CombatTwirl", true);
         Scribe_Values.Look(ref combatTwirlMaxMassEnabled, "CombatTwirlMaxMassEnabled", true);
         Scribe_Values.Look(ref combatTwirlMaxMass, "CombatTwirlMaxMass", 5f);
-        Scribe_Values.Look(ref combatTwirlMaxSizeEnabled, "CombatTwirlMaxSizeEnabled", true);
-        Scribe_Values.Look(ref combatTwirlMaxSize, "CombatTwirlMaxSize", 1.25f);
 
         Scribe_Values.Look(ref anyJobEnabled, "AnyJobAnim", true);
 
@@ -77,9 +69,6 @@ public class YayoAniSettings : ModSettings
         Scribe_Values.Look(ref animalJobEnabled, "AnimalJob", true);
         Scribe_Values.Look(ref animalWalkEnabled, "AnimalCombat", true);
 
-#if IDEOLOGY
-        Scribe_Values.Look(ref applyHarPatch, "ApplyHarPatch", true);
-#endif
         Scribe_Values.Look(ref applyOversizedChanges, "applyOversizedChanges", true);
 
         Scribe_Values.Look(ref debugMode, "Debug", false);
@@ -116,17 +105,12 @@ public class YayoAniSettings : ModSettings
         listing.Gap();
 
         listing.CheckboxLabeled("YayoAnim_Combat".Translate(), ref combatEnabled);
-#if BIOTECH_PLUS
-        if (Core.usingReinforcedMechanoids)
-            ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(combatEnabled);
-#endif
+        // if (Core.usingReinforcedMechanoids)
+        //     ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(combatEnabled);
         listing.CheckboxLabeled("YayoAnim_TwirlWeapon".Translate(), ref combatTwirlEnabled);
         listing.CheckboxLabeled("YayoAnim_TwirlWeaponMaxMassEnabled".Translate(), ref combatTwirlMaxMassEnabled);
         buffer = null;
         listing.TextFieldNumericLabeled($"{"YayoAnim_TwirlWeaponMaxMass".Translate()}  ", ref combatTwirlMaxMass, ref buffer);
-        listing.CheckboxLabeled("YayoAnim_TwirlWeaponMaxSizeEnabled".Translate(), ref combatTwirlMaxSizeEnabled);
-        buffer = null;
-        listing.TextFieldNumericLabeled($"{"YayoAnim_TwirlWeaponMaxSize".Translate()}  ", ref combatTwirlMaxSize, ref buffer);
 
         listing.Gap();
 
@@ -151,10 +135,6 @@ public class YayoAniSettings : ModSettings
 
         listing.Gap();
 
-#if IDEOLOGY
-        listing.CheckboxLabeled("YayoAnim_ApplyHarPatch".Translate(), ref applyHarPatch, "YayoAnim_ApplyHarPatchTooltip".Translate());
-        HumanoidAlienRaces.SetHarPatch(applyHarPatch);
-#endif
         listing.CheckboxLabeled("YayoAnim_ApplyOversizedChanges".Translate(), ref applyOversizedChanges, "YayoAnim_ApplyOversizedChangesTooltip".Translate());
 
         listing.Gap();
@@ -180,15 +160,11 @@ public class YayoAniSettings : ModSettings
         walkAngle = 0.6f;
 
         combatEnabled = true;
-#if BIOTECH_PLUS
-        if (Core.usingReinforcedMechanoids)
-            ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(combatEnabled);
-#endif
+        // if (Core.usingReinforcedMechanoids)
+        //     ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(combatEnabled);
         combatTwirlEnabled = true;
         combatTwirlMaxMassEnabled = true;
         combatTwirlMaxMass = 5f;
-        combatTwirlMaxSizeEnabled = true;
-        combatTwirlMaxSize = 1.25f;
 
         anyJobEnabled = true;
 
@@ -203,10 +179,6 @@ public class YayoAniSettings : ModSettings
         animalJobEnabled = true;
         animalCombatEnabled = true;
 
-#if IDEOLOGY
-        applyHarPatch = true;
-        HumanoidAlienRaces.SetHarPatch(applyHarPatch);
-#endif
         applyOversizedChanges = true;
 
         debugMode = false;

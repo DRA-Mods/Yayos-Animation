@@ -4,26 +4,20 @@ using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
-using yayoAni.Compat;
+using YayoAnimation.Compat;
+using YayoAnimation.Data;
 
-namespace yayoAni;
+namespace YayoAnimation;
 
 public class Core : Mod
 {
     public static YayoAniSettings settings;
     public static Harmony harmony;
 
-#if BIOTECH_PLUS
     public const byte RotNorth = Rot4.NorthInt;
     public const byte RotEast = Rot4.EastInt;
     public const byte RotSouth = Rot4.SouthInt;
     public const byte RotWest = Rot4.WestInt;
-#else
-    public const byte RotNorth = 0;
-    public const byte RotEast = 1;
-    public const byte RotSouth = 2;
-    public const byte RotWest = 3;
-#endif
 
     public Core(ModContentPack content) : base(content)
     {
@@ -31,33 +25,22 @@ public class Core : Mod
         harmony = new Harmony("com.yayo.yayoAni");
         harmony.PatchAll();
 
-#if IDEOLOGY
-        if (usingHar && settings.applyHarPatch)
-            LongEventHandler.ExecuteWhenFinished(() => HumanoidAlienRaces.SetHarPatch(true));
-#endif
-#if BIOTECH_PLUS
-        if (usingReinforcedMechanoids)
-            LongEventHandler.ExecuteWhenFinished(() => ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(settings.combatEnabled));
-#endif
+        // if (usingReinforcedMechanoids)
+        //     LongEventHandler.ExecuteWhenFinished(() => ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(settings.combatEnabled));
     }
 
     public override string SettingsCategory() => "Yayo's Animation";
 
     public override void DoSettingsWindowContents(Rect inRect) => settings.DoSettingsWindowContents(inRect);
 
-    public static bool usingDualWield = false;
-#if IDEOLOGY
-    public static bool usingHar = false;
-#endif
-    public static bool usingOversizedWeapons = false;
-    public static bool usingDeflector = false;
+    // public static bool usingDualWield = false;
+    // public static bool usingOversizedWeapons = false;
+    // public static bool usingDeflector = false;
     public static bool usingGiddyUp = false;
-    public static bool usingSheathYourSword = false;
-#if BIOTECH_PLUS
+    // public static bool usingSheathYourSword = false;
     // public static bool usingVfeCore = false;
-    public static bool usingReinforcedMechanoids = false;
-    public static bool usingTacticowl = false;
-#endif
+    // public static bool usingReinforcedMechanoids = false;
+    // public static bool usingTacticowl = false;
 
     static Core()
     {
@@ -65,41 +48,29 @@ public class Core : Mod
         {
             switch (mod.PackageId.ToLower())
             {
-                case "roolo.dualwield":
-                    usingDualWield = true;
-                    Compat.DualWield.Init();
-                    Log.Message("[Yayo's Animation] - DualWield detected");
-                    break;
-#if IDEOLOGY
-                case "erdelf.humanoidalienraces":
-                    usingHar = true;
-                    Log.Message("[Yayo's Animation] - HumanoidAlienRaces detected");
-                    break;
-#endif
-#if BIOTECH_PLUS
+                // case "roolo.dualwield":
+                //     usingDualWield = true;
+                //     Compat.DualWield.Init();
+                //     Log.Message("[Yayo's Animation] - DualWield detected");
+                //     break;
                 case "owlchemist.giddyup":
-#else
-                case "roolo.giddyupcore":
-#endif
                     usingGiddyUp = true;
                     Log.Message("[Yayo's Animation] - Giddy-up! detected");
                     break;
-#if BIOTECH_PLUS
-                case "hlx.reinforcedmechanoids2":
-                    usingReinforcedMechanoids = true;
-                    Log.Message("[Yayo's Animation] - Reinforced Mechanoids 2 detected");
-                    break;
-                case "owlchemist.tacticowl":
-                    usingTacticowl = true;
-                    Log.Message("[Yayo's Animation] - Tacticowl detected");
-                    break;
-#endif
+                // case "hlx.reinforcedmechanoids2":
+                //     usingReinforcedMechanoids = true;
+                //     Log.Message("[Yayo's Animation] - Reinforced Mechanoids 2 detected");
+                //     break;
+                // case "owlchemist.tacticowl":
+                //     usingTacticowl = true;
+                //     Log.Message("[Yayo's Animation] - Tacticowl detected");
+                //     break;
             }
         }
 
-        OversizedWeapon.CheckOversizedActive();
-        Deflector.CheckDeflectorActive();
-        SheathYourSword.CheckSheathYourSwordActive();
+        // OversizedWeapon.CheckOversizedActive();
+        // Deflector.CheckDeflectorActive();
+        // SheathYourSword.CheckSheathYourSwordActive();
     }
 
     public static Rot4 getRot(in Vector3 vel, in Rot4 curRot)

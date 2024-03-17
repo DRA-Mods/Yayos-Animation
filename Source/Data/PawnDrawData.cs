@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Verse;
 
-namespace yayoAni.Data;
+namespace YayoAnimation.Data;
 
 public class PawnDrawData
 {

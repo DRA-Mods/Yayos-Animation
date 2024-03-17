@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using HarmonyLib;
+using LudeonTK;
 using Verse;
 
-namespace yayoAni;
+namespace YayoAnimation;
 
 public static class DebugTools
 {
@@ -16,7 +17,7 @@ public static class DebugTools
     {
         try
         {
-            Core.harmony.Patch(AccessTools.Method(typeof(Yayo), nameof(Yayo.Ani0)),
+            Core.harmony.Patch(AccessTools.Method(typeof(Yayo), nameof(Yayo.AniStanding)),
                 transpiler: new HarmonyMethod(typeof(DebugTools), nameof(Transpiler)));
         }
         catch (Exception)
@@ -28,7 +29,7 @@ public static class DebugTools
 
         try
         {
-            Core.harmony.Patch(AccessTools.Method(typeof(Yayo), nameof(Yayo.Ani1)),
+            Core.harmony.Patch(AccessTools.Method(typeof(Yayo), nameof(Yayo.AniLaying)),
                 transpiler: new HarmonyMethod(typeof(DebugTools), nameof(Transpiler)));
         }
         catch (Exception)

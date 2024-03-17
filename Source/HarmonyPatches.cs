@@ -1,205 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using HarmonyLib;
-using RimWorld;
+﻿using RimWorld;
 using UnityEngine;
 using Verse;
-using yayoAni.Compat;
-using yayoAni.Data;
+using YayoAnimation.Compat;
+using YayoAnimation.Data;
 
-namespace yayoAni;
-
-[HarmonyPatch(typeof(PawnRenderer))]
-[HarmonyPatch("RenderPawnAt")]
-public static class Patch_RenderPawnAt2
-{
-    public static bool Equal(this CodeInstruction ci, OpCode oc)
-    {
-        return ci.opcode == oc;
-    }
-
-    public static bool OpLoc(this CodeInstruction ci, OpCode oc, int i)
-    {
-        if (ci.opcode == oc && ci.operand is LocalBuilder localBuilder)
-            return localBuilder.LocalIndex == i;
-
-        return false;
-    }
-
-    public enum FindPointType
-    {
-        start,
-        after
-    }
-
-    public static bool FindPoint(this List<CodeInstruction> ar, List<OpCode> target, out int point, FindPointType findType)
-    {
-        point = -1;
-        for (int i = 0; i < ar.Count - target.Count; i++)
-        {
-            for (int j = 0; j < target.Count; j++)
-            {
-                if (ar[i + j].Equal(target[j]))
-                {
-                    if (j == target.Count - 1)
-                    {
-                        switch (findType)
-                        {
-                            case FindPointType.start:
-                                point = i;
-                                break;
-                            case FindPointType.after:
-                                point = i + j + 1;
-                                break;
-                        }
-
-                        return true;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-
-        return false;
-    }
-
-
-    private static IEnumerable<CodeInstruction> Transpiler(MethodBase original, IEnumerable<CodeInstruction> instructions)
-    {
-        List<CodeInstruction> arCi = instructions.ToList();
-
-        // --------------------
-
-        #region GenDraw.DrawMeshNowOrLater(GetBlitMeshUpdatedFrame(frameSet, rot, PawnDrawMode.BodyAndHead), drawLoc, Quaternion.AngleAxis(0f, Vector3.up), original, drawNow: false);
-
-        var arFind = new List<OpCode>()
-        {
-            OpCodes.Ldarg_0,
-            OpCodes.Ldloc_S,
-            OpCodes.Ldloc_0,
-            OpCodes.Ldc_I4_0,
-            OpCodes.Call,
-            OpCodes.Ldarg_1,
-            OpCodes.Ldc_R4,
-            OpCodes.Call,
-            OpCodes.Call,
-            OpCodes.Ldloc_S,
-            OpCodes.Ldc_I4_0,
-            OpCodes.Call
-        };
-
-        if (arCi.FindPoint(arFind, out var point, FindPointType.start))
-        {
-            //for (int i = point; i < point + ar_find.Count; i++)
-            //{
-            //    Log.Message($"{i} : {ar_ci[i].opcode}");
-            //}
-            //Log.Message($"--------------change-----------------");
-
-            var tmpPoint = point + 11;
-            arCi.RemoveRange(tmpPoint, 1);
-            var arInsert = new List<CodeInstruction>()
-            {
-                new(OpCodes.Ldarg_0),
-                new(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), nameof(PawnRenderer.pawn))),
-                new(OpCodes.Call, AccessTools.Method(typeof(Yayo), nameof(Yayo.DrawMeshNowOrLater)))
-            };
-            arCi.InsertRange(tmpPoint, arInsert);
-
-
-            tmpPoint = point + 4;
-            arCi.RemoveRange(tmpPoint, 1);
-            arInsert = new List<CodeInstruction>()
-            {
-                new(OpCodes.Ldarg_0),
-                new(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), nameof(PawnRenderer.pawn))),
-                new(OpCodes.Call, AccessTools.Method(typeof(Yayo), nameof(Yayo.GetBlitMeshUpdatedFrame)))
-            };
-            arCi.InsertRange(tmpPoint, arInsert);
-
-
-            tmpPoint = point + 0;
-            arCi.RemoveRange(tmpPoint, 1);
-
-
-            //for (int i = point; i < point + ar_find.Count; i++)
-            //{
-            //	Log.Message($"{i} : {ar_ci[i].opcode}");
-
-            //}
-        }
-
-        #endregion
-
-        #region RenderPawnInternal(drawLoc, 0f, renderBody: true, rot, curRotDrawMode, pawnRenderFlags);
-
-        //ar_find = new List<OpCode>()
-        //{
-        //	//IL_0106: br.s IL_0118
-        //	OpCodes.Br_S,
-        //	//IL_0108: ldarg.0
-        //	OpCodes.Ldarg_0,
-        //	//IL_0109: ldarg.1
-        //	OpCodes.Ldarg_1,
-        //	//IL_010a: ldc.r4 0.0
-        //	OpCodes.Ldc_R4,
-        //	//IL_010f: ldc.i4.1
-        //	OpCodes.Ldc_I4_1,
-        //	//IL_0110: ldloc.0
-        //	OpCodes.Ldloc_0,
-        //	//IL_0111: ldloc.2
-        //	OpCodes.Ldloc_2,
-        //	//IL_0112: ldloc.1
-        //	OpCodes.Ldloc_1,
-        //	//IL_0113: call instance void Verse.PawnRenderer::RenderPawnInternal(valuetype[UnityEngine.CoreModule]UnityEngine.Vector3, float32, bool, valuetype Verse.Rot4, valuetype Verse.RotDrawMode, valuetype Verse.PawnRenderFlags)
-        //	OpCodes.Call
-        //};
-
-        //if (ar_ci.findPoint(ar_find, out point, findPointType.start))
-        //{
-        //             for (int i = point - 5; i < point + ar_find.Count + 5; i++)
-        //             {
-        //                 Log.Message($"{i} : {ar_ci[i].opcode} - {ar_ci[i].operand}");
-        //             }
-        //             Log.Message($"--------------change-----------------");
-
-        //             tmp_point = point + 8;
-        //	ar_ci.RemoveRange(tmp_point, 1);
-        //	ar_insert = new List<CodeInstruction>()
-        //	{
-        //                 //new CodeInstruction(OpCodes.Ldarg_2),
-        //		//new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), "pawn")),
-        //		new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(yayo), "RenderPawnInternal"))
-
-        //	};
-        //	ar_ci.InsertRange(tmp_point, ar_insert);
-
-
-        //             //ar_ci.RemoveRange(point + 0, 2);
-        //             //ar_ci.Insert(point + 3, new CodeInstruction(OpCodes.Ldarg_2));
-
-
-        //             for (int i = point - 5; i < point + ar_find.Count + 5; i++)
-        //             {
-        //                 Log.Message($"{i} : {ar_ci[i].opcode} - {ar_ci[i].operand}");
-
-        //             }
-
-        //         }
-
-        #endregion
-
-
-        // result out
-        return arCi;
-    }
-}
+namespace YayoAnimation;
 
 [HotSwappable]
 public static class Yayo
@@ -227,40 +32,17 @@ public static class Yayo
     private static readonly Vector3 PosStep2 = new(-0.5f + -0.25f * 2, 0f, 0f + 0.25f * 2);
     private static readonly Vector3 PosStep3 = new(-0.5f + -0.25f * 3, 0f, 0f + 0.25f * 3);
 
-    public static Mesh GetBlitMeshUpdatedFrame(PawnTextureAtlasFrameSet frameSet, Rot4 rotation, PawnDrawMode drawMode, Pawn p)
-    {
-        var pdd = DataUtility.GetData(p);
-        rotation = pdd.fixedRot ?? rotation;
-        return p.Drawer.renderer.GetBlitMeshUpdatedFrame(frameSet, rotation, drawMode);
-    }
-
-
-    // ReSharper disable once RedundantAssignment
-    public static void DrawMeshNowOrLater(Mesh mesh, Vector3 loc, Quaternion quat, Material mat, bool drawNow, Pawn p)
-    {
-        var pdd = DataUtility.GetData(p);
-        quat = Quaternion.AngleAxis(pdd.angleOffset, Vector3.up);
-        GenDraw.DrawMeshNowOrLater(mesh, loc, quat, mat, drawNow);
-    }
-
-
-    //public static void RenderPawnInternal(Vector3 rootLoc, float angle, bool renderBody, Rot4 bodyFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags)
-    //{
-    //	//pdd = dataUtility.GetData(p);
-    //	//angle += pdd.offset_angle;
-    // //         bodyFacing = pdd.fixed_rot ?? bodyFacing;
-    // //         AccessTools.Method(typeof(PawnRenderer), "RenderPawnInternal").Invoke(p.Drawer.renderer, new object[] { rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags });
-    //}
-
     public static void CheckAni(Pawn pawn, ref Vector3 pos, Rot4 rot, PawnDrawData pdd)
     {
-        if (!pawn.Spawned || pawn.Dead)
+        if (!pawn.Spawned || pawn.Dead || pawn.Drawer.renderer.HasAnimation)
         {
             pdd.Reset();
             return;
         }
+
+        var defName = pawn.CurJob?.def.defName;
         if (pdd.jobName != null && // Make sure we've cached some job before cancelling
-            pdd.jobName == pawn.CurJob?.def.defName && // Check if the current pawn's job is the same as cached
+            pdd.jobName == defName && // Check if the current pawn's job is the same as cached
             Find.TickManager.TicksGame < pdd.nextUpdateTick && // Check if it's the proper tick to update
             (pawn.pather == null || pawn.pather.MovingNow == false) && // Make sure pawn isn't moving
             (pawn.stances?.curStance is not Stance_Busy busy || busy.neverAimWeapon || !busy.focusTarg.IsValid)) // Make sure the pawn isn't aiming at something
@@ -269,13 +51,16 @@ public static class Yayo
             return;
         }
 
-        if (pawn.GetPosture() == PawnPosture.Standing)
+        if (!AniMovement(pawn, ref pos, ref rot, pdd, defName))
         {
-            Ani0(pawn, ref pos, ref rot, pdd);
-        }
-        else
-        {
-            Ani1(pawn, ref pos, pdd);
+            if (pawn.GetPosture() == PawnPosture.Standing)
+            {
+                AniStanding(pawn, ref pos, ref rot, pdd, defName);
+            }
+            else
+            {
+                AniLaying(pawn, ref pos, pdd);
+            }
         }
     }
 
@@ -292,56 +77,14 @@ public static class Yayo
         solemn
     }
 
-    public static void Ani0(Pawn pawn, ref Vector3 pos, ref Rot4 rot, PawnDrawData pdd)
+    public static void AniStanding(Pawn pawn, ref Vector3 pos, ref Rot4 rot, PawnDrawData pdd, string defName)
     {
         var changed = false;
         var oa = 0f;
         var op = Vector3.zero;
         int? nextUpdate = null;
-        var defName = pawn.CurJob?.def.defName;
-        var mounted = Core.usingGiddyUp && defName is "Mounted";
 
-        if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns ||
-            Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel ||
-            Core.usingGiddyUp && pawn.HasMount())
-        {
-            // Ignored
-        }
-        else if ((pawn.pather.lastMovedTick >= Find.TickManager.TicksGame - 1 && pawn.pather is { MovingNow: true }) || mounted)
-        {
-            if (Core.settings.walkEnabled)
-            {
-                var targetPawn = pawn;
-                if (mounted && Core.settings.animalWalkEnabled)
-                {
-                    var rider = pawn.MountingPawn();
-                    if (rider is { pather.MovingNow: true } && rider.pather.lastMovedTick >= Find.TickManager.TicksGame - 1)
-                        targetPawn = rider;
-                    else
-                        targetPawn = null;
-                }
-
-                if (targetPawn != null &&
-                    (!targetPawn.RaceProps.IsMechanoid || Core.settings.mechanoidWalkEnabled) &&
-                    (!targetPawn.RaceProps.Animal || Core.settings.animalWalkEnabled))
-                {
-                    changed = true;
-                    var IdTick = targetPawn.thingIDNumber * 20;
-                    var walkSpeed = Core.settings.walkSpeed;
-                    if (defName is "Hunt" or "GR_AnimalHuntJob" || mounted)
-                        walkSpeed *= 0.6f;
-
-                    var nextCellCost = targetPawn.pather.nextCellCostTotal;
-                    if (nextCellCost <= 0)
-                        nextCellCost = Mathf.Epsilon;
-
-                    var wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f * walkSpeed / nextCellCost);
-                    oa = wiggle * 9f * Core.settings.walkAngle;
-                    op = new Vector3(wiggle * 0.025f, 0f, 0f);
-                }
-            }
-        }
-        else if (Core.settings.anyJobEnabled && defName != null &&
+        if (Core.settings.anyJobEnabled && defName != null &&
                  (!pawn.RaceProps.IsMechanoid || Core.settings.mechanoidJobEnabled) &&
                  (!pawn.RaceProps.Animal || Core.settings.animalJobEnabled))
         {
@@ -382,11 +125,7 @@ public static class Yayo
                 case "Tame":
                 case "FillFermentingBarrel":
                 case "TakeBeerOutOfFermentingBarrel":
-#if IDEOLOGY
-                case "StudyThing":
-#elif BIOTECH_PLUS
                 case "StudyBuilding":
-#endif
                 case "Strip":
                 case "SmoothFloor":
                 case "SlaveSuppress":
@@ -440,7 +179,6 @@ public static class Yayo
                 case "BuildSnowman":
                 case "HaulToContainer": // Bury pawn
                 case "PrepareSkylantern":
-#if BIOTECH_PLUS
                 case "PaintBuilding":
                 case "PaintFloor":
                 case "RemovePaintBuilding":
@@ -453,7 +191,6 @@ public static class Yayo
                 case "ClearPollution":
                 case "RepairMech":
                 case "Floordrawing":
-#endif
                 // Dubs Paint Shop
                 case "PaintThings":
                 case "PaintCells":
@@ -504,11 +241,6 @@ public static class Yayo
                 case "Play_ComputerModern":
                 // Vanilla Furniture Security
                 case "VFES_RearmTrap":
-                // Vanilla Furniture Power
-#if IDEOLOGY
-                // Removed in 1.4
-                case "VPE_JobPlugHole":
-#endif
                 // Vanilla Factions Ancients
                 case "VFEA_Play_AncientEducator":
                 // Vanilla Factions Insectoid
@@ -523,10 +255,6 @@ public static class Yayo
                 // Vanilla Factions Vikings
                 case "VFEV_TakeHoneyOutOfApiary":
                 case "VFEV_TendToApiary":
-#if IDEOLOGY
-                // Removed in 1.4
-                case "VFEV_ChangeFacepaint":
-#endif
                 // Vanilla Factions Medieval
                 case "VFEM_DigTerrain":
                 case "VFEM_FillTerrain":
@@ -560,14 +288,12 @@ public static class Yayo
                 case "VisitSickPawn":
                 case "SocialRelax":
                 case "WatchTelevision":
-#if BIOTECH_PLUS
                 case "Radiotalking":
                 case "Workwatching":
                 case "Lessontaking":
                 case "Lessongiving":
                 case "PlayStatic":
                 case "PlayToys":
-#endif
                 // Dubs Bad Hygiene
                 case "WatchWashingMachine":
                 case "DBHGoSwimming":
@@ -626,12 +352,10 @@ public static class Yayo
                     aniType = AniType.idle;
                     break;
 
-#if BIOTECH_PLUS
                 case "BottleFeedBaby":
                 case "Breastfeed":
                     aniType = AniType.wiggleGentle;
                     break;
-#endif
 
 
                 case "Vomit":
@@ -952,7 +676,6 @@ public static class Yayo
                         Core.Ani(ref t, 25, ref oa, -idleAngle, 0f, -1f, ref op, r);
                     break;
 
-#if BIOTECH_PLUS
                 case AniType.wiggleGentle:
                     t = (Find.TickManager.TicksGame + IdTick * 13) % 200;
                     const float wiggleGentleAngle = 2.5f;
@@ -960,7 +683,6 @@ public static class Yayo
                     if (!Core.Ani(ref t, 100, ref oa, -wiggleGentleAngle, wiggleGentleAngle, -1f, ref op, r))
                         Core.Ani(ref t, 100, ref oa, wiggleGentleAngle, -wiggleGentleAngle, -1f, ref op, r);
                     break;
-#endif
 
                 case AniType.smash:
                     t = (Find.TickManager.TicksGame + IdTick) % 133;
@@ -1048,8 +770,7 @@ public static class Yayo
         }
     }
 
-
-    public static void Ani1(Pawn pawn, ref Vector3 pos, PawnDrawData pdd)
+    public static void AniLaying(Pawn pawn, ref Vector3 pos, PawnDrawData pdd)
     {
         try
         {
@@ -1115,9 +836,7 @@ public static class Yayo
                     case "LayDown": // 잠자기
                         if (!Core.settings.sleepEnabled) break;
                         if (!(pawn.jobs?.curDriver?.asleep ?? false)) break;
-#if BIOTECH
                         if (pawn.DevelopmentalStage.Newborn() || pawn.DevelopmentalStage.Baby()) break;
-#endif
 
                         idTickMult = idTick * 5;
                         idTickDiv = (Find.TickManager.TicksGame + idTickMult) / 2500;
@@ -1156,9 +875,7 @@ public static class Yayo
                         break;
 
                     case "Skygaze":
-#if BIOTECH_PLUS
                     case "Skydreaming":
-#endif
                     case "VSIE_Skygaze":
                         seed = pawn.CurJob.loadID + idTick * 5;
 
@@ -1233,307 +950,68 @@ public static class Yayo
         }
         catch
         {
-            DataUtility.GetData(pawn).Reset();
+            pawn.GetData().Reset();
         }
     }
-}
 
-// ---------------------------------------------------
-[HotSwappable]
-[HarmonyPatch(typeof(PawnRenderer), "RenderPawnAt")]
-public class Patch_PawnRenderer_RenderPawnAt
-{
-    [HarmonyPriority(0)]
-    public static void Prefix(PawnRenderer __instance, Pawn ___pawn, ref Vector3 drawLoc, Rot4? rotOverride = null, bool neverAimWeapon = false)
+    public static bool AniMovement(Pawn pawn, ref Vector3 pos, ref Rot4 rot, PawnDrawData pdd, string defName)
     {
-        if (___pawn == null)
-            return;
-
-        var pdd = DataUtility.GetData(___pawn);
-        Yayo.CheckAni(___pawn, ref drawLoc, rotOverride ?? ___pawn.Rotation, pdd);
-    }
-}
-
-[HotSwappable]
-[HarmonyPatch(typeof(PawnRenderer), "DrawDynamicParts")]
-public class Patch_PawnRenderer_DrawDynamicParts
-{
-    [HarmonyPriority(0)]
-    public static void Prefix(PawnRenderer __instance, ref Vector3 rootLoc, ref float angle, ref Rot4 pawnRotation, PawnRenderFlags flags, Pawn ___pawn)
-    {
-        if (___pawn.GetPosture() == PawnPosture.Standing)
+        var mounted = Core.usingGiddyUp && defName is "Mounted";
+        
+        if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns ||
+            Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel ||
+            Core.usingGiddyUp && pawn.HasMount())
         {
-            var pdd = DataUtility.GetData(___pawn);
-            angle += pdd.angleOffset;
-            pawnRotation = pdd.fixedRot ?? pawnRotation;
-        }
-    }
-}
-
-[HotSwappable]
-[HarmonyPatch(typeof(PawnRenderer), "RenderPawnInternal")]
-public class Patch_PawnRenderer_RenderPawnInternal
-{
-    public static bool skipPatch = false;
-
-    [HarmonyPriority(0)]
-    [HarmonyBefore("rimworld.Nals.FacialAnimation")]
-    public static void Prefix(PawnRenderer __instance, ref Vector3 rootLoc, ref float angle, bool renderBody, ref Rot4 bodyFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags, Pawn ___pawn)
-    {
-        if (skipPatch)
-        {
-            skipPatch = false;
-            return;
+            pdd.Reset();
+            return true;
         }
 
-        if (___pawn.GetPosture() == PawnPosture.Standing)
+        if ((pawn.pather.lastMovedTick >= Find.TickManager.TicksGame - 1 && pawn.pather is { MovingNow: true }) || mounted)
         {
-            var pdd = DataUtility.GetData(___pawn);
-            angle += pdd.angleOffset;
-            bodyFacing = pdd.fixedRot ?? bodyFacing;
-        }
-    }
-}
-
-[HotSwappable]
-[HarmonyPatch(typeof(PawnRenderer), "RenderCache")]
-public class Patch_PawnRenderer_RenderCache
-{
-    [HarmonyPriority(0)]
-    public static bool Prefix(PawnRenderer __instance, Pawn ___pawn, Dictionary<Apparel, (Color, bool)> ___tmpOriginalColors, Rot4 rotation, ref float angle, Vector3 positionOffset,
-        bool renderHead, bool renderBody, bool portrait, bool renderHeadgear, bool renderClothes, Dictionary<Apparel, Color> overrideApparelColor = null, Color? overrideHairColor = null,
-        bool stylingStation = false)
-    {
-        //PawnRenderFlags pawnRenderFlags = GetDefaultRenderFlags(pawn);
-        var pawnRenderFlags = __instance.GetDefaultRenderFlags(___pawn);
-        if (portrait)
-        {
-            pawnRenderFlags |= PawnRenderFlags.Portrait;
-        }
-
-        pawnRenderFlags |= PawnRenderFlags.Cache;
-        pawnRenderFlags |= PawnRenderFlags.DrawNow;
-        if (!renderHead)
-        {
-            pawnRenderFlags |= PawnRenderFlags.HeadStump;
-        }
-
-        if (renderHeadgear)
-        {
-            pawnRenderFlags |= PawnRenderFlags.Headgear;
-        }
-
-        if (renderClothes)
-        {
-            pawnRenderFlags |= PawnRenderFlags.Clothes;
-        }
-
-        if (stylingStation)
-        {
-            pawnRenderFlags |= PawnRenderFlags.StylingStation;
-        }
-
-        ___tmpOriginalColors.Clear();
-        try
-        {
-            if (overrideApparelColor != null)
+            if (Core.settings.walkEnabled)
             {
-                foreach (var (key, value) in overrideApparelColor)
+                var targetPawn = pawn;
+                if (mounted && Core.settings.animalWalkEnabled)
                 {
-                    var compColorable = key.TryGetComp<CompColorable>();
-                    if (compColorable != null)
-                    {
-                        ___tmpOriginalColors.Add(key, (compColorable.Color, compColorable.Active));
-                        key.SetColor(value);
-                    }
+                    var rider = pawn.MountingPawn();
+                    if (rider is { pather.MovingNow: true } && rider.pather.lastMovedTick >= Find.TickManager.TicksGame - 1)
+                        targetPawn = rider;
+                    else
+                        targetPawn = null;
+                }
+
+                if (targetPawn != null &&
+                    (!targetPawn.RaceProps.IsMechanoid || Core.settings.mechanoidWalkEnabled) &&
+                    (!targetPawn.RaceProps.Animal || Core.settings.animalWalkEnabled))
+                {
+                    var idTick = targetPawn.thingIDNumber * 20;
+                    var walkSpeed = Core.settings.walkSpeed;
+                    if (defName is "Hunt" or "GR_AnimalHuntJob" || mounted)
+                        walkSpeed *= 0.6f;
+
+                    var nextCellCost = targetPawn.pather.nextCellCostTotal;
+                    if (nextCellCost <= 0)
+                        nextCellCost = Mathf.Epsilon;
+
+                    var wiggle = Mathf.Sin((Find.TickManager.TicksGame + idTick) * 7f * walkSpeed / nextCellCost);
+                    // oa = wiggle * 9f * Core.settings.walkAngle;
+                    // op = new Vector3(wiggle * 0.025f, 0f, 0f);
+
+                    pdd.angleOffset = wiggle * 9f * Core.settings.walkAngle;
+                    pdd.fixedRot = rot.IsValid ? rot : null;
+                    // op = new Vector3(op.x, 0f, op.z);
+                    pdd.posOffset = new Vector3(wiggle * 0.025f, 0f, 0f);
+                    pos += pdd.posOffset;
+                    pdd.nextUpdateTick = Find.TickManager.TicksGame + Core.settings.updateFrequencyTicks;
+
+                    return true;
                 }
             }
 
-            var hairColor = Color.white;
-            if (___pawn.story != null)
-            {
-                hairColor = ___pawn.story.hairColor;
-                if (overrideHairColor.HasValue)
-                {
-                    ___pawn.story.hairColor = overrideHairColor.Value;
-                    ___pawn.Drawer.renderer.graphics.CalculateHairMats();
-                }
-            }
-
-            //RenderPawnInternal(zero + positionOffset, angle, renderBody, rotation, ___CurRotDrawMode, pawnRenderFlags);
-            Patch_PawnRenderer_RenderPawnInternal.skipPatch = true;
-            var curRotDrawMode = __instance.CurRotDrawMode;
-            __instance.RenderPawnInternal(Vector3.zero + positionOffset, angle, renderBody, rotation, curRotDrawMode, pawnRenderFlags);
-            foreach (var tmpOriginalColor in ___tmpOriginalColors)
-            {
-                if (!tmpOriginalColor.Value.Item2)
-                {
-                    tmpOriginalColor.Key.TryGetComp<CompColorable>().Disable();
-                }
-                else
-                {
-                    tmpOriginalColor.Key.SetColor(tmpOriginalColor.Value.Item1);
-                }
-            }
-
-            if (___pawn.story != null && overrideHairColor.HasValue)
-            {
-                ___pawn.story.hairColor = hairColor;
-                ___pawn.Drawer.renderer.graphics.CalculateHairMats();
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error("[Yayo's Animation] - Error rendering pawn portrait: " + ex.Message);
-        }
-        finally
-        {
-            ___tmpOriginalColors.Clear();
+            pdd.Reset();
+            return true;
         }
 
         return false;
     }
 }
-
-[HotSwappable]
-[HarmonyPatch(typeof(PawnRenderer), "GetBodyPos")]
-internal class Patch_PawnRenderer_GetBodyPos
-{
-    [HarmonyPostfix]
-    public static void Postfix(PawnRenderer __instance, ref Vector3 __result, Vector3 drawLoc, ref bool showBody, Pawn ___pawn)
-    {
-        var pdd = DataUtility.GetData(___pawn);
-        __result += pdd.posOffset;
-        if (pdd.forcedShowBody) showBody = true;
-    }
-}
-
-[HotSwappable]
-[HarmonyPatch(typeof(PawnRenderer), "BodyAngle")]
-internal class Patch_PawnRenderer_BodyAngle
-{
-    [HarmonyPostfix]
-    public static void Postfix(PawnRenderer __instance, ref float __result, Pawn ___pawn)
-    {
-        var pdd = DataUtility.GetData(___pawn);
-        __result += pdd.angleOffset;
-    }
-}
-
-[HotSwappable]
-[HarmonyPatch(typeof(PawnRenderer), "LayingFacing")]
-internal class Patch_PawnRenderer_LayingFacing
-{
-    [HarmonyPostfix]
-    public static void Postfix(PawnRenderer __instance, ref Rot4 __result, Pawn ___pawn)
-    {
-        var pdd = DataUtility.GetData(___pawn);
-        __result = pdd.fixedRot ?? __result;
-    }
-}
-
-
-/*
-// ---------------------------------------------------
-
-[HarmonyPatch(typeof(PawnRenderer), "RenderPawnAt")]
-public class Patch_PawnRenderer_RenderPawnAt
-{
-    static Pawn pawn;
-
-    [HarmonyPriority(0)]
-    public static bool Prefix(PawnRenderer __instance, Vector3 drawLoc, Rot4? rotOverride = null, bool neverAimWeapon = false)
-    {
-
-        pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>();
-
-        if (!__instance.graphics.AllResolved)
-        {
-            __instance.graphics.ResolveAllGraphics();
-        }
-
-        Rot4 rot = rotOverride ?? pawn.Rotation;
-        PawnRenderFlags pawnRenderFlags = (PawnRenderFlags)AccessTools.Method(typeof(PawnRenderer), "GetDefaultRenderFlags").Invoke(__instance, new object[] { pawn });
-        if (neverAimWeapon)
-        {
-            pawnRenderFlags |= PawnRenderFlags.NeverAimWeapon;
-        }
-
-        RotDrawMode curRotDrawMode = Traverse.Create(__instance).Property("CurRotDrawMode").GetValue<RotDrawMode>();
-        bool flag = pawn.RaceProps.Humanlike && curRotDrawMode != RotDrawMode.Dessicated && !pawn.IsInvisible();
-        PawnTextureAtlasFrameSet frameSet = null;
-        if (flag && !GlobalTextureAtlasManager.TryGetPawnFrameSet(pawn, out frameSet, out var _))
-        {
-            flag = false;
-        }
-
-        int IdTick = pawn.thingIDNumber * 100;
-
-        if (pawn.GetPosture() == PawnPosture.Standing)
-        {
-            // yayo
-            float angle = 0f;
-            yayo.ani0(pawn, ref drawLoc, ref rot, out angle);
-
-
-            if (flag)
-            {
-                Material original = MaterialPool.MatFrom(new MaterialRequest(frameSet.atlas, ShaderDatabase.Cutout));
-                original = (Material)AccessTools.Method(typeof(PawnRenderer), "OverrideMaterialIfNeeded").Invoke(__instance, new object[] { original, pawn, false });
-
-                // need fix
-                GenDraw.DrawMeshNowOrLater((Mesh)AccessTools.Method(typeof(PawnRenderer), "GetBlitMeshUpdatedFrame").Invoke(__instance, new object[] { frameSet, rot, PawnDrawMode.BodyAndHead }), drawLoc, Quaternion.AngleAxis(angle, Vector3.up), original, drawNow: false);
-
-                // need fix
-                AccessTools.Method(typeof(PawnRenderer), "DrawDynamicParts").Invoke(__instance, new object[] { drawLoc, angle, rot, pawnRenderFlags });
-            }
-            else
-            {
-                // need fix
-                AccessTools.Method(typeof(PawnRenderer), "RenderPawnInternal").Invoke(__instance, new object[] { drawLoc, angle, true, rot, curRotDrawMode, pawnRenderFlags });
-            }
-            AccessTools.Method(typeof(PawnRenderer), "DrawCarriedThing").Invoke(__instance, new object[] { drawLoc });
-            if (!pawnRenderFlags.FlagSet(PawnRenderFlags.Invisible))
-            {
-                AccessTools.Method(typeof(PawnRenderer), "DrawInvisibleShadow").Invoke(__instance, new object[] { drawLoc });
-            }
-        }
-        else
-        {
-            bool showBody = true;
-            Vector3 bodyPos = (Vector3)AccessTools.Method(typeof(PawnRenderer), "GetBodyPos").Invoke(__instance, new object[] { drawLoc, showBody });
-            float angle = __instance.BodyAngle();
-            Rot4 rot2 = __instance.LayingFacing();
-
-            // yayo
-            yayo.ani1(pawn, ref bodyPos, ref rot2, ref angle, ref showBody);
-
-
-            if (flag)
-            {
-                Material original2 = MaterialPool.MatFrom(new MaterialRequest(frameSet.atlas, ShaderDatabase.Cutout));
-                original2 = (Material)AccessTools.Method(typeof(PawnRenderer), "OverrideMaterialIfNeeded").Invoke(__instance, new object[] { original2, pawn, false });
-
-                // need fix
-                GenDraw.DrawMeshNowOrLater((Mesh)AccessTools.Method(typeof(PawnRenderer), "GetBlitMeshUpdatedFrame").Invoke(__instance, new object[] { frameSet, rot2, (!showBody) ? PawnDrawMode.HeadOnly : PawnDrawMode.BodyAndHead }), bodyPos, Quaternion.AngleAxis(angle, Vector3.up), original2, drawNow: false);
-                // need fix
-                AccessTools.Method(typeof(PawnRenderer), "DrawDynamicParts").Invoke(__instance, new object[] { bodyPos, angle, rot, pawnRenderFlags });
-            }
-            else
-            {
-                // need fix
-                AccessTools.Method(typeof(PawnRenderer), "RenderPawnInternal").Invoke(__instance, new object[] { bodyPos, angle, showBody, rot2, curRotDrawMode, pawnRenderFlags });
-            }
-        }
-        if (pawn.Spawned && !pawn.Dead)
-        {
-            pawn.stances.StanceTrackerDraw();
-            pawn.pather.PatherDraw();
-            pawn.roping.RopingDraw();
-        }
-
-        AccessTools.Method(typeof(PawnRenderer), "DrawDebug").Invoke(__instance, new object[] { });
-        return false;
-    }
-}
-*/

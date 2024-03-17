@@ -1,17 +1,13 @@
 ﻿using System;
 using Verse;
 
-namespace yayoAni;
+namespace YayoAnimation;
 
 public static class Extensions
 {
     public static bool ButtonTextTooltip(this Listing_Standard listing, string label, string tooltip, string highlightTag = null)
     {
-#if IDEOLOGY
-            var rect = listing.GetRect(30f);
-#else
-        var rect = listing.GetRect(30f, 1f);
-#endif
+        var rect = listing.GetRect(30f);
         var pressed = false;
 
         if (listing.BoundingRectCached == null || rect.Overlaps(listing.BoundingRectCached.Value))
