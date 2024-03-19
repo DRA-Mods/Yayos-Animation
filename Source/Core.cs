@@ -33,7 +33,6 @@ public class Core : Mod
 
     public override void DoSettingsWindowContents(Rect inRect) => settings.DoSettingsWindowContents(inRect);
 
-    // public static bool usingDualWield = false;
     // public static bool usingOversizedWeapons = false;
     // public static bool usingDeflector = false;
     public static bool usingGiddyUp = false;
@@ -48,11 +47,6 @@ public class Core : Mod
         {
             switch (mod.PackageId.ToLower())
             {
-                // case "roolo.dualwield":
-                //     usingDualWield = true;
-                //     Compat.DualWield.Init();
-                //     Log.Message("[Yayo's Animation] - DualWield detected");
-                //     break;
                 case "owlchemist.giddyup":
                     usingGiddyUp = true;
                     Log.Message("[Yayo's Animation] - Giddy-up! detected");
