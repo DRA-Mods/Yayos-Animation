@@ -17,7 +17,7 @@ public static class DebugTools
     {
         try
         {
-            Core.harmony.Patch(AccessTools.Method(typeof(Yayo), nameof(Yayo.AniStanding)),
+            Core.harmony.Patch(AccessTools.Method(typeof(AnimationCore), nameof(AnimationCore.AniStanding)),
                 transpiler: new HarmonyMethod(typeof(DebugTools), nameof(Transpiler)));
         }
         catch (Exception)
@@ -29,7 +29,7 @@ public static class DebugTools
 
         try
         {
-            Core.harmony.Patch(AccessTools.Method(typeof(Yayo), nameof(Yayo.AniLaying)),
+            Core.harmony.Patch(AccessTools.Method(typeof(AnimationCore), nameof(AnimationCore.AniLaying)),
                 transpiler: new HarmonyMethod(typeof(DebugTools), nameof(Transpiler)));
         }
         catch (Exception)

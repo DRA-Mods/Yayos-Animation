@@ -15,7 +15,7 @@ public static class ParallelGetPreRenderResultsPatch
     {
         var data = ___pawn.GetData();
 
-        Yayo.CheckAni(
+        AnimationCore.CheckAni(
             ___pawn,
             ref drawLoc,
             rotOverride ?? (___pawn.GetPosture() == PawnPosture.Standing || ___pawn.Crawling ? ___pawn.Rotation : __instance.LayingFacing()),

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Linq;
 using Prepatcher;
 using Verse;
 
@@ -6,7 +7,7 @@ namespace YayoAnimation.Data;
 
 public static class PawnDataUtility
 {
-    private static readonly Dictionary<Pawn, PawnDrawData> DrawDataDictionary = new();
+    private static readonly ConcurrentDictionary<Pawn, PawnDrawData> DrawDataDictionary = new();
 
     private static PawnDrawData MakeBlankDrawData() => new();
 
@@ -26,7 +27,9 @@ public static class PawnDataUtility
     public static void GC()
     {
         var prev = DrawDataDictionary.Keys.Count;
-        DrawDataDictionary.RemoveAll(a => a.Key == null || a.Key.mapIndexOrState < 0 || a.Key.mapIndexOrState >= Find.Maps.Count);
+        var empty = DrawDataDictionary.Where(a => a.Key == null || a.Key.mapIndexOrState < 0 || a.Key.mapIndexOrState >= Find.Maps.Count).ToList();
+        foreach (var value in empty)
+            DrawDataDictionary.TryRemove(value.Key, out _);
         Log.Message($"[Yayo's Animation] GC : animation data count [{prev} -> {DrawDataDictionary.Keys.Count}]");
     }
 

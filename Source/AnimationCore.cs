@@ -7,7 +7,7 @@ using YayoAnimation.Data;
 namespace YayoAnimation;
 
 [HotSwappable]
-public static class Yayo
+public static class AnimationCore
 {
     private static readonly Vector3 XOffset005 = new(0.05f, 0f, 0f);
     private static readonly Vector3 ZOffset005 = new(0f, 0f, 0.05f);
