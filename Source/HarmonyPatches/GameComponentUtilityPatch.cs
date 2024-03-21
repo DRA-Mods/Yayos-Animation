@@ -10,13 +10,13 @@ namespace YayoAnimation.HarmonyPatches;
 public static class GameComponentUtilityPatch
 {
     // TODO: Replace with check for prepatcher once supporting prepatcher
-    private static bool IsPatchActive() => true;
+    private static bool IsPatchActive() => ModsConfig.IsActive("zetrith.prepatcher");
 
     [HarmonyPatch(typeof(GameComponentUtility), nameof(GameComponentUtility.StartedNewGame))]
     [HarmonyPatch(typeof(GameComponentUtility), nameof(GameComponentUtility.LoadedGame))]
     public static class ResetOnStartedOrLoaded
     {
-        public static bool Prepare(MethodBase method) => ModsConfig.IsActive("");
+        public static bool Prepare(MethodBase method) => IsPatchActive();
 
         public static void Postfix() => PawnDataUtility.Reset();
     }
