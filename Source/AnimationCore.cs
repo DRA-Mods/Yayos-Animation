@@ -105,7 +105,6 @@ public static class AnimationCore
             Rot4 r;
             Rot4 tr;
 
-
             switch (pawn.CurJob.def.defName)
             {
                 // do something
@@ -319,7 +318,7 @@ public static class AnimationCore
                     var idTickDiv = (Find.TickManager.TicksGame + idTickMult) / 2500;
                     var seed = idTickDiv + idTickMult;
                     nextUpdate = (idTickDiv + 1) * 2500 - idTickMult;
-                    rot = Rand.RangeSeeded(0, 4, seed) switch
+                    rot = FastRandom.NewNext(0, 4, seed) switch
                     {
                         0 => Rot4.East,
                         1 => Rot4.West,
@@ -803,6 +802,8 @@ public static class AnimationCore
                 int seed;
                 int idTickMult;
                 int idTickDiv;
+                FastRandom rand;
+
                 switch (pawn.CurJob.def.defName)
                 {
                     case "Lovin": // 사랑나누기
@@ -843,33 +844,33 @@ public static class AnimationCore
                         seed = idTickDiv + idTickMult;
                         nextUpdate = (idTickDiv + 1) * 2500 - idTickMult;
 
-                        rot = Rand.RangeSeeded(0, 4, seed) switch
+                        rand = new FastRandom();
+                        rot = rand.Next(4, seed) switch
                         {
                             0 => Rot4.East,
                             1 => Rot4.West,
                             2 => Rot4.South,
-                            3 => Rot4.North,
-                            _ => rot
+                            _ => Rot4.North,
                         };
 
-                        switch (Rand.RangeSeeded(0, 3, seed + 100))
+                        switch (rand.Next(3, seed + 100))
                         {
                             case 0:
-                                op = new Vector3(Rand.RangeSeeded(-0.1f, 0.1f, seed + 50), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 100));
+                                op = new Vector3(rand.Next(-0.1f, 0.1f, seed + 50), 0f, rand.Next(-0.1f, 0.1f, seed + 100));
                                 break;
                             case 1:
-                                op = new Vector3(Rand.RangeSeeded(-0.2f, 0.2f, seed + 150), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 200));
+                                op = new Vector3(rand.Next(-0.2f, 0.2f, seed + 150), 0f, rand.Next(-0.1f, 0.1f, seed + 200));
                                 break;
                             case 2:
-                                op = new Vector3(Rand.RangeSeeded(-0.3f, 0.3f, seed + 250), 0f, Rand.RangeSeeded(-0.2f, 0.2f, seed + 300));
+                                op = new Vector3(rand.Next(-0.3f, 0.3f, seed + 250), 0f, rand.Next(-0.2f, 0.2f, seed + 300));
                                 pdd.forcedShowBody = true;
                                 break;
                         }
 
-                        oa = Rand.RangeSeeded(0, 3, seed + 200) switch
+                        oa = rand.Next(3, seed + 200) switch
                         {
-                            2 => Rand.RangeSeeded(-45f, 45f, seed),
-                            _ => Rand.RangeSeeded(-15f, 15f, seed),
+                            2 => rand.Next(-45f, 45f, seed),
+                            _ => rand.Next(-15f, 15f, seed),
                         };
 
                         break;
@@ -880,14 +881,15 @@ public static class AnimationCore
                         seed = pawn.CurJob.loadID + idTick * 5;
 
                         nextUpdate = int.MaxValue;
-                        op = Rand.RangeSeeded(0, 3, seed + 100) switch
+                        rand = new FastRandom();
+                        op = rand.Next(3, seed + 100) switch
                         {
-                            0 => new Vector3(Rand.RangeSeeded(-0.1f, 0.1f, seed + 50), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 100)),
-                            1 => new Vector3(Rand.RangeSeeded(-0.2f, 0.2f, seed + 150), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 200)),
-                            _ => new Vector3(Rand.RangeSeeded(-0.3f, 0.3f, seed + 250), 0f, Rand.RangeSeeded(-0.2f, 0.2f, seed + 300)),
+                            0 => new Vector3(rand.Next(-0.1f, 0.1f, seed + 50), 0f, rand.Next(-0.1f, 0.1f, seed + 100)),
+                            1 => new Vector3(rand.Next(-0.2f, 0.2f, seed + 150), 0f, rand.Next(-0.1f, 0.1f, seed + 200)),
+                            _ => new Vector3(rand.Next(-0.3f, 0.3f, seed + 250), 0f, rand.Next(-0.2f, 0.2f, seed + 300)),
                         };
 
-                        oa = Rand.RangeSeeded(0f, 360f, seed + 200);
+                        oa = rand.Next(360f, seed + 200);
 
                         break;
 
@@ -897,7 +899,7 @@ public static class AnimationCore
                     //     break;
                     case "UseHotTub":
                         nextUpdate = int.MaxValue;
-                        if (Rand.ChanceSeeded(0.5f, pawn.CurJob.loadID + idTick))
+                        if (FastRandom.NewBool(pawn.CurJob.loadID + idTick))
                         {
                             op = ZOffset05;
                             oa = 180f;
@@ -912,7 +914,8 @@ public static class AnimationCore
                         seed = idTickDiv + idTickMult;
                         nextUpdate = (idTickDiv + 1) * 2500 - idTickMult;
 
-                        rot = Rand.RangeSeeded(0, 4, seed) switch
+                        rand = new FastRandom();
+                        rot = rand.Next(4, seed) switch
                         {
                             0 => Rot4.East,
                             1 => Rot4.West,
@@ -921,10 +924,10 @@ public static class AnimationCore
                             _ => rot
                         };
 
-                        if (Rand.ChanceSeeded(0.5f, seed + 100))
-                            op = new Vector3(Rand.RangeSeeded(-0.1f, 0.1f, seed + 50), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 100));
+                        if (rand.Bool(seed + 100))
+                            op = new Vector3(rand.Next(-0.1f, 0.1f, seed + 50), 0f, rand.Next(-0.1f, 0.1f, seed + 100));
                         else
-                            op = new Vector3(Rand.RangeSeeded(-0.2f, 0.2f, seed + 150), 0f, Rand.RangeSeeded(-0.1f, 0.1f, seed + 200));
+                            op = new Vector3(rand.Next(-0.2f, 0.2f, seed + 150), 0f, rand.Next(-0.1f, 0.1f, seed + 200));
 
                         break;
 
