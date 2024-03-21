@@ -139,6 +139,8 @@ public static class AimingPatch
         IsAimingAnimation = true;
         IsTwirling = false;
         SetCurrentPawnTick();
+        // Since we always override the angle with wiggle, set it up to angle as fallback
+        Wiggle = angle;
 
         // Could probably pass as argument, however this should be safer.
         // Guaranteed non-null, focusTarg is valid, neverAimWeapon is false
