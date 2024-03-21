@@ -11,6 +11,8 @@ namespace YayoAnimation.HarmonyPatches.PawnPatches;
 [HarmonyPatch(typeof(PawnRenderer), nameof(PawnRenderer.ParallelGetPreRenderResults))]
 public static class ParallelGetPreRenderResultsPatch
 {
+    // Should be threaded
+
     public static void Prefix(PawnRenderer __instance, Pawn ___pawn, ref Vector3 drawLoc, ref Rot4? rotOverride)
     {
         var data = ___pawn.GetData();

@@ -12,6 +12,8 @@ namespace YayoAnimation.HarmonyPatches.PawnPatches;
 // [HarmonyPatchCategory(HarmonyCategories.Combat)]
 public static class AimingPatch
 {
+    // Shouldn't be threaded
+
     #region Setup
 
     private static float OffsetX = -0.2f;
