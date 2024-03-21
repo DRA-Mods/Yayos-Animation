@@ -174,4 +174,11 @@ public static class MethodUtil
     public static MethodInfo MethodOf(Delegate d) => d.Method;
 
     #endregion
+
+    #region Method Name
+
+    public static string GetNameWithNamespace(this MethodBase method)
+        => (method.DeclaringType?.Namespace).NullOrEmpty() ? method.Name : $"{method.DeclaringType.Name}:{method.Name}";
+
+    #endregion
 }
