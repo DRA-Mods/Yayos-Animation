@@ -32,7 +32,7 @@ public static class AimingPatch
         CurrentPawn = pawn;
     }
 
-    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instr)
+    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instr, MethodBase baseMethod)
     {
         var locFields = new HashSet<FieldInfo>
         {
@@ -87,6 +87,13 @@ public static class AimingPatch
         const int expectedPatchedFields = 4;
         const int expectedPatchedAimingCalls = 2;
         const int expectedRotatedByCalls = 1;
+
+        if (patchedFields != expectedPatchedFields)
+            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to Messages.Message (expected: {expectedPatchedFields}, patched: {patchedFields}) for method {baseMethod.GetNameWithNamespace()}");
+        if (patchedAimingCalls != expectedPatchedAimingCalls)
+            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to Messages.Message (expected: {expectedPatchedAimingCalls}, patched: {patchedAimingCalls}) for method {baseMethod.GetNameWithNamespace()}");
+        if (patchedRotatedByCalls != expectedRotatedByCalls)
+            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to Messages.Message (expected: {expectedRotatedByCalls}, patched: {patchedRotatedByCalls}) for method {baseMethod.GetNameWithNamespace()}");
     }
 
     #endregion
