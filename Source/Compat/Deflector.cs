@@ -29,14 +29,14 @@
 //
 //             Core.usingDeflector = Temp();
 //             if (Core.usingSheathYourSword)
-//                 Log.Message("[Yayo's Animation] - CompDeflector detected");
+//                 Log.Message($"[{Core.ModName}] - CompDeflector detected");
 //         }
 //         catch (Exception e)
 //         {
 //             Core.usingDeflector = false;
 //             Log.Message(e is not TypeLoadException or TypeInitializationException or MissingFieldException
-//                 ? $"[Yayo's Animation] - No CompDeflector detected. Unexpected exception caught: {e.GetType()}"
-//                 : "[Yayo's Animation] - No CompDeflector detected.");
+//                 ? $"[{Core.ModName}] - No CompDeflector detected. Unexpected exception caught: {e.GetType()}"
+//                 : $"[{Core.ModName}] - No CompDeflector detected.");
 //         }
 //     }
 // }

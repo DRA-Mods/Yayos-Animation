@@ -94,7 +94,7 @@ public static class AnimationCore
 
             if (Core.settings.debugMode)
                 if (pawn.IsColonist)
-                    Log.Message($"[Yayo's Animation] - {pawn.NameShortColored} : {pawn.CurJob.def.defName}");
+                    Log.Message($"[{Core.ModName}] - {pawn.NameShortColored} : {pawn.CurJob.def.defName}");
 
             //if (pawn.IsColonist) Log.Message($"{pawn.NameShortColored} : {pawn.CurJob.def.defName} / id {pawn.thingIDNumber}");
             //float wiggle = Mathf.Sin((Find.TickManager.TicksGame + IdTick) * 7f / pawn.pather.nextCellCostTotal);
@@ -794,7 +794,7 @@ public static class AnimationCore
 
                 if (Core.settings.debugMode)
                     if (pawn.IsColonist)
-                        Log.Message($"[Yayo's Animation] - {pawn.NameShortColored} : {pawn.CurJob.def.defName}");
+                        Log.Message($"[{Core.ModName}] - {pawn.NameShortColored} : {pawn.CurJob.def.defName}");
 
 
                 var idTick = pawn.thingIDNumber * 20;

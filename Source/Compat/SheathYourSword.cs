@@ -133,14 +133,14 @@
 //
 //             Core.usingSheathYourSword = Temp();
 //             if (Core.usingSheathYourSword)
-//                 Log.Message("[Yayo's Animation] - SheathYourSword detected");
+//                 Log.Message($"[{Core.ModName}] - SheathYourSword detected");
 //         }
 //         catch (Exception e)
 //         {
 //             Core.usingSheathYourSword = false;
 //             Log.Message(e is not TypeLoadException or TypeInitializationException or MissingFieldException
-//                 ? $"[Yayo's Animation] - No SheathYourSword detected. Unexpected exception caught: {e.GetType()}"
-//                 : "[Yayo's Animation] - No SheathYourSword detected.");
+//                 ? $"[{Core.ModName}] - No SheathYourSword detected. Unexpected exception caught: {e.GetType()}"
+//                 : $"[{Core.ModName}] - No SheathYourSword detected.");
 //         }
 //     }
 // }

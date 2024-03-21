@@ -89,14 +89,14 @@
 //
 //             Core.usingOversizedWeapons = Temp();
 //             if (Core.usingOversizedWeapons)
-//                 Log.Message("[Yayo's Animation] - CompOversizedWeapons detected");
+//                 Log.Message($"[{Core.ModName}] - CompOversizedWeapons detected");
 //         }
 //         catch (Exception e)
 //         {
 //             Core.usingOversizedWeapons = false;
 //             Log.Message(e is not TypeLoadException or TypeInitializationException or MissingFieldException
-//                 ? $"[Yayo's Animation] - No CompOversizedWeapons detected. Unexpected exception caught: {e.GetType()}"
-//                 : "[Yayo's Animation] - No CompOversizedWeapons detected.");
+//                 ? $"[{Core.ModName}] - No CompOversizedWeapons detected. Unexpected exception caught: {e.GetType()}"
+//                 : $"[{Core.ModName}] - No CompOversizedWeapons detected.");
 //         }
 //     }
 // }

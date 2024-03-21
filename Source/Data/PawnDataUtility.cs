@@ -30,7 +30,7 @@ public static class PawnDataUtility
         var empty = DrawDataDictionary.Where(a => a.Key == null || a.Key.mapIndexOrState < 0 || a.Key.mapIndexOrState >= Find.Maps.Count).ToList();
         foreach (var value in empty)
             DrawDataDictionary.TryRemove(value.Key, out _);
-        Log.Message($"[Yayo's Animation] GC : animation data count [{prev} -> {DrawDataDictionary.Keys.Count}]");
+        Log.Message($"[{Core.ModName}] GC : animation data count [{prev} -> {DrawDataDictionary.Keys.Count}]");
     }
 
     // Should never be called with Prepatcher active, will be no-op anyway
@@ -38,6 +38,6 @@ public static class PawnDataUtility
     {
         var prev = DrawDataDictionary.Keys.Count;
         DrawDataDictionary.Clear();
-        Log.Message($"[Yayo's Animation] GC : animation data count [{prev} -> {DrawDataDictionary.Keys.Count}]");
+        Log.Message($"[{Core.ModName}] GC : animation data count [{prev} -> {DrawDataDictionary.Keys.Count}]");
     }
 }

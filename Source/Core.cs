@@ -14,6 +14,7 @@ public class Core : Mod
     public static YayoAniSettings settings;
     public static Harmony harmony;
 
+    public const string ModName = "Yayo's Animation";
     public const byte RotNorth = Rot4.NorthInt;
     public const byte RotEast = Rot4.EastInt;
     public const byte RotSouth = Rot4.SouthInt;
@@ -29,7 +30,7 @@ public class Core : Mod
         //     LongEventHandler.ExecuteWhenFinished(() => ReinforcedMechanoids2.SetReinforcedMechanoidsPatch(settings.combatEnabled));
     }
 
-    public override string SettingsCategory() => "Yayo's Animation";
+    public override string SettingsCategory() => ModName;
 
     public override void DoSettingsWindowContents(Rect inRect) => settings.DoSettingsWindowContents(inRect);
 
@@ -49,15 +50,15 @@ public class Core : Mod
             {
                 case "owlchemist.giddyup":
                     usingGiddyUp = true;
-                    Log.Message("[Yayo's Animation] - Giddy-up! detected");
+                    Log.Message($"[{Core.ModName}] - Giddy-up! detected");
                     break;
                 // case "hlx.reinforcedmechanoids2":
                 //     usingReinforcedMechanoids = true;
-                //     Log.Message("[Yayo's Animation] - Reinforced Mechanoids 2 detected");
+                //     Log.Message($"[{Core.ModName}] - Reinforced Mechanoids 2 detected");
                 //     break;
                 // case "owlchemist.tacticowl":
                 //     usingTacticowl = true;
-                //     Log.Message("[Yayo's Animation] - Tacticowl detected");
+                //     Log.Message($"[{Core.ModName}] - Tacticowl detected");
                 //     break;
             }
         }
