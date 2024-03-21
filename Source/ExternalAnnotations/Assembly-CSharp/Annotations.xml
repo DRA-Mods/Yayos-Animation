@@ -1,5 +1,19 @@
 <assembly name="Assembly-CSharp">
-    <member name="T:Verse.DebugActionAttribute">
+    <!-- Implicit use -->
+    <member name="T:LudeonTK.DebugActionAttribute">
         <attribute ctor="M:JetBrains.Annotations.MeansImplicitUseAttribute.#ctor"/>
+    </member>
+    <member name="T:LudeonTK.DebugActionYielderAttribute">
+        <attribute ctor="M:JetBrains.Annotations.MeansImplicitUseAttribute.#ctor"/>
+    </member>
+    <member name="T:LudeonTK.DebugOutputAttribute">
+        <attribute ctor="M:JetBrains.Annotations.MeansImplicitUseAttribute.#ctor"/>
+    </member>
+
+    <!-- Contracts -->
+    <member name="M:Verse.GenText.NullOrEmpty(System.String)">
+        <attribute ctor="M:JetBrains.Annotations.ContractAnnotationAttribute.#ctor(System.String)">
+            <argument>null => true</argument>
+        </attribute>
     </member>
 </assembly>
