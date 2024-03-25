@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Prepatcher;
 using Verse;
 
@@ -7,20 +8,20 @@ namespace YayoAnimation.Data;
 
 public static class PawnDataUtility
 {
-    private static readonly ConcurrentDictionary<Pawn, PawnDrawData> DrawDataDictionary = new();
+    private static readonly ConcurrentDictionary<Pawn, StrongBox<PawnDrawData>> DrawDataDictionary = new();
 
-    private static PawnDrawData MakeBlankDrawData() => new();
+    public static PawnDrawData MakeBlankDrawData() => new();
 
     [PrepatcherField]
     [ValueInitializer(nameof(MakeBlankDrawData))]
-    public static PawnDrawData GetData(this Pawn key)
+    public static ref PawnDrawData GetData(this Pawn key)
     {
         if (DrawDataDictionary.TryGetValue(key, out var data))
-            return data;
+            return ref data.Value;
 
-        data = MakeBlankDrawData();
+        data = new StrongBox<PawnDrawData>(MakeBlankDrawData());
         DrawDataDictionary[key] = data;
-        return data;
+        return ref data.Value;
     }
 
     // Should never be called with Prepatcher active, will be no-op anyway
