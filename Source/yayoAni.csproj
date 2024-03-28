@@ -42,7 +42,7 @@
     <PackageReference Condition=" '$(Configuration.EndsWith( 1.4))' " Include="UnlimitedHugs.Rimworld.HugsLib" Version="10.0.1" ExcludeAssets="runtime" />
     <PackageReference Condition=" '$(Configuration.EndsWith( 1.3))' " Include="Krafs.Rimworld.Ref" Version="1.3.*" />
     <PackageReference Condition=" '$(Configuration.EndsWith( 1.4))' " Include="Krafs.Rimworld.Ref" Version="1.4.*" />
-    <PackageReference Include="Zetrith.Prepatcher" Version="1.2.0" />
+    <PackageReference Condition=" '$(Configuration.EndsWith( 1.4))' " Include="Zetrith.Prepatcher" Version="1.2.0" />
   </ItemGroup>
   
   <ItemGroup>
