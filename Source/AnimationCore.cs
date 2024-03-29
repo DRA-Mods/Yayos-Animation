@@ -797,7 +797,7 @@ public static class AnimationCore
 
 
                 var idTick = pawn.thingIDNumber * 20;
-                pdd.forcedShowBody = false;
+                // pdd.forcedShowBody = false;
 
                 int seed;
                 int idTickMult;
@@ -863,7 +863,7 @@ public static class AnimationCore
                                 break;
                             case 2:
                                 op = new Vector3(rand.Next(-0.3f, 0.3f, seed + 250), 0f, rand.Next(-0.2f, 0.2f, seed + 300));
-                                pdd.forcedShowBody = true;
+                                // pdd.forcedShowBody = true;
                                 break;
                         }
 

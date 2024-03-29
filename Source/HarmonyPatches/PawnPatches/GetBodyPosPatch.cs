@@ -15,6 +15,6 @@ public static class GetBodyPosPatch
     {
         var pdd = ___pawn.GetData();
         __result += pdd.posOffset;
-        if (pdd.forcedShowBody) showBody = true;
+        // if (pdd.forcedShowBody) showBody = true;
     }
 }
