@@ -114,6 +114,9 @@ public static class AimingPatch
 
     private static float AddWiggleToAngle(float angle)
     {
+        if (!Core.settings.combatEnabled)
+            return angle;
+
         // Aiming angle handled earlier.
         if (IsAimingAnimation)
             return Wiggle;
@@ -131,6 +134,9 @@ public static class AimingPatch
 
     private static Vector3 AddWiggleToAimingRotation(Vector3 vec, float angle)
     {
+        if (!Core.settings.combatEnabled)
+            return vec;
+
         IsAimingAnimation = true;
         IsTwirling = false;
         SetCurrentPawnTick();
@@ -322,6 +328,9 @@ public static class AimingPatch
 
     private static Vector3 AddWiggleToRotation(Vector3 vec)
     {
+        if (!Core.settings.combatEnabled)
+            return vec;
+
         IsAimingAnimation = false;
         IsTwirling = false;
         SetCurrentPawnTick();
