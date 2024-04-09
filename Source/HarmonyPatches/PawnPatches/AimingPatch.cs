@@ -45,7 +45,7 @@ public static class AimingPatch
         var addWiggleToRotation = MethodUtil.MethodOf(AddWiggleToRotation);
 
         var drawEquipmentAiming = MethodUtil.MethodOf(PawnRenderUtility.DrawEquipmentAiming);
-        var drawEquipmentAimingReplacement = MethodUtil.MethodOf(DrawEquipmentAimingReplacement);
+        var addWiggleToAngle = MethodUtil.MethodOf(AddWiggleToAngle);
 
         var rotatedBy = AccessTools.DeclaredMethod(typeof(Vector3Utility), nameof(Vector3Utility.RotatedBy),
             [typeof(Vector3), typeof(float)]);
@@ -57,18 +57,18 @@ public static class AimingPatch
 
         foreach (var ci in instr)
         {
-            yield return ci;
-
-            // If DrawEquipmentAiming, replace it with ours
+            // If DrawEquipmentAiming, then the last value on stack is float (angle) - replace it with ours
             if (ci.Calls(drawEquipmentAiming))
             {
-                ci.opcode = OpCodes.Call;
-                ci.operand = drawEquipmentAimingReplacement;
+                yield return new CodeInstruction(OpCodes.Call, addWiggleToAngle);
 
                 patchedAimingCalls++;
             }
+
+            yield return ci;
+
             // If RotatedBy called, apply our operations and then rotate
-            else if (ci.Calls(rotatedBy))
+            if (ci.Calls(rotatedBy))
             {
                 ci.opcode = OpCodes.Call;
                 ci.operand = addWiggleToAimingRotation;
@@ -89,11 +89,11 @@ public static class AimingPatch
         const int expectedRotatedByCalls = 1;
 
         if (patchedFields != expectedPatchedFields)
-            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to Messages.Message (expected: {expectedPatchedFields}, patched: {patchedFields}) for method {baseMethod.GetNameWithNamespace()}");
+            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to PawnRenderUtility directional rotation fields (expected: {expectedPatchedFields}, patched: {patchedFields}) for method {baseMethod.GetNameWithNamespace()}");
         if (patchedAimingCalls != expectedPatchedAimingCalls)
-            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to Messages.Message (expected: {expectedPatchedAimingCalls}, patched: {patchedAimingCalls}) for method {baseMethod.GetNameWithNamespace()}");
+            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to PawnRenderUtility.DrawEquipmentAiming (expected: {expectedPatchedAimingCalls}, patched: {patchedAimingCalls}) for method {baseMethod.GetNameWithNamespace()}");
         if (patchedRotatedByCalls != expectedRotatedByCalls)
-            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to Messages.Message (expected: {expectedRotatedByCalls}, patched: {patchedRotatedByCalls}) for method {baseMethod.GetNameWithNamespace()}");
+            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to Vector3Utility.RotatedBy (expected: {expectedRotatedByCalls}, patched: {patchedRotatedByCalls}) for method {baseMethod.GetNameWithNamespace()}");
     }
 
     #endregion
@@ -112,22 +112,17 @@ public static class AimingPatch
 
     #region Shared
 
-    private static void DrawEquipmentAimingReplacement(Thing weapon, Vector3 drawPos, float angle)
+    private static float AddWiggleToAngle(float angle)
     {
         // Aiming angle handled earlier.
         if (IsAimingAnimation)
-        {
-            PawnRenderUtility.DrawEquipmentAiming(weapon, drawPos, Wiggle);
-            return;
-        }
+            return Wiggle;
 
+        // TODO: Re-add dual wielding support in the future
         if (IsTwirling)
-        {
-            // TODO: Re-add dual wielding support in the future
             angle += CurrentPawnTick * 36f;
-        }
 
-        PawnRenderUtility.DrawEquipmentAiming(weapon, drawPos, angle + Wiggle * -5f);
+        return angle + Wiggle * -5f;
     }
 
     #endregion
