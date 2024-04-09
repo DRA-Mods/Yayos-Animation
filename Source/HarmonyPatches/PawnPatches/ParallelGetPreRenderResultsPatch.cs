@@ -19,7 +19,6 @@ public static class ParallelGetPreRenderResultsPatch
 
         AnimationCore.CheckAni(
             ___pawn,
-            ref drawLoc,
             rotOverride ?? (___pawn.GetPosture() == PawnPosture.Standing || ___pawn.Crawling ? ___pawn.Rotation : __instance.LayingFacing()),
             data);
 
