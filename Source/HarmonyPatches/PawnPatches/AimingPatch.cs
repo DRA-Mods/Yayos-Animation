@@ -149,7 +149,7 @@ public static class AimingPatch
         // Guaranteed non-null.
         var weapon = CurrentPawn.equipment.Primary;
 
-        if (weapon.def.IsRangedWeapon && !stance.verb.IsMeleeAttack)
+        if (weapon.def.IsRangedWeapon && stance.verb is { IsMeleeAttack: false })
         {
             if (!CurrentPawn.RaceProps.IsMechanoid)
             {
