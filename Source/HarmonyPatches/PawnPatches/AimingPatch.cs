@@ -78,7 +78,7 @@ public static class AimingPatch
             // If any of the 4 static fields was loaded, call our method to add wiggle to it
             else if (ci.opcode == OpCodes.Ldsfld && ci.operand is FieldInfo field && locFields.Contains(field))
             {
-                yield return new CodeInstruction(OpCodes.Call, addWiggleToRotation);
+                yield return new CodeInstruction(OpCodes.Call, addWiggleToCarryPos);
 
                 patchedFields++;
             }
@@ -135,7 +135,7 @@ public static class AimingPatch
     private static Vector3 AddWiggleToAimingRotation(Vector3 vec, float angle)
     {
         if (!Core.settings.combatEnabled)
-            return vec;
+            return vec.RotatedBy(angle);
 
         IsAimingAnimation = true;
         IsTwirling = false;
