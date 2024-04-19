@@ -234,14 +234,15 @@ public static class AimingPatch
 
                 const float reboundFactor = 70f;
 
+                // Our input is a Vec3(0, 0, 0.4f + pawn.equipment.Primary.def.equippedDistanceOffset)
                 if (CurrentPawn.Rotation == Rot4.West)
                 {
-                    vec += new Vector3(addZ, vec.y, 0.4f + addX + ani);
+                    vec = new Vector3(addZ, 0, vec.z + addX + ani);
                     Wiggle = angle + ani * reboundFactor + addAngle;
                 }
                 else
                 {
-                    vec += new Vector3(-addZ, vec.y, 0.4f + addX - ani);
+                    vec = new Vector3(-addZ, 0, vec.z + addX - ani);
                     Wiggle = angle - ani * reboundFactor - addAngle;
                 }
             }
