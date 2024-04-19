@@ -42,7 +42,7 @@ public static class AimingPatch
             AccessTools.DeclaredField(typeof(PawnRenderUtility), nameof(PawnRenderUtility.EqLocWest)),
         };
 
-        var addWiggleToRotation = MethodUtil.MethodOf(AddWiggleToRotation);
+        var addWiggleToCarryPos = MethodUtil.MethodOf(AddWiggleToCarryPos);
 
         var drawEquipmentAiming = MethodUtil.MethodOf(PawnRenderUtility.DrawEquipmentAiming);
         var addWiggleToAngle = MethodUtil.MethodOf(AddWiggleToAngle);
@@ -327,7 +327,7 @@ public static class AimingPatch
 
     #region Weapon carry
 
-    private static Vector3 AddWiggleToRotation(Vector3 vec)
+    private static Vector3 AddWiggleToCarryPos(Vector3 vec)
     {
         if (!Core.settings.combatEnabled)
             return vec;
