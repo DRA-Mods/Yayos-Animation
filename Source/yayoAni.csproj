@@ -56,37 +56,21 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="DualWield">
-            <HintPath>..\..\..\..\..\workshop\content\294100\1628211313\1.4\Assemblies\DualWield.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="HumanoidAlienRaces">
-            <HintPath>..\..\..\..\..\workshop\content\294100\839005762\1.4\Assemblies\AlienRace.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="CompOversizedWeapon">
-            <HintPath>..\..\..\..\..\workshop\content\294100\932008009\1.4\Assemblies\CompOversizedWeapon.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="CompDeflector">
-            <HintPath>..\..\..\..\..\workshop\content\294100\932008009\1.4\Assemblies\CompDeflector.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="GiddyUpCore">
-            <HintPath>..\..\..\..\..\workshop\content\294100\2934245647\1.4\Assemblies\GiddyUpCore.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="ReinforcedMechanoids2">
-            <HintPath>..\..\..\..\..\workshop\content\294100\2910050186\1.4\Assemblies\ReinforcedMechanoids.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="SheathYourSword">
-            <HintPath>..\..\..\..\..\workshop\content\294100\1586105873\1.4\Assemblies\SYS.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Tacticowl">
-            <HintPath>..\..\..\..\..\workshop\content\294100\2936140288\1.4\Assemblies\Tacticowl.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
+<!--        <Reference Include="GiddyUpCore">-->
+<!--            <HintPath>..\..\..\..\..\workshop\content\294100\2934245647\1.5\Assemblies\GiddyUpCore.dll</HintPath>-->
+<!--            <Private>false</Private>-->
+<!--        </Reference>-->
+<!--        <Reference Include="ReinforcedMechanoids2">-->
+<!--            <HintPath>..\..\..\..\..\workshop\content\294100\2910050186\1.5\Assemblies\ReinforcedMechanoids.dll</HintPath>-->
+<!--            <Private>false</Private>-->
+<!--        </Reference>-->
+<!--        <Reference Include="SheathYourSword">-->
+<!--            <HintPath>..\..\..\..\..\workshop\content\294100\1586105873\1.5\Assemblies\SYS.dll</HintPath>-->
+<!--            <Private>false</Private>-->
+<!--        </Reference>-->
+<!--        <Reference Include="Tacticowl">-->
+<!--            <HintPath>..\..\..\..\..\workshop\content\294100\2936140288\1.4\Assemblies\Tacticowl.dll</HintPath>-->
+<!--            <Private>false</Private>-->
+<!--        </Reference>-->
     </ItemGroup>
 </Project>
