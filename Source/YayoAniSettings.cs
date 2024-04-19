@@ -32,8 +32,6 @@ public class YayoAniSettings : ModSettings
     public bool animalJobEnabled = true;
     public bool animalCombatEnabled = true;
 
-    public bool applyOversizedChanges = true;
-
     public bool debugMode = false;
 
     public override void ExposeData()
@@ -68,8 +66,6 @@ public class YayoAniSettings : ModSettings
         Scribe_Values.Look(ref animalWalkEnabled, "AnimalWalk", true);
         Scribe_Values.Look(ref animalJobEnabled, "AnimalJob", true);
         Scribe_Values.Look(ref animalWalkEnabled, "AnimalCombat", true);
-
-        Scribe_Values.Look(ref applyOversizedChanges, "applyOversizedChanges", true);
 
         Scribe_Values.Look(ref debugMode, "Debug", false);
     }
@@ -135,10 +131,6 @@ public class YayoAniSettings : ModSettings
 
         listing.Gap();
 
-        listing.CheckboxLabeled("YayoAnim_ApplyOversizedChanges".Translate(), ref applyOversizedChanges, "YayoAnim_ApplyOversizedChangesTooltip".Translate());
-
-        listing.Gap();
-
         if (listing.ButtonText("YayoAnim_ResetToDefault".Translate()))
             ResetToDefault();
 
@@ -178,8 +170,6 @@ public class YayoAniSettings : ModSettings
         animalWalkEnabled = true;
         animalJobEnabled = true;
         animalCombatEnabled = true;
-
-        applyOversizedChanges = true;
 
         debugMode = false;
     }
