@@ -4,8 +4,6 @@ using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
-using YayoAnimation.Compat;
-using YayoAnimation.Data;
 
 namespace YayoAnimation;
 
@@ -34,9 +32,7 @@ public class Core : Mod
 
     public override void DoSettingsWindowContents(Rect inRect) => settings.DoSettingsWindowContents(inRect);
 
-    // public static bool usingOversizedWeapons = false;
-    // public static bool usingDeflector = false;
-    public static bool usingGiddyUp = false;
+    // public static bool usingGiddyUp = false;
     // public static bool usingSheathYourSword = false;
     // public static bool usingVfeCore = false;
     // public static bool usingReinforcedMechanoids = false;
@@ -44,27 +40,25 @@ public class Core : Mod
 
     static Core()
     {
-        foreach (var mod in ModsConfig.ActiveModsInLoadOrder)
-        {
-            switch (mod.PackageId.ToLower())
-            {
-                case "owlchemist.giddyup":
-                    usingGiddyUp = true;
-                    Log.Message($"[{Core.ModName}] - Giddy-up! detected");
-                    break;
-                // case "hlx.reinforcedmechanoids2":
-                //     usingReinforcedMechanoids = true;
-                //     Log.Message($"[{Core.ModName}] - Reinforced Mechanoids 2 detected");
-                //     break;
-                // case "owlchemist.tacticowl":
-                //     usingTacticowl = true;
-                //     Log.Message($"[{Core.ModName}] - Tacticowl detected");
-                //     break;
-            }
-        }
+        // foreach (var mod in ModsConfig.ActiveModsInLoadOrder)
+        // {
+        //     switch (mod.PackageId.ToLower())
+        //     {
+        //         case "owlchemist.giddyup":
+        //             usingGiddyUp = true;
+        //             Log.Message($"[{Core.ModName}] - Giddy-up! detected");
+        //             break;
+        //         case "hlx.reinforcedmechanoids2":
+        //             usingReinforcedMechanoids = true;
+        //             Log.Message($"[{Core.ModName}] - Reinforced Mechanoids 2 detected");
+        //             break;
+        //         case "owlchemist.tacticowl":
+        //             usingTacticowl = true;
+        //             Log.Message($"[{Core.ModName}] - Tacticowl detected");
+        //             break;
+        //     }
+        // }
 
-        // OversizedWeapon.CheckOversizedActive();
-        // Deflector.CheckDeflectorActive();
         // SheathYourSword.CheckSheathYourSwordActive();
     }
 

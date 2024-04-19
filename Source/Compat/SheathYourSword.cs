@@ -71,8 +71,8 @@
 //     {
 //         try
 //         {
-//             // Basically a check to see if oversized weapons are active, and aren't an outdated version
-//             // which (despite me checking the code with decompiler) are causing errors when accessing fields in props.
+//             // Basically a check to see if SYS is active, and isn't an outdated version, which caused
+//             // me issues with CompOversizedWeapons and CompDeflector.
 //             // Need to put it into a method other than this, as otherwise the static constructor will error.
 //             bool Temp()
 //             {
@@ -133,7 +133,7 @@
 //
 //             Core.usingSheathYourSword = Temp();
 //             if (Core.usingSheathYourSword)
-//                 Log.Message($"[{Core.ModName}] - SheathYourSword detected");
+//                 Log.Message($"[{Core.ModName}] - SheathYourSword compat initialized");
 //         }
 //         catch (Exception e)
 //         {
