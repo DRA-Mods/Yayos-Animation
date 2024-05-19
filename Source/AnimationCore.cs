@@ -1,6 +1,7 @@
 ﻿using RimWorld;
 using UnityEngine;
 using Verse;
+using YayoAnimation.Compat;
 using YayoAnimation.Data;
 
 namespace YayoAnimation;
@@ -926,29 +927,27 @@ public static class AnimationCore
 
     public static bool AniMovement(Pawn pawn, ref Rot4 rot, PawnDrawData pdd, string defName)
     {
-        // var mounted = Core.usingGiddyUp && defName is "Mounted";
-
         if (pawn.Faction != Faction.OfPlayer && Core.settings.onlyPlayerPawns ||
-            Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel /*||
-            Core.usingGiddyUp && pawn.HasMount()*/)
+            Find.CameraDriver.CurrentZoom > Core.settings.maximumZoomLevel ||
+            Core.usingGiddyUp && pawn.HasMount())
         {
             pdd.Reset();
             return true;
         }
 
-        if ((pawn.pather.lastMovedTick >= Find.TickManager.TicksGame - 1 && pawn.pather is { MovingNow: true }) /*|| mounted*/)
+        if ((pawn.pather.lastMovedTick >= Find.TickManager.TicksGame - 1 && pawn.pather is { MovingNow: true }) || (Core.usingGiddyUp && defName is "Mounted"))
         {
             if (Core.settings.walkEnabled)
             {
                 var targetPawn = pawn;
-                // if (mounted && Core.settings.animalWalkEnabled)
-                // {
-                //     var rider = pawn.MountingPawn();
-                //     if (rider is { pather.MovingNow: true } && rider.pather.lastMovedTick >= Find.TickManager.TicksGame - 1)
-                //         targetPawn = rider;
-                //     else
-                //         targetPawn = null;
-                // }
+                if (Core.usingGiddyUp && defName is "Mounted" && Core.settings.animalWalkEnabled)
+                {
+                    var rider = pawn.MountingPawn();
+                    if (rider is { pather.MovingNow: true } && rider.pather.lastMovedTick >= Find.TickManager.TicksGame - 1)
+                        targetPawn = rider;
+                    else
+                        targetPawn = null;
+                }
 
                 if (targetPawn != null &&
                     (!targetPawn.RaceProps.IsMechanoid || Core.settings.mechanoidWalkEnabled) &&
@@ -956,7 +955,7 @@ public static class AnimationCore
                 {
                     var idTick = targetPawn.thingIDNumber * 20;
                     var walkSpeed = Core.settings.walkSpeed;
-                    if (defName is "Hunt" or "GR_AnimalHuntJob" /*|| mounted*/)
+                    if (defName is "Hunt" or "GR_AnimalHuntJob" || (Core.usingGiddyUp && defName is "Mounted"))
                         walkSpeed *= 0.6f;
 
                     var nextCellCost = targetPawn.pather.nextCellCostTotal;

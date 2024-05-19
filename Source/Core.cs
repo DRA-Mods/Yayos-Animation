@@ -32,7 +32,7 @@ public class Core : Mod
 
     public override void DoSettingsWindowContents(Rect inRect) => settings.DoSettingsWindowContents(inRect);
 
-    // public static bool usingGiddyUp = false;
+    public static bool usingGiddyUp = false;
     // public static bool usingSheathYourSword = false;
     // public static bool usingVfeCore = false;
     // public static bool usingReinforcedMechanoids = false;
@@ -40,24 +40,24 @@ public class Core : Mod
 
     static Core()
     {
-        // foreach (var mod in ModsConfig.ActiveModsInLoadOrder)
-        // {
-        //     switch (mod.PackageId.ToLower())
-        //     {
-        //         case "owlchemist.giddyup":
-        //             usingGiddyUp = true;
-        //             Log.Message($"[{Core.ModName}] - Giddy-up! detected");
-        //             break;
-        //         case "hlx.reinforcedmechanoids2":
-        //             usingReinforcedMechanoids = true;
-        //             Log.Message($"[{Core.ModName}] - Reinforced Mechanoids 2 detected");
-        //             break;
-        //         case "owlchemist.tacticowl":
-        //             usingTacticowl = true;
-        //             Log.Message($"[{Core.ModName}] - Tacticowl detected");
-        //             break;
-        //     }
-        // }
+        foreach (var mod in ModsConfig.ActiveModsInLoadOrder)
+        {
+            switch (mod.PackageId.ToLower())
+            {
+                case "owlchemist.giddyup":
+                    usingGiddyUp = true;
+                    Log.Message($"[{Core.ModName}] - Giddy-up! detected");
+                    break;
+                // case "hlx.reinforcedmechanoids2":
+                //     usingReinforcedMechanoids = true;
+                //     Log.Message($"[{Core.ModName}] - Reinforced Mechanoids 2 detected");
+                //     break;
+                // case "owlchemist.tacticowl":
+                //     usingTacticowl = true;
+                //     Log.Message($"[{Core.ModName}] - Tacticowl detected");
+                //     break;
+            }
+        }
 
         // SheathYourSword.CheckSheathYourSwordActive();
     }
