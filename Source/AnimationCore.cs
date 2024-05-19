@@ -135,10 +135,15 @@ public static class AnimationCore
             case "Uninstall":
             case "Train":
             case "TendPatient":
+            case "TendEntity":
+            case "ExtractBioferrite":
             case "Tame":
             case "FillFermentingBarrel":
             case "TakeBeerOutOfFermentingBarrel":
-            case "StudyBuilding":
+            case "TakeBioferriteOutOfHarvester":
+            case "StudyItem":
+            case "StudyInteract":
+            case "AnalyzeItem":
             case "Strip":
             case "SmoothFloor":
             case "SlaveSuppress":
@@ -148,6 +153,8 @@ public static class AnimationCore
             case "DoBill": // 제작, 조리
             case "Deconstruct":
             case "FinishFrame": // 건설
+            case "BuildCubeSculpture":
+            case "FillIn":
             case "Equip":
             case "ExtractRelic":
             case "ExtractToInventory":
@@ -178,6 +185,8 @@ public static class AnimationCore
             case "FixBrokenDownBuilding":
             case "Research":
             case "ApplyTechprint":
+            case "InvestigateMonolith":
+            case "ActivateMonolith":
             case "OperateDeepDrill":
             case "OperateScanner":
             case "Resurrect":
@@ -307,6 +316,7 @@ public static class AnimationCore
             case "Lessongiving":
             case "PlayStatic":
             case "PlayToys":
+            case "GoldenCubePlay":
             // Dubs Bad Hygiene
             case "WatchWashingMachine":
             case "DBHGoSwimming":
