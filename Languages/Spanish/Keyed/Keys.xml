@@ -2,7 +2,7 @@
 <LanguageData>
     <YayoAnim_OnlyPlayerPawns>Solo animaciones de colonos del jugador</YayoAnim_OnlyPlayerPawns>
     <YayoAnim_OnlyPlayerPawnsTooltip>Evita que cualquier colono (ya sea humano, animal o mecanoide) tenga animaciones a menos que pertenezca a la facción del jugador.</YayoAnim_OnlyPlayerPawnsTooltip>
-    <YayoAnim_UpdateFrequency>Frecuencia de actualización (en ticks)</YayoAnim_UpdateFrequency>
+    <YayoAnim_UpdateFrequency>Frecuencia de act. (en ticks)</YayoAnim_UpdateFrequency>
     <YayoAnim_MaximumZoomLevel>Nivel máximo de zoom: {0}</YayoAnim_MaximumZoomLevel>
     <YayoAnim_MaximumZoomLevelTooltip>Determina el nivel máximo de zoom en el que se reproducirán las animaciones. Si haces zoom más allá de este nivel, las animaciones dejarán de reproducirse.</YayoAnim_MaximumZoomLevelTooltip>
     <YayoAnim_MaximumZoomLevel_Closest>Más cercano</YayoAnim_MaximumZoomLevel_Closest>
@@ -12,13 +12,13 @@
     <YayoAnim_MaximumZoomLevel_Furthest>Cualquier nivel de zoom</YayoAnim_MaximumZoomLevel_Furthest>
 
     <YayoAnim_Walk>Animaciones de caminar</YayoAnim_Walk>
-    <YayoAnim_WalkAnimSpeed>Velocidad del movimiento al caminar</YayoAnim_WalkAnimSpeed>
-    <YayoAnim_WalkAnimAngle>Ángulo del movimiento al caminar</YayoAnim_WalkAnimAngle>
+    <YayoAnim_WalkAnimSpeed>Vel. del movimiento al caminar</YayoAnim_WalkAnimSpeed>
+    <YayoAnim_WalkAnimAngle>Ángulo del mov. al caminar</YayoAnim_WalkAnimAngle>
 
     <YayoAnim_Combat>Animaciones de combate</YayoAnim_Combat>
     <YayoAnim_TwirlWeapon>Giro de arma</YayoAnim_TwirlWeapon>
     <YayoAnim_TwirlWeaponMaxMassEnabled>Desactivar el giro de armas con masa superior a un valor específico</YayoAnim_TwirlWeaponMaxMassEnabled>
-    <YayoAnim_TwirlWeaponMaxMass>Masa máxima del arma para girar</YayoAnim_TwirlWeaponMaxMass>
+    <YayoAnim_TwirlWeaponMaxMass>Masa máx. del arma para girar</YayoAnim_TwirlWeaponMaxMass>
 
     <YayoAnim_AllJobs>Animaciones de todos los trabajos</YayoAnim_AllJobs>
 
