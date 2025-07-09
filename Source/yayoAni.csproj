@@ -2,9 +2,9 @@
     <PropertyGroup>
         <TargetFramework>net48</TargetFramework>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <LangVersion>12</LangVersion>
+        <LangVersion>latest</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <OutputPath>..\1.5\Assemblies\</OutputPath>
+        <OutputPath>..\1.6\Assemblies\</OutputPath>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
         <DebugType>portable</DebugType>
@@ -30,13 +30,12 @@
 <!--    </PropertyGroup>-->
 
     <ItemGroup>
-        <PackageReference Include="Krafs.Publicizer" Version="2.2.1">
+        <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Lib.Harmony" Version="2.3.1.1" ExcludeAssets="runtime"/>
-        <PackageReference Include="UnlimitedHugs.Rimworld.HugsLib" Version="10.0.1" ExcludeAssets="runtime"/>
-        <PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.4034-beta" />
+        <PackageReference Include="Lib.Harmony" Version="2.3.6" ExcludeAssets="runtime" />
+        <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4515-beta" />
         <PackageReference Include="Zetrith.Prepatcher" Version="1.2.0" />
     </ItemGroup>
 
