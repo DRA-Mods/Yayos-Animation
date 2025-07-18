@@ -57,7 +57,7 @@
     <ItemGroup>
         <!-- Temporary Giddy-Up 2 fork -->
         <Reference Include="GiddyUpCore">
-            <HintPath>..\..\..\..\..\workshop\content\294100\3246108162\1.5\Assemblies\GiddyUpCore.dll</HintPath>
+            <HintPath>..\..\..\..\..\workshop\content\294100\3246108162\1.6\Assemblies\GiddyUpCore.dll</HintPath>
             <Private>false</Private>
         </Reference>
 <!--        <Reference Include="GiddyUpCore">-->
