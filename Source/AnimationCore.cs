@@ -46,7 +46,7 @@ public static class AnimationCore
             return;
         }
 
-        var defName = pawn.CurJob?.def.defName;
+        var defName = pawn.CurJob?.def?.defName;
         if (pdd.jobName != null && // Make sure we've cached some job before cancelling
             pdd.jobName == defName && // Check if the current pawn's job is the same as cached
             Find.TickManager.TicksGame < pdd.nextUpdateTick && // Check if it's the proper tick to update
