@@ -15,7 +15,7 @@
 		<li>automatic.gunplay</li>
 		<li>hlx.ReinforcedMechanoids2</li>
 		<li>owlchemist.giddyup</li>
-  	</loadAfter>
+	</loadAfter>
 	<modDependencies>
 		<li>
 			<packageId>brrainz.harmony</packageId>
