@@ -32,6 +32,12 @@ public static class AimingPatch
         CurrentPawn = pawn;
     }
 
+    private static void Finalizer(Pawn pawn)
+    {
+        // Clear the cache so item stands aren't animated
+        CurrentPawn = null;
+    }
+
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instr, MethodBase baseMethod)
     {
         var drawEquipmentAiming = MethodUtil.MethodOf(PawnRenderUtility.DrawEquipmentAiming);
@@ -93,7 +99,7 @@ public static class AimingPatch
 
     internal static float AddWiggleToAngle(float angle)
     {
-        if (!Core.settings.combatEnabled)
+        if (!Core.settings.combatEnabled || CurrentPawn == null)
             return angle;
 
         // Aiming angle handled earlier.
@@ -113,7 +119,7 @@ public static class AimingPatch
 
     private static Vector3 AddWiggleToAimingRotation(Vector3 vec, float angle)
     {
-        if (!Core.settings.combatEnabled)
+        if (!Core.settings.combatEnabled || CurrentPawn == null)
             return vec.RotatedBy(angle);
 
         IsAimingAnimation = true;
@@ -261,13 +267,13 @@ public static class AimingPatch
                     case 1:
                         // Takedown
                         addZ = readyZ + 0.05f + ani2; // Higher -> closer to enemy
-                        addX = 0.45f - 0.35f + ani2 * 0.5f;  // Higher -> weapon is lower, animate in opposite direction
+                        addX = 0.45f - 0.35f + ani2 * 0.5f; // Higher -> weapon is lower, animate in opposite direction
                         ani = 30f + ani * 0.5f; // Fixed angle value + angle change amount
                         break;
                     case 2:
                         // Head stab
                         addZ = readyZ + 0.05f + ani2; // Higher -> closer to enemy
-                        addX = 0.45f - 0.35f - ani2;  // Higher -> weapon is lower
+                        addX = 0.45f - 0.35f - ani2; // Higher -> weapon is lower
                         break;
                 }
 
@@ -308,7 +314,7 @@ public static class AimingPatch
 
     internal static Vector3 AddWiggleToCarryPos(Vector3 vec)
     {
-        if (!Core.settings.combatEnabled)
+        if (!Core.settings.combatEnabled || CurrentPawn == null)
             return vec;
 
         IsAimingAnimation = false;
