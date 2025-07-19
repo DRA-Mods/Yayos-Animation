@@ -4,6 +4,7 @@
   <Excluded>
     <exclude>.git</exclude>
     <exclude>.idea</exclude>
+    <exclude>1.6\Assemblies\yayoAni.pdb</exclude>
     <exclude>Source\.idea</exclude>
     <exclude>Source\obj</exclude>
   </Excluded>
