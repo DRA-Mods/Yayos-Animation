@@ -9,7 +9,7 @@ namespace YayoAnimation.HarmonyPatches;
 // GameComponent would cause (one time) errors if removed from game
 public static class GameComponentUtilityPatch
 {
-    private static bool IsPatchActive() => !ModsConfig.IsActive("zetrith.prepatcher");
+    private static bool IsPatchActive() => !ModLister.AnyModActiveNoSuffix(["zetrith.prepatcher", "jikulopo.prepatcher"]);
 
     [HarmonyPatch(typeof(GameComponentUtility), nameof(GameComponentUtility.StartedNewGame))]
     [HarmonyPatch(typeof(GameComponentUtility), nameof(GameComponentUtility.LoadedGame))]
