@@ -320,7 +320,7 @@ public static class AimingPatch
 
     #region Weapon carry
 
-    internal static Vector3 AddWiggleToCarryPos(Vector3 vec)
+    internal static Vector3 AddWiggleToCarryPos(Vector3 vec, bool isOffhand)
     {
         if (!Core.settings.combatEnabled || CurrentPawn == null)
             return vec;
@@ -329,16 +329,13 @@ public static class AimingPatch
         IsTwirling = false;
         SetCurrentPawnTick();
 
-        // TODO: Re-add dual wielding support in the future
-        Wiggle = Mathf.Sin(CurrentPawnTick * 0.05f);
-        // var wiggle = !isSub
-        //     ? Mathf.Sin(tick * 0.05f)
-        //     : Mathf.Sin(tick * 0.05f + 0.5f);
+        Wiggle = !isOffhand
+            ? Mathf.Sin(CurrentPawnTick * 0.05f)
+            : Mathf.Sin(CurrentPawnTick * 0.05f + 0.5f);
 
         if (UseTwirl())
         {
-            // TODO: Re-add dual wielding support in the future
-            // if (!isSub)
+            if (!isOffhand)
             {
                 if (CurrentPawnTick is < 80 and >= 40)
                 {
@@ -346,53 +343,14 @@ public static class AimingPatch
                     return new Vector3(vec.x + OffsetX, vec.y, vec.z + OffsetZ + Wiggle * 0.05f);
                 }
             }
-            // else
-            // {
-            //     if (tick < 40)
-            //     {
-            //         addAngle += (tick - 40) * -36f;
-            //         rootLoc += OffsetSub;
-            //     }
-            // }
-        }
-
-        return new Vector3(vec.x, vec.y, vec.z + Wiggle * 0.05f);
-    }
-
-    internal static Vector3 AddWiggleToCarryPosCounter(Vector3 vec)
-    {
-        if (!Core.settings.combatEnabled || CurrentPawn == null)
-            return vec;
-
-        IsAimingAnimation = false;
-        IsTwirling = false;
-        SetCurrentPawnTick();
-
-        // TODO: Re-add dual wielding support in the future
-        Wiggle = Mathf.Sin(CurrentPawnTick * 0.05f);
-        // var wiggle = !isSub
-        //     ? Mathf.Sin(tick * 0.05f)
-        //     : Mathf.Sin(tick * 0.05f + 0.5f);
-
-        if (UseTwirl())
-        {
-            // TODO: Re-add dual wielding support in the future
-            // if (!isSub)
+            else
             {
-                if (CurrentPawnTick is < 80 and >= 40)
+                if (CurrentPawnTick < 40)
                 {
                     IsTwirling = true;
                     return new Vector3(vec.x - OffsetX, vec.y, vec.z + OffsetZ + Wiggle * 0.05f);
                 }
             }
-            // else
-            // {
-            //     if (tick < 40)
-            //     {
-            //         addAngle += (tick - 40) * -36f;
-            //         rootLoc += OffsetSub;
-            //     }
-            // }
         }
 
         return new Vector3(vec.x, vec.y, vec.z + Wiggle * 0.05f);

@@ -33,15 +33,14 @@ public static class CarriedWeaponDrawing
         var drawEquipmentAiming = MethodUtil.MethodOf(PawnRenderUtility.DrawEquipmentAiming);
 
         var addWiggleToCarryPos = MethodUtil.MethodOf(AimingPatch.AddWiggleToCarryPos);
-        var addWiggleToCarryPosCounter = MethodUtil.MethodOf(AimingPatch.AddWiggleToCarryPosCounter);
         var addWiggleToAngle = MethodUtil.MethodOf(AimingPatch.AddWiggleToAngle);
 
         var patchedAimingCalls = 0;
         var patchedFields = 0;
 
         // Check if Dual Wield is loaded, and if it's later in the mod list, if it's already applied the patch.
-        var dualWieldPatchField = ModsConfig.IsActive("MemeGoddess.DualWield") 
-            ? AccessTools.TypeByName("DualWield.Harmony.PawnRenderUtility_DrawCarriedWeapon")?.Field("PatchApplied") 
+        var dualWieldPatchField = ModLister.AnyModActiveNoSuffix(["MemeGoddess.DualWield"]) 
+            ? AccessTools.DeclaredField("DualWield.Harmony.PawnRenderUtility_DrawCarriedWeapon:PatchApplied") 
             : null;
         var dualWieldLoaded = dualWieldPatchField != null && dualWieldPatchField.GetValue(null) is true;
         foreach (var ci in instr)
@@ -59,19 +58,23 @@ public static class CarriedWeaponDrawing
             // If any of the 4 static fields was loaded, call our method to add wiggle to it
             if (!dualWieldLoaded && ci.opcode == OpCodes.Ldsfld && ci.operand is FieldInfo field && locFields.Contains(field))
             {
+                // Load false (not offhand)
+                yield return new CodeInstruction(OpCodes.Ldc_I4_0);
                 yield return new CodeInstruction(OpCodes.Call, addWiggleToCarryPos);
 
                 patchedFields++;
             }
             else if (dualWieldLoaded && ldLoc.Contains(ci.opcode) && ci.operand is LocalBuilder localBuilder && localBuilder.LocalType == typeof(Vector3))
             {
-                yield return new CodeInstruction(OpCodes.Call, patchedFields % 2 == 0 ? addWiggleToCarryPos : addWiggleToCarryPosCounter);
+                // Load true/false depending on if offhand weapon or not
+                yield return new CodeInstruction(patchedFields % 2 == 0 ? OpCodes.Ldc_I4_0 : OpCodes.Ldc_I4_1);
+                yield return new CodeInstruction(OpCodes.Call, addWiggleToCarryPos);
                 patchedFields++;
             }
         }
 
-        int expectedPatchedAimingCalls = dualWieldLoaded ? 2 : 1;
-        int expectedPatchedFields = dualWieldLoaded ? 2 : 4;
+        var expectedPatchedAimingCalls = dualWieldLoaded ? 2 : 1;
+        var expectedPatchedFields = dualWieldLoaded ? 2 : 4;
 
         if (patchedAimingCalls != expectedPatchedAimingCalls)
             Log.Error($"[{Core.ModName}] - patched incorrect number of calls to PawnRenderUtility.DrawEquipmentAiming (expected: {expectedPatchedAimingCalls}, patched: {patchedAimingCalls}) for method {baseMethod.GetNameWithNamespace()}");
