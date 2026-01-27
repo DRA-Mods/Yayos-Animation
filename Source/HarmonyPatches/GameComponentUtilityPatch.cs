@@ -15,7 +15,7 @@ public static class GameComponentUtilityPatch
     [HarmonyPatch(typeof(GameComponentUtility), nameof(GameComponentUtility.LoadedGame))]
     public static class ResetOnStartedOrLoaded
     {
-        public static bool Prepare(MethodBase method) => IsPatchActive();
+        public static bool Prepare() => IsPatchActive();
 
         public static void Postfix() => PawnDataUtility.Reset();
     }
@@ -23,7 +23,7 @@ public static class GameComponentUtilityPatch
     [HarmonyPatch(typeof(GameComponentUtility), nameof(GameComponentUtility.GameComponentTick))]
     public static class DoTicking
     {
-        public static bool Prepare(MethodBase method) => IsPatchActive();
+        public static bool Prepare() => IsPatchActive();
 
         public static void Postfix()
         {
