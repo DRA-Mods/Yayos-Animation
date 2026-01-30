@@ -34,8 +34,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Lib.Harmony" Version="2.3.6" ExcludeAssets="runtime" />
-        <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4515-beta" />
+        <PackageReference Include="Lib.Harmony" Version="2.4.2" ExcludeAssets="runtime" />
+        <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.*-*" />
         <PackageReference Include="Zetrith.Prepatcher" Version="1.2.0" />
     </ItemGroup>
 
@@ -50,14 +50,19 @@
 
     <ItemGroup>
         <Publicize Include="Assembly-CSharp"/>
-        <Publicize Include="CompOversizedWeapon"/>
-        <Publicize Include="Tacticowl"/>
+        <Publicize Include="DualWield"/>
+<!--        <Publicize Include="CompOversizedWeapon"/>-->
+<!--        <Publicize Include="Tacticowl"/>-->
     </ItemGroup>
 
     <ItemGroup>
         <!-- Temporary Giddy-Up 2 fork -->
         <Reference Include="GiddyUpCore">
             <HintPath>..\..\..\..\..\workshop\content\294100\3246108162\1.6\Assemblies\GiddyUpCore.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="DualWield">
+            <HintPath>..\..\..\..\..\workshop\content\294100\3630049419\1.6\Assemblies\DualWield.dll</HintPath>
             <Private>false</Private>
         </Reference>
 <!--        <Reference Include="GiddyUpCore">-->

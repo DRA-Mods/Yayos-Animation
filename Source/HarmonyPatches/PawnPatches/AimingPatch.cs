@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
 using UnityEngine;
 using Verse;
+using YayoAnimation.Compat;
 
 namespace YayoAnimation.HarmonyPatches.PawnPatches;
 
@@ -26,6 +28,8 @@ public static class AimingPatch
     private static float Wiggle;
     private static bool IsTwirling;
 
+    public static bool HasPawn => CurrentPawn != null;
+
     private static void Prefix(Pawn pawn)
     {
         // Cache the pawn for the remaining methods
@@ -38,7 +42,7 @@ public static class AimingPatch
         CurrentPawn = null;
     }
 
-    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instr, MethodBase baseMethod)
+    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instr, MethodBase baseMethod, ILGenerator generator)
     {
         var drawEquipmentAiming = MethodUtil.MethodOf(PawnRenderUtility.DrawEquipmentAiming);
         var addWiggleToAngle = MethodUtil.MethodOf(AddWiggleToAngle);
@@ -47,54 +51,112 @@ public static class AimingPatch
             [typeof(Vector3), typeof(float)]);
         var addWiggleToAimingRotation = MethodUtil.MethodOf(AddWiggleToAimingRotation);
 
+        // Dual wield patch stuff
+        var dualWieldPatchField = ModLister.AnyModActiveNoSuffix(["MemeGoddess.DualWield"])
+            ? AccessTools.DeclaredField("DualWield.Harmony.PawnRenderUtility_DrawEquipmentAndApparelExtras:PatchApplied")
+            : null;
+        var dualWieldLoaded = dualWieldPatchField != null && dualWieldPatchField.GetValue(null) is true;
+
+        var skippingInstructionsState = 0;
+        var jumpOverRotationLabel = dualWieldLoaded ? generator.DefineLabel() : default;
+        // End of dual wield patch stuff
+
         var patchedAimingCalls = 0;
         var patchedRotatedByCalls = 0;
 
         foreach (var ci in instr)
         {
-            // If DrawEquipmentAiming, then the last value on stack is float (angle) - replace it with ours
-            if (ci.Calls(drawEquipmentAiming))
+            if (dualWieldLoaded)
             {
-                yield return new CodeInstruction(OpCodes.Call, addWiggleToAngle);
+                // Just jump over the whole line here:
+                // drawPos += new Vector3(0f, 0f, 0.4f + pawn.equipment.Primary.def.equippedDistanceOffset).RotatedBy(num) * equipmentDrawDistanceFactor;
+                // We'll handle it by prefixing DualWield methods, since we want different values for main hand and offhand weapons.
+                // Keep the old code unused in case something wants to patch it, I suppose?
 
-                patchedAimingCalls++;
+                if (patchedRotatedByCalls == 0 && ci.IsLdarg() && ci.ArgumentIndex() == 1)
+                {
+                    yield return new CodeInstruction(OpCodes.Br_S, jumpOverRotationLabel).MoveLabelsFrom(ci);
+
+                    skippingInstructionsState++;
+                }
+                else
+                    switch (skippingInstructionsState)
+                    {
+                        case 2:
+                            ci.labels.Add(jumpOverRotationLabel);
+                            skippingInstructionsState++;
+                            patchedRotatedByCalls++;
+                            break;
+                        case 1 when ci.IsStarg() && ci.ArgumentIndex() == 1:
+                            skippingInstructionsState++;
+                            break;
+                    }
+
+                yield return ci;
             }
-
-            yield return ci;
-
-            // If RotatedBy called, apply our operations and then rotate
-            if (ci.Calls(rotatedBy))
+            else
             {
-                ci.opcode = OpCodes.Call;
-                ci.operand = addWiggleToAimingRotation;
+                // If DrawEquipmentAiming, then the last value on stack is float (angle) - replace it with ours
+                if (ci.Calls(drawEquipmentAiming))
+                {
+                    yield return new CodeInstruction(OpCodes.Call, addWiggleToAngle);
 
-                patchedRotatedByCalls++;
+                    patchedAimingCalls++;
+                }
+                // If RotatedBy called, apply our operations and then rotate
+                else if (ci.Calls(rotatedBy))
+                {
+                    // Load false (main hand)
+                    yield return new CodeInstruction(OpCodes.Ldc_I4_0);
+
+                    // Replace rotation with our own method
+                    ci.opcode = OpCodes.Call;
+                    ci.operand = addWiggleToAimingRotation;
+
+                    patchedRotatedByCalls++;
+                }
+
+                yield return ci;
             }
         }
 
-        var dualWieldPatchField = ModsConfig.IsActive("MemeGoddess.DualWield")
-            ? AccessTools.TypeByName("DualWield.Harmony.PawnRenderUtility_DrawEquipmentAndApparelExtras")?.Field("PatchApplied")
-            : null;
-        var dualWieldLoaded = dualWieldPatchField != null && dualWieldPatchField.GetValue(null) is true;
+        if (dualWieldLoaded)
+        {
+            const int expectedRotatedByCalls = 1;
 
-        int expectedPatchedAimingCalls = dualWieldLoaded ? 2 : 1;
-        const int expectedRotatedByCalls = 1;
+            if (patchedRotatedByCalls != expectedRotatedByCalls)
+                Log.Error($"[{Core.ModName}] - (Dual Wield compat) patched incorrect number of calls to Vector3Utility.RotatedBy (expected: {expectedRotatedByCalls}, patched: {patchedRotatedByCalls}) for method {baseMethod.GetNameWithNamespace()}");
+        }
+        else
+        {
+            const int expectedPatchedAimingCalls = 1;
+            const int expectedRotatedByCalls = 1;
 
-        if (patchedAimingCalls != expectedPatchedAimingCalls)
-            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to PawnRenderUtility.DrawEquipmentAiming (expected: {expectedPatchedAimingCalls}, patched: {patchedAimingCalls}) for method {baseMethod.GetNameWithNamespace()}");
-        if (patchedRotatedByCalls != expectedRotatedByCalls)
-            Log.Error($"[{Core.ModName}] - patched incorrect number of calls to Vector3Utility.RotatedBy (expected: {expectedRotatedByCalls}, patched: {patchedRotatedByCalls}) for method {baseMethod.GetNameWithNamespace()}");
+            if (patchedAimingCalls != expectedPatchedAimingCalls)
+                Log.Error($"[{Core.ModName}] - patched incorrect number of calls to PawnRenderUtility.DrawEquipmentAiming (expected: {expectedPatchedAimingCalls}, patched: {patchedAimingCalls}) for method {baseMethod.GetNameWithNamespace()}");
+            if (patchedRotatedByCalls != expectedRotatedByCalls)
+                Log.Error($"[{Core.ModName}] - patched incorrect number of calls to Vector3Utility.RotatedBy (expected: {expectedRotatedByCalls}, patched: {patchedRotatedByCalls}) for method {baseMethod.GetNameWithNamespace()}");
+        }
     }
 
     #endregion
 
     #region Utilities
 
-    // TODO: Re-add dual wielding support in the future
-    private static bool UseTwirl()
-        => Core.settings.combatTwirlEnabled &&
-           !CurrentPawn.RaceProps.IsMechanoid &&
-           (!Core.settings.combatTwirlMaxMassEnabled || CurrentPawn.equipment.Primary.def.BaseMass <= Core.settings.combatTwirlMaxMass);
+    private static bool UseTwirl(bool isOffhand)
+    {
+        if (!Core.settings.combatTwirlEnabled)
+            return false;
+        if (CurrentPawn.RaceProps.IsMechanoid)
+            return false;
+        if (!Core.settings.combatTwirlMaxMassEnabled)
+            return true;
+
+        var equipment = isOffhand
+            ? DualWieldCompat.GetOffhandWeapons(CurrentPawn) ?? CurrentPawn.equipment.Primary
+            : CurrentPawn.equipment.Primary;
+        return equipment.def.BaseMass <= Core.settings.combatTwirlMaxMass;
+    }
 
     private static void SetCurrentPawnTick() => CurrentPawnTick = CurrentPawn.HashOffsetTicks() & 0b0011_1111_1111;
 
@@ -111,7 +173,6 @@ public static class AimingPatch
         if (IsAimingAnimation)
             return Wiggle;
 
-        // TODO: Re-add dual wielding support in the future
         if (IsTwirling)
             if (angle < 180)
                 angle += CurrentPawnTick * 36f;
@@ -125,9 +186,18 @@ public static class AimingPatch
 
     #region Weapon aiming
 
-    private static Vector3 AddWiggleToAimingRotation(Vector3 vec, float angle)
+    internal static Vector3 AddWiggleToAimingRotation(Vector3 vec, float angle, bool isOffhand)
     {
         if (!Core.settings.combatEnabled || CurrentPawn == null)
+            return vec.RotatedBy(angle);
+
+        // Guaranteed non-null in vanilla, could be null with dual wield.
+        var weapon = isOffhand
+            ? DualWieldCompat.GetOffhandWeapons(CurrentPawn)
+            : CurrentPawn.equipment.Primary;
+
+        // For dual wield
+        if (weapon == null)
             return vec.RotatedBy(angle);
 
         IsAimingAnimation = true;
@@ -139,8 +209,6 @@ public static class AimingPatch
         // Could probably pass as argument, however this should be safer.
         // Guaranteed non-null, focusTarg is valid, neverAimWeapon is false
         var stance = (CurrentPawn.stances.curStance as Stance_Busy)!;
-        // Guaranteed non-null.
-        var weapon = CurrentPawn.equipment.Primary;
 
         if (weapon.def.IsRangedWeapon && stance.verb is { IsMeleeAttack: false })
         {
@@ -154,19 +222,16 @@ public static class AimingPatch
                 if (ticksToNextBurstShot > 10)
                     ticksToNextBurstShot = 10;
 
-                var ani = Mathf.Max(stance.ticksLeft, 25f) * 0.001f;
-                if (ticksToNextBurstShot > 0)
-                    ani = ticksToNextBurstShot * 0.02f;
+                var ani = ticksToNextBurstShot > 0
+                    ? ticksToNextBurstShot * 0.02f
+                    : Mathf.Max(stance.ticksLeft, 25f) * 0.001f;
 
                 [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                float WiggleSlow() => Mathf.Sin(stance.ticksLeft * 0.035f) * 0.05f;
-                // TODO: Re-add dual wielding support in the future
-                // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                // float WiggleSlow() => !isSub 
-                //     ? Mathf.Sin(ani_cool * 0.035f) * 0.05f
-                //     : Mathf.Sin(ani_cool * 0.035f + 0.5f) * 0.05f;
+                float WiggleSlow() => !isOffhand
+                    ? Mathf.Sin(stance.ticksLeft * 0.035f) * 0.05f
+                    : Mathf.Sin(stance.ticksLeft * 0.035f + 0.5f) * 0.05f;
 
-                switch ((CurrentPawn.LastAttackTargetTick ^ weapon.thingIDNumber) % 0b111)
+                switch ((CurrentPawn.LastAttackTargetTick ^ weapon.thingIDNumber) % 7)
                 {
                     // Twirl, unused/not finished
                     // case 0:
@@ -333,7 +398,7 @@ public static class AimingPatch
             ? Mathf.Sin(CurrentPawnTick * 0.05f)
             : Mathf.Sin(CurrentPawnTick * 0.05f + 0.5f);
 
-        if (UseTwirl())
+        if (UseTwirl(isOffhand))
         {
             if (!isOffhand)
             {
