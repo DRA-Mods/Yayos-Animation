@@ -43,6 +43,7 @@ public static class CarriedWeaponDrawing
             ? AccessTools.DeclaredField("DualWield.Harmony.PawnRenderUtility_DrawCarriedWeapon:PatchApplied") 
             : null;
         var dualWieldLoaded = dualWieldPatchField != null && dualWieldPatchField.GetValue(null) is true;
+
         foreach (var ci in instr)
         {
             // If DrawEquipmentAiming, then the last value on stack is float (angle) - replace it with ours
