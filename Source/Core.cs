@@ -45,6 +45,7 @@ public class Core : Mod
             switch (mod.PackageId.ToLower())
             {
                 case "owlchemist.giddyup":
+                case "memegoddess.giddyup":
                     usingGiddyUp = true;
                     Log.Message($"[{Core.ModName}] - Giddy-up! detected");
                     break;
