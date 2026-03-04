@@ -364,6 +364,14 @@ public static class AimingPatch
                         Wiggle = angle + addAngle + ani;
                         break;
                     }
+                    case Core.RotSouth:
+                    {
+                        vec = new Vector3(vec.x - addX, vec.y, vec.z + addZ);
+                        // Stops the game from subtracting 180 degrees and flipping the weapon.
+                        // It really doesn't want that knife to be pointing downwards.
+                        Wiggle = angle + addAngle + ani + 360f;
+                        break;
+                    }
                     default:
                     {
                         vec = new Vector3(vec.x - addX, vec.y, vec.z + addZ);
