@@ -231,7 +231,7 @@ public static class AimingPatch
                     ? Mathf.Sin(stance.ticksLeft * 0.035f) * 0.05f
                     : Mathf.Sin(stance.ticksLeft * 0.035f + 0.5f) * 0.05f;
 
-                switch ((CurrentPawn.LastAttackTargetTick ^ weapon.thingIDNumber) % 7)
+                switch (FastRandom.NewNext(7, CurrentPawn.LastAttackTargetTick ^ weapon.thingIDNumber))
                 {
                     // Twirl, unused/not finished
                     // case 0:
@@ -308,7 +308,7 @@ public static class AimingPatch
         }
         else
         {
-            var atkType = (CurrentPawn.LastAttackTargetTick ^ weapon.thingIDNumber) & 0b0011;
+            var atkType = FastRandom.NewNext(3, CurrentPawn.LastAttackTargetTick ^ weapon.thingIDNumber);
 
             var addAngle = atkType switch
             {
