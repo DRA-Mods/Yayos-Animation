@@ -14,7 +14,8 @@
 		<li>UnlimitedHugs.HugsLib</li>
 		<li>automatic.gunplay</li>
 		<li>hlx.ReinforcedMechanoids2</li>
-		<li>owlchemist.giddyup</li>
+    <li>owlchemist.giddyup</li>
+    <li>memegoddess.giddyup</li>
 	</loadAfter>
 	<modDependencies>
 		<li>
