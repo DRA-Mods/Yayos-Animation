@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <YayoAnim_OnlyPlayerPawns>Solo animaciones de colonos del jugador</YayoAnim_OnlyPlayerPawns>
+    <YayoAnim_OnlyPlayerPawnsTooltip>Evita que cualquier colono (ya sea humano, animal o mecanoide) tenga animaciones a menos que pertenezca a la facción del jugador.</YayoAnim_OnlyPlayerPawnsTooltip>
+    <YayoAnim_UpdateFrequency>Frecuencia de act. (en ticks)</YayoAnim_UpdateFrequency>
+    <YayoAnim_MaximumZoomLevel>Nivel máximo de zoom: {0}</YayoAnim_MaximumZoomLevel>
+    <YayoAnim_MaximumZoomLevelTooltip>Determina el nivel máximo de zoom en el que se reproducirán las animaciones. Si haces zoom más allá de este nivel, las animaciones dejarán de reproducirse.</YayoAnim_MaximumZoomLevelTooltip>
+    <YayoAnim_MaximumZoomLevel_Closest>Más cercano</YayoAnim_MaximumZoomLevel_Closest>
+    <YayoAnim_MaximumZoomLevel_Close>Cercano</YayoAnim_MaximumZoomLevel_Close>
+    <YayoAnim_MaximumZoomLevel_Middle>Medio</YayoAnim_MaximumZoomLevel_Middle>
+    <YayoAnim_MaximumZoomLevel_Far>Lejano</YayoAnim_MaximumZoomLevel_Far>
+    <YayoAnim_MaximumZoomLevel_Furthest>Cualquier nivel de zoom</YayoAnim_MaximumZoomLevel_Furthest>
+
+    <YayoAnim_Walk>Animaciones de caminar</YayoAnim_Walk>
+    <YayoAnim_WalkAnimSpeed>Vel. del movimiento al caminar</YayoAnim_WalkAnimSpeed>
+    <YayoAnim_WalkAnimAngle>Ángulo del mov. al caminar</YayoAnim_WalkAnimAngle>
+
+    <YayoAnim_Combat>Animaciones de combate</YayoAnim_Combat>
+    <YayoAnim_TwirlWeapon>Giro de arma</YayoAnim_TwirlWeapon>
+    <YayoAnim_TwirlWeaponMaxMassEnabled>Desactivar el giro de armas con masa superior a un valor específico</YayoAnim_TwirlWeaponMaxMassEnabled>
+    <YayoAnim_TwirlWeaponMaxMass>Masa máx. del arma para girar</YayoAnim_TwirlWeaponMaxMass>
+
+    <YayoAnim_AllJobs>Animaciones de todos los trabajos</YayoAnim_AllJobs>
+
+    <YayoAnim_Sleep>Animaciones al dormir</YayoAnim_Sleep>
+    <YayoAnim_LovinBed>Animaciones al hacer el amor</YayoAnim_LovinBed>
+
+    <YayoAnim_MechanoidWalk>Animaciones de caminar de mecanoides</YayoAnim_MechanoidWalk>
+    <YayoAnim_MechanoidJob>Animaciones de trabajo de mecanoides</YayoAnim_MechanoidJob>
+    <YayoAnim_MechanoidCombat>Animaciones de combate de mecanoides</YayoAnim_MechanoidCombat>
+
+    <YayoAnim_AnimalWalk>Animaciones de caminar de animales</YayoAnim_AnimalWalk>
+    <YayoAnim_AnimalJob>Animaciones de trabajo de animales</YayoAnim_AnimalJob>
+    <YayoAnim_AnimalCombat>Animaciones de combate de animales</YayoAnim_AnimalCombat>
+
+    <YayoAnim_RequiresWalkTooltip>Requiere que las animaciones de caminar estén habilitadas</YayoAnim_RequiresWalkTooltip>
+    <YayoAnim_RequiresJobTooltip>Requiere que las animaciones de todos los trabajos estén habilitadas</YayoAnim_RequiresJobTooltip>
+    <YayoAnim_RequiresCombatTooltip>Requiere que las animaciones de combate estén habilitadas</YayoAnim_RequiresCombatTooltip>
+
+    <YayoAnim_DebugMode>Modo debug</YayoAnim_DebugMode>
+
+    <YayoAnim_ResetToDefault>Restablecer a los valores predeterminados</YayoAnim_ResetToDefault>
+</LanguageData>
