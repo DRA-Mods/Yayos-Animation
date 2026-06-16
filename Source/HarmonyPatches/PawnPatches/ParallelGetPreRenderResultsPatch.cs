@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Reflection.Emit;
-using HarmonyLib;
+﻿using HarmonyLib;
 using RimWorld;
+using System.Collections.Generic;
+using System.Reflection.Emit;
 using UnityEngine;
 using Verse;
 using YayoAnimation.Data;
@@ -13,14 +13,23 @@ public static class ParallelGetPreRenderResultsPatch
 {
     // Should be threaded
 
+    public static bool groupedProcessingShouldUpdate(Pawn pawn)
+    {
+        if (!Core.settings.batchedProcessing)
+            return true;
+
+        return pawn.IsHashIntervalTick(Core.settings.batchGroups, 2); 
+    }
+
     public static void Prefix(PawnRenderer __instance, Pawn ___pawn, ref Vector3 drawLoc, ref Rot4? rotOverride)
     {
         var data = ___pawn.GetData();
 
-        AnimationCore.CheckAni(
-            ___pawn,
-            rotOverride ?? (___pawn.GetPosture() == PawnPosture.Standing || ___pawn.Crawling ? ___pawn.Rotation : __instance.LayingFacing()),
-            data);
+        if (groupedProcessingShouldUpdate(___pawn)) // Check if the pawn is outside of the current updating group
+            AnimationCore.CheckAni(
+                ___pawn,
+                rotOverride ?? (___pawn.GetPosture() == PawnPosture.Standing || ___pawn.Crawling ? ___pawn.Rotation : __instance.LayingFacing()),
+                data);
 
         // drawLoc += data.posOffset;
         rotOverride = data.fixedRot ?? rotOverride;

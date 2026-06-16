@@ -2,6 +2,10 @@
 <LanguageData>
     <YayoAnim_OnlyPlayerPawns>Only player pawn animations</YayoAnim_OnlyPlayerPawns>
     <YayoAnim_OnlyPlayerPawnsTooltip>Prevents any pawn (be it human, animal, or mechanoid) from having any animations unless they're from player's faction.</YayoAnim_OnlyPlayerPawnsTooltip>
+	<YayoAnim_BatchedProcessing>Batched animation processing</YayoAnim_BatchedProcessing>
+	<YayoAnim_BatchedProcessingTooltip>Processes only 1/x of the pawns each tick. This results in a more balanced processing time at the cost of reduced animation stability.\n\n(x = Animation batch groups)</YayoAnim_BatchedProcessingTooltip>
+	<YayoAnim_BatchGroups>Animation batch groups</YayoAnim_BatchGroups>
+	<YayoAnim_BatchGroupsToolTip>Determines how many groups to split pawns into when using Batched animation processing.\nHigher numbers may result in better performance, but may also cause unintended effects.\n\n(The default number is a good compromise between performance and animation stability.)</YayoAnim_BatchGroupsToolTip>
     <YayoAnim_UpdateFrequency>Update frequency (in ticks)</YayoAnim_UpdateFrequency>
     <YayoAnim_MaximumZoomLevel>Maximum zoom level: {0}</YayoAnim_MaximumZoomLevel>
     <YayoAnim_MaximumZoomLevelTooltip>Determines maximum zoom level at which the animations will play. If you zoom beyond it, the animations will stop playing.</YayoAnim_MaximumZoomLevelTooltip>

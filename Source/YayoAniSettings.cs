@@ -6,7 +6,9 @@ namespace YayoAnimation;
 
 public class YayoAniSettings : ModSettings
 {
+    public bool batchedProcessing = false;
     public bool onlyPlayerPawns = false;
+    public int batchGroups = 3;
     public int updateFrequencyTicks = 1;
     public CameraZoomRange maximumZoomLevel = CameraZoomRange.Furthest;
 
@@ -40,8 +42,11 @@ public class YayoAniSettings : ModSettings
 
         Scribe_Values.Look(ref onlyPlayerPawns, "OnlyPlayer", false);
         Scribe_Values.Look(ref updateFrequencyTicks, "UpdateFrequencyTicks", 1);
+        Scribe_Values.Look(ref batchedProcessing, "BatchedProcessing", false);
+        Scribe_Values.Look(ref batchGroups, "BatchGroups", 3);
         Scribe_Values.Look(ref maximumZoomLevel, "MaximumZoomLevel", CameraZoomRange.Furthest);
         updateFrequencyTicks = Mathf.Clamp(updateFrequencyTicks, 1, 10);
+        batchGroups = Mathf.Clamp(batchGroups, 2, 9);
 
         Scribe_Values.Look(ref walkEnabled, "WalkAnim", true);
         Scribe_Values.Look(ref walkSpeed, "WalkSpeed", 0.8f);
@@ -80,6 +85,15 @@ public class YayoAniSettings : ModSettings
         listing.CheckboxLabeled("YayoAnim_OnlyPlayerPawns".Translate(), ref onlyPlayerPawns, "YayoAnim_OnlyPlayerPawnsTooltip".Translate());
         buffer = null;
         listing.TextFieldNumericLabeled($"{"YayoAnim_UpdateFrequency".Translate()}  ", ref updateFrequencyTicks, ref buffer, 1, 10);
+
+        listing.CheckboxLabeled("YayoAnim_BatchedProcessing".Translate(), ref batchedProcessing, "YayoAnim_BatchedProcessingTooltip".Translate());
+        buffer = null;
+
+        Rect batchGroupsRect = listing.GetRect(Text.LineHeight);
+
+        TooltipHandler.TipRegion(batchGroupsRect, "YayoAnim_BatchGroupsToolTip".Translate());
+        Widgets.TextFieldNumericLabeled(batchGroupsRect, $"{"YayoAnim_BatchGroups".Translate()}  ", ref batchGroups, ref buffer, 2, 9);
+
         if (listing.ButtonTextTooltip("YayoAnim_MaximumZoomLevel".Translate($"YayoAnim_MaximumZoomLevel_{maximumZoomLevel}".Translate()), "YayoAnim_MaximumZoomLevelTooltip".Translate()))
         {
             FloatMenuUtility.MakeMenu(
@@ -144,6 +158,8 @@ public class YayoAniSettings : ModSettings
     private void ResetToDefault()
     {
         onlyPlayerPawns = false;
+        batchedProcessing = false;
+        batchGroups = 3;
         updateFrequencyTicks = 1;
         maximumZoomLevel = CameraZoomRange.Furthest;
 
