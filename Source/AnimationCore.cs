@@ -799,13 +799,18 @@ public static class AnimationCore
         {
             case "Lovin": // 사랑나누기
             case "VSIE_OneStandLovin":
+            case "SRL_Lovin_Standard":
+            case "SRL_Lovin_Group_Primary":
+            case "SRL_Lovin_Group_Secondary":
                 if (!Core.settings.lovinEnabled) break;
                 var bed = pawn.CurrentBed();
                 if (bed == null) break;
+                var partner = SameRoomLovinCompat.GetPartner(pawn, defName);
+                if (partner == null) break;
                 var t = (Find.TickManager.TicksGame + idTick % 30) % 360;
                 if (pawn.RaceProps.Humanlike)
                 {
-                    rot = Core.getRot(pawn.CurJob.targetA.Pawn.DrawPos - pawn.DrawPos, bed.Rotation);
+                    rot = Core.getRot(partner.DrawPos - pawn.DrawPos, bed.Rotation);
 
                     if (t <= 160)
                     {
