@@ -470,7 +470,7 @@ public static class AnimationCore
             case "Play_Faro":
             // Vanilla Factions Vikings
             case "Play_Hnefatafl":
-                t = (Find.TickManager.TicksGame + idTick * 27) % 900;
+                t = (Find.TickManager.TicksGame % 900 + (pawn.thingIDNumber % 900) * 20 * 27 % 900) % 900;
                 if (t <= 159)
                     aniType = AniType.gameCeremony;
                 else
